@@ -20,8 +20,8 @@ public class Playlist extends BaseEntity {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "profile_id")
+    private Profile profile;
 
     @ManyToMany
     @JoinTable(name = "playlists_songs",
@@ -31,10 +31,10 @@ public class Playlist extends BaseEntity {
     private Set<Song> songs = new HashSet<>();
 
     @Builder
-    public Playlist(Long id, String name, User user, Set<Song> songs) {
+    public Playlist(Long id, String name, Profile profile, Set<Song> songs) {
         super(id);
         this.name = name;
-        this.user = user;
+        this.profile = profile;
         this.songs = songs;
     }
 }
