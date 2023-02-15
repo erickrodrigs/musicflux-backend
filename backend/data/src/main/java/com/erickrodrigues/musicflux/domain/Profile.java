@@ -1,10 +1,8 @@
 package com.erickrodrigues.musicflux.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +10,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "profiles")
 public class Profile extends BaseEntity {
@@ -20,24 +20,14 @@ public class Profile extends BaseEntity {
     private User user;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @Builder.Default
     private Set<Playlist> playlists = new HashSet<>();
 
-    @OneToMany(mappedBy = "profile")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
+    @Builder.Default
     private Set<Favorite> favorites = new HashSet<>();
 
-    @OneToMany(mappedBy = "profile")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
+    @Builder.Default
     private Set<RecentlyListened> recentlyListenedSongs = new HashSet<>();
-
-    @Builder
-    public Profile(Long id,
-                   User user,
-                   Set<Playlist> playlists,
-                   Set<Favorite> favorites,
-                   Set<RecentlyListened> recentlyListenedSongs) {
-        super(id);
-        this.user = user;
-        this.playlists = playlists;
-        this.favorites = favorites;
-        this.recentlyListenedSongs = recentlyListenedSongs;
-    }
 }

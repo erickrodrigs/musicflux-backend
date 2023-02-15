@@ -1,10 +1,8 @@
 package com.erickrodrigues.musicflux.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +10,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "artists")
 public class Artist extends BaseEntity {
@@ -28,13 +28,6 @@ public class Artist extends BaseEntity {
             joinColumns = @JoinColumn(name = "artist_id"),
             inverseJoinColumns = @JoinColumn(name = "album_id")
     )
+    @Builder.Default
     private Set<Album> albums = new HashSet<>();
-
-    @Builder
-    public Artist(Long id, String name, String biography, Set<Album> albums) {
-        super(id);
-        this.name = name;
-        this.biography = biography;
-        this.albums = albums;
-    }
 }

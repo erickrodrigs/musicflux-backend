@@ -1,10 +1,8 @@
 package com.erickrodrigues.musicflux.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.Duration;
 import java.util.HashSet;
@@ -13,6 +11,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "songs")
 public class Song extends BaseEntity {
@@ -24,7 +24,8 @@ public class Song extends BaseEntity {
     private Duration length;
 
     @Column(name = "number_of_plays")
-    private Long numberOfPlays;
+    @Builder.Default
+    private Long numberOfPlays = 0L;
 
     @ManyToOne
     @JoinColumn(name = "album_id")
@@ -35,15 +36,10 @@ public class Song extends BaseEntity {
             joinColumns = @JoinColumn(name = "song_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
+    @Builder.Default
     private Set<Genre> genres = new HashSet<>();
 
-    @Builder
-    public Song(Long id, String title, Duration length, Long numberOfPlays, Album album, Set<Genre> genres) {
-        super(id);
-        this.title = title;
-        this.length = length;
-        this.numberOfPlays = numberOfPlays;
-        this.album = album;
-        this.genres = genres;
+    public void play() {
+        this.numberOfPlays += 1;
     }
 }

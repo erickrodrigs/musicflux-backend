@@ -1,10 +1,8 @@
 package com.erickrodrigues.musicflux.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -13,6 +11,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "albums")
 public class Album extends BaseEntity {
@@ -27,18 +27,10 @@ public class Album extends BaseEntity {
     private LocalDate releaseDate;
 
     @OneToMany(cascade = CascadeType.ALL)
+    @Builder.Default
     private Set<Song> songs = new HashSet<>();
 
     @ManyToMany(mappedBy = "albums")
+    @Builder.Default
     private Set<Artist> artists = new HashSet<>();
-
-    @Builder
-    public Album(Long id, String title, String coverUrl, LocalDate releaseDate, Set<Song> songs, Set<Artist> artists) {
-        super(id);
-        this.title = title;
-        this.coverUrl = coverUrl;
-        this.releaseDate = releaseDate;
-        this.songs = songs;
-        this.artists = artists;
-    }
 }

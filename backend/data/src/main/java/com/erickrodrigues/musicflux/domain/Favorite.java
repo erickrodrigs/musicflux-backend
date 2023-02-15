@@ -4,14 +4,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "favorites")
 public class Favorite extends BaseEntity {
@@ -23,11 +23,4 @@ public class Favorite extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "song_id")
     private Song song;
-
-    @Builder
-    public Favorite(Long id, Profile profile, Song song) {
-        super(id);
-        this.profile = profile;
-        this.song = song;
-    }
 }

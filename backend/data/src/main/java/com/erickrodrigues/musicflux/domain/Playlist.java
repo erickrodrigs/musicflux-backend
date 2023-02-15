@@ -1,10 +1,8 @@
 package com.erickrodrigues.musicflux.domain;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,6 +10,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
 @Entity
 @Table(name = "playlists")
 public class Playlist extends BaseEntity {
@@ -28,13 +28,14 @@ public class Playlist extends BaseEntity {
             joinColumns = @JoinColumn(name = "playlist_id"),
             inverseJoinColumns = @JoinColumn(name = "song_id")
     )
+    @Builder.Default
     private Set<Song> songs = new HashSet<>();
 
-    @Builder
-    public Playlist(Long id, String name, Profile profile, Set<Song> songs) {
-        super(id);
-        this.name = name;
-        this.profile = profile;
-        this.songs = songs;
+    public void addSong(Song song) {
+        if (songs.contains(song)) {
+            throw new RuntimeException("Song already included in the playlist");
+        }
+
+        songs.add(song);
     }
 }
