@@ -20,7 +20,7 @@ public class Profile extends BaseEntity {
     @OneToOne
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
     @Builder.Default
     private Set<Playlist> playlists = new HashSet<>();
 
@@ -31,6 +31,10 @@ public class Profile extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
     @Builder.Default
     private Set<RecentlyListened> recentlyListenedSongs = new HashSet<>();
+
+    public void addPlaylist(Playlist playlist) {
+        playlists.add(playlist);
+    }
 
     public void addRecentlyListenedSong(Song song) {
         recentlyListenedSongs.add(

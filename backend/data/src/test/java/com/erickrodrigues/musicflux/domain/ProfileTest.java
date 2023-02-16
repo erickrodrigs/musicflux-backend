@@ -14,4 +14,13 @@ public class ProfileTest {
 
         assertEquals(1, profile.getRecentlyListenedSongs().size());
     }
+
+    @Test
+    public void addPlaylist() {
+        Profile profile = Profile.builder().id(1L).build();
+
+        profile.addPlaylist(Playlist.builder().id(1L).build());
+
+        assertEquals(1, profile.getPlaylists().size());
+    }
 }
