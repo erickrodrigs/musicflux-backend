@@ -54,7 +54,7 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public Set<Song> findAllByTitle(String title) {
-        return this.songRepository.findAllByTitleIsContainingIgnoreCase(title);
+        return this.songRepository.findAllByTitleContainingIgnoreCase(title);
     }
 
     @Override

@@ -74,10 +74,10 @@ public class SongServiceImplTest {
                 Song.builder().id(2L).title("all i know is i wanna love you").build()
         );
 
-        when(songRepository.findAllByTitleIsContainingIgnoreCase(title)).thenReturn(songs);
+        when(songRepository.findAllByTitleContainingIgnoreCase(title)).thenReturn(songs);
 
         assertEquals(2, songService.findAllByTitle(title).size());
-        verify(songRepository, times(1)).findAllByTitleIsContainingIgnoreCase(anyString());
+        verify(songRepository, times(1)).findAllByTitleContainingIgnoreCase(anyString());
     }
 
     @Test

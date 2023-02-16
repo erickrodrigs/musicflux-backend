@@ -49,7 +49,7 @@ public class SongRepositoryTest {
 
     @Test
     public void findAllByTitleIsContainingIgnoreCase() {
-        Set<Song> songs = songRepository.findAllByTitleIsContainingIgnoreCase("I WANNA LOVE YOU");
+        Set<Song> songs = songRepository.findAllByTitleContainingIgnoreCase("I WANNA LOVE YOU");
 
         assertEquals(2, songs.size());
         assertTrue(songs.containsAll(Set.of(song2, song3)));
