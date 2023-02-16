@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,4 +31,14 @@ public class Profile extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
     @Builder.Default
     private Set<RecentlyListened> recentlyListenedSongs = new HashSet<>();
+
+    public void addRecentlyListenedSong(Song song) {
+        recentlyListenedSongs.add(
+                RecentlyListened.builder()
+                        .profile(this)
+                        .song(song)
+                        .createdAt(LocalDateTime.now())
+                        .build()
+        );
+    }
 }
