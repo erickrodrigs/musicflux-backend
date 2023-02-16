@@ -3,4 +3,11 @@ package com.erickrodrigues.musicflux.repositories;
 import com.erickrodrigues.musicflux.domain.Song;
 import org.springframework.data.repository.CrudRepository;
 
-public interface SongRepository extends CrudRepository<Song, Long> {}
+import java.util.Set;
+
+public interface SongRepository extends CrudRepository<Song, Long> {
+
+    Set<Song> findAllByTitleIsContainingIgnoreCase(String title);
+
+    Set<Song> findAllByAlbumId(Long albumId);
+}
