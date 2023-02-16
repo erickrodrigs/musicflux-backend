@@ -38,4 +38,12 @@ public class Playlist extends BaseEntity {
 
         songs.add(song);
     }
+
+    public void removeSong(Song song) {
+        if (!songs.contains(song)) {
+            throw new RuntimeException("Song is not included in the playlist");
+        }
+
+        songs.remove(song);
+    }
 }
