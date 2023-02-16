@@ -6,7 +6,7 @@ import java.util.Set;
 
 public interface SongService {
 
-    void play(Long profileId);
+    void play(Long profileId, Long songId);
 
     Set<Song> findAllByTitle(String title);
 
