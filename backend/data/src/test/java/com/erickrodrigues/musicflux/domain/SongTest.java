@@ -13,4 +13,12 @@ public class SongTest {
 
         assertEquals(1, song.getNumberOfPlays());
     }
+
+    @Test
+    public void compareTo() {
+        Song song1 = Song.builder().numberOfPlays(7600L).build();
+        Song song2 = Song.builder().numberOfPlays(3600L).build();
+
+        assertTrue(song1.compareTo(song2) < 0);
+    }
 }
