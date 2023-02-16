@@ -26,7 +26,7 @@ public class Album extends BaseEntity {
     @Column(name = "release_date")
     private LocalDate releaseDate;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "album")
     @Builder.Default
     private Set<Song> songs = new HashSet<>();
 
