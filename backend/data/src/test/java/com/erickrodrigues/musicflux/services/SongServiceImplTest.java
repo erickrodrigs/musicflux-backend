@@ -82,15 +82,26 @@ public class SongServiceImplTest {
 
     @Test
     public void findAllByAlbumId() {
-        Set<Song> songs = Set.of(
+        final Long albumId = 1L;
+        final Set<Song> songs = Set.of(
                 Song.builder().id(1L).title("i wanna love you").build(),
                 Song.builder().id(2L).title("all i know is i wanna love you").build()
         );
+        final Album album = Album.builder().id(albumId).songs(songs).build();
 
-        when(songRepository.findAllByAlbumId(1L)).thenReturn(songs);
+        when(albumRepository.findById(albumId)).thenReturn(Optional.of(album));
 
-        assertEquals(2, songService.findAllByAlbumId(1L).size());
-        verify(songRepository, times(1)).findAllByAlbumId(anyLong());
+        assertEquals(2, songService.findAllByAlbumId(albumId).size());
+        verify(albumRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    public void findAllByAlbumIdThatDoesNotExist() {
+        final Long albumId = 1L;
+        when(albumRepository.findById(albumId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> songService.findAllByAlbumId(albumId));
+        verify(albumRepository, times(1)).findById(anyLong());
     }
 
     @Test

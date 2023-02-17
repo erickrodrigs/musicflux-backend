@@ -6,6 +6,7 @@ import com.erickrodrigues.musicflux.domain.Song;
 import com.erickrodrigues.musicflux.repositories.AlbumRepository;
 import com.erickrodrigues.musicflux.repositories.ProfileRepository;
 import com.erickrodrigues.musicflux.repositories.SongRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,20 +31,8 @@ public class SongServiceImpl implements SongService {
     @Transactional
     @Override
     public void play(Long profileId, Long songId) {
-        final Optional<Song> optionalSong = this.songRepository.findById(songId);
-
-        if (optionalSong.isEmpty()) {
-            throw new RuntimeException("Song with that ID does not exist");
-        }
-
-        final Optional<Profile> optionalProfile = this.profileRepository.findById(profileId);
-
-        if (optionalProfile.isEmpty()) {
-            throw new RuntimeException("Profile with that ID does not exist");
-        }
-
-        final Song song = optionalSong.get();
-        final Profile profile = optionalProfile.get();
+        final Song song = this.getEntityOrThrowException(songId, songRepository, Song.class);
+        final Profile profile = this.getEntityOrThrowException(profileId, profileRepository, Profile.class);
 
         song.play();
         profile.addRecentlyListenedSong(song);
@@ -59,7 +48,8 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public Set<Song> findAllByAlbumId(Long albumId) {
-        return this.songRepository.findAllByAlbumId(albumId);
+        final Album album = this.getEntityOrThrowException(albumId, albumRepository, Album.class);
+        return album.getSongs();
     }
 
     @Override
@@ -73,5 +63,15 @@ public class SongServiceImpl implements SongService {
                 .stream()
                 .limit(5)
                 .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    private <T> T getEntityOrThrowException(Long entityId, CrudRepository<T, Long> repository, Class<T> tClass) {
+        final Optional<T> optionalEntity = repository.findById(entityId);
+
+        if (optionalEntity.isEmpty()) {
+            throw new RuntimeException(tClass.getSimpleName() + " with that ID does not exist");
+        }
+
+        return optionalEntity.get();
     }
 }

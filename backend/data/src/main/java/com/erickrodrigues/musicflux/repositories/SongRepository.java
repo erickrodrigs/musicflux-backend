@@ -8,6 +8,4 @@ import java.util.Set;
 public interface SongRepository extends CrudRepository<Song, Long> {
 
     Set<Song> findAllByTitleContainingIgnoreCase(String title);
-
-    Set<Song> findAllByAlbumId(Long albumId);
 }
