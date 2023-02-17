@@ -6,13 +6,13 @@ import java.util.Set;
 
 public interface PlaylistService {
 
-    Playlist create(Long profileId);
+    Playlist create(Long profileId, String name);
 
     Set<Playlist> findAllByName(String name);
 
     Set<Playlist> findAllByProfileId(Long profileId);
 
-    Playlist addSong(Long profileId, Long songId);
+    Playlist addSong(Long profileId, Long playlistId, Long songId);
 
-    Playlist removeSong(Long profileId, Long songId);
+    Playlist removeSong(Long profileId, Long playlistId, Long songId);
 }
