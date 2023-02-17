@@ -7,5 +7,5 @@ public interface UserService {
 
     Profile login(String username, String password);
 
-    User signUp(User user);
+    User signUp(String name, String username, String email, String password);
 }
