@@ -6,9 +6,9 @@ import java.util.Set;
 
 public interface FavoriteService {
 
-    void likeSong(Long profileId, Long songId);
+    Favorite likeSong(Long profileId, Long songId);
 
-    void dislikeSong(Long profileId, Long songId);
+    void dislikeSong(Long profileId, Long favoriteId);
 
     Set<Favorite> findAllByProfileId(Long profileId);
 }
