@@ -10,7 +10,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -47,12 +46,14 @@ public class PlaylistServiceImpl implements PlaylistService {
 
     @Override
     public Set<Playlist> findAllByName(String name) {
-        return new HashSet<>(playlistRepository.findAllByNameContainingIgnoreCase(name));
+        return playlistRepository.findAllByNameContainingIgnoreCase(name);
     }
 
     @Override
     public Set<Playlist> findAllByProfileId(Long profileId) {
-        return new HashSet<>(playlistRepository.findAllByProfileId(profileId));
+        final Profile profile = this.getEntityOrThrowException(profileId, this.profileRepository, Profile.class);
+
+        return profile.getPlaylists();
     }
 
     @Transactional
