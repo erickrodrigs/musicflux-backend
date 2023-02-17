@@ -15,7 +15,7 @@ import java.util.Set;
 @SuperBuilder
 @Entity
 @Table(name = "songs")
-public class Song extends BaseEntity {
+public class Song extends BaseEntity implements Comparable<Song> {
 
     @Column(name = "title")
     private String title;
@@ -41,5 +41,10 @@ public class Song extends BaseEntity {
 
     public void play() {
         this.numberOfPlays += 1;
+    }
+
+    @Override
+    public int compareTo(Song o) {
+        return (int) (o.getNumberOfPlays() - this.getNumberOfPlays());
     }
 }

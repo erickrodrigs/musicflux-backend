@@ -30,4 +30,19 @@ public class PlaylistTest {
 
         assertThrows(RuntimeException.class, () -> playlist.addSong(Song.builder().id(1L).build()));
     }
+
+    @Test
+    public void removeSong() {
+        Song song = Song.builder().id(1L).build();
+
+        playlist.addSong(song);
+        playlist.removeSong(song);
+
+        assertTrue(playlist.getSongs().isEmpty());
+    }
+
+    @Test
+    public void removeSongThatIsNotIncludedInThePlaylist() {
+        assertThrows(RuntimeException.class, () -> playlist.removeSong(Song.builder().id(1L).build()));
+    }
 }
