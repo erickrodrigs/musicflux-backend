@@ -30,9 +30,9 @@ public class AlbumRepositoryTest {
     void setUp() {
         artist1 = Artist.builder().id(1L).build();
         artist2 = Artist.builder().id(2L).build();
-        album1 = Album.builder().id(1L).build();
-        album2 = Album.builder().id(2L).build();
-        album3 = Album.builder().id(3L).build();
+        album1 = Album.builder().id(1L).title("my untitled album").build();
+        album2 = Album.builder().id(2L).title("THIS ALBUM IS UNTITLED").build();
+        album3 = Album.builder().id(3L).title("Master of Puppets").build();
 
         artistRepository.save(artist1);
         artistRepository.save(artist2);
@@ -51,6 +51,14 @@ public class AlbumRepositoryTest {
         albumRepository.save(album1);
         albumRepository.save(album2);
         albumRepository.save(album3);
+    }
+
+    @Test
+    public void findAllByTitleContainingIgnoreCase() {
+        Set<Album> albums = albumRepository.findAllByTitleContainingIgnoreCase("untitled");
+
+        assertEquals(2, albums.size());
+        assertTrue(albums.containsAll(Set.of(album1, album2)));
     }
 
     @Test

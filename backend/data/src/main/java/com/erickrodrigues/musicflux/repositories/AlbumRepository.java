@@ -7,5 +7,7 @@ import java.util.Set;
 
 public interface AlbumRepository extends CrudRepository<Album, Long> {
 
+    Set<Album> findAllByTitleContainingIgnoreCase(String title);
+
     Set<Album> findAllByArtistsIn(Set<Long> artistIds);
 }
