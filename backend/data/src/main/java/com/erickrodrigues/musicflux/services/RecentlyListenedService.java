@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface RecentlyListenedService {
 
-    Page<RecentlyListened> findAll(Pageable pageable, Long profileId);
+    Page<RecentlyListened> findAllByProfileId(Pageable pageable, Long profileId);
 }
