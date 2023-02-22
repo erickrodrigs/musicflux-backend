@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends BaseService implements UserService {
 
     private final UserRepository userRepository;
     private final ProfileRepository profileRepository;
@@ -38,8 +38,8 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Username or email already exist");
         }
 
-        Profile profile = Profile.builder().build();
-        User user = User.builder()
+        final Profile profile = Profile.builder().build();
+        final User user = User.builder()
                 .name(name)
                 .username(username)
                 .email(email)

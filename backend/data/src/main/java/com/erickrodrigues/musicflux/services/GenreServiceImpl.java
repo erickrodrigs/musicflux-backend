@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Service
-public class GenreServiceImpl implements GenreService {
+public class GenreServiceImpl extends BaseService implements GenreService {
 
     private final GenreRepository genreRepository;
 
@@ -19,7 +19,7 @@ public class GenreServiceImpl implements GenreService {
     @Override
     public Set<Genre> findAll() {
         final Set<Genre> genres = new HashSet<>();
-        this.genreRepository.findAll().forEach(genres::add);
+        genreRepository.findAll().forEach(genres::add);
         return genres;
     }
 }

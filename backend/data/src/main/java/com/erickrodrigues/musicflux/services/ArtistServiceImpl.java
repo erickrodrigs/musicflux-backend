@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.Set;
 
 @Service
-public class ArtistServiceImpl implements ArtistService {
+public class ArtistServiceImpl extends BaseService implements ArtistService {
 
     private final ArtistRepository artistRepository;
 
@@ -17,6 +17,6 @@ public class ArtistServiceImpl implements ArtistService {
 
     @Override
     public Set<Artist> findAllByName(String name) {
-        return this.artistRepository.findAllByNameContainingIgnoreCase(name);
+        return artistRepository.findAllByNameContainingIgnoreCase(name);
     }
 }
