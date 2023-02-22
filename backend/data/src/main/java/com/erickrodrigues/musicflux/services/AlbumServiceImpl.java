@@ -6,11 +6,10 @@ import com.erickrodrigues.musicflux.repositories.AlbumRepository;
 import com.erickrodrigues.musicflux.repositories.ArtistRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class AlbumServiceImpl implements AlbumService {
+public class AlbumServiceImpl extends BaseService implements AlbumService {
 
     private final AlbumRepository albumRepository;
     private final ArtistRepository artistRepository;
@@ -22,17 +21,11 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public Set<Album> findAllByTitle(String title) {
-        return this.albumRepository.findAllByTitleContainingIgnoreCase(title);
+        return albumRepository.findAllByTitleContainingIgnoreCase(title);
     }
 
     @Override
     public Set<Album> findAllByArtistId(Long artistId) {
-        final Optional<Artist> optionalArtist = this.artistRepository.findById(artistId);
-
-        if (optionalArtist.isEmpty()) {
-            throw new RuntimeException("Artist with that ID does not exist");
-        }
-
-        return optionalArtist.get().getAlbums();
+        return super.getEntityOrThrowException(artistId, artistRepository, Artist.class).getAlbums();
     }
 }

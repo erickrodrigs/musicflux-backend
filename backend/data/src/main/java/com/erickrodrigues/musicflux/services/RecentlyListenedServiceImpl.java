@@ -11,10 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class RecentlyListenedServiceImpl implements RecentlyListenedService {
+public class RecentlyListenedServiceImpl extends BaseService implements RecentlyListenedService {
 
     private final ProfileRepository profileRepository;
 
@@ -25,13 +24,9 @@ public class RecentlyListenedServiceImpl implements RecentlyListenedService {
     @Transactional(readOnly = true)
     @Override
     public Page<RecentlyListened> findAllByProfileId(Pageable pageable, Long profileId) {
-        final Optional<Profile> optionalProfile = profileRepository.findById(profileId);
+        final Profile profile = super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
 
-        if (optionalProfile.isEmpty()) {
-            throw new RuntimeException("Profile with that ID does not exist");
-        }
-
-        List<RecentlyListened> recentlyListenedSongs = optionalProfile.get()
+        final List<RecentlyListened> recentlyListenedSongs = profile
                 .getRecentlyListenedSongs()
                 .stream()
                 .sorted(Comparator.comparing(RecentlyListened::getCreatedAt).reversed())
