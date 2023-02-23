@@ -45,8 +45,6 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
 
     @Override
     public Set<Playlist> findAllByProfileId(Long profileId) {
-        super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
-
         return playlistRepository.findAllByProfileId(profileId);
     }
 

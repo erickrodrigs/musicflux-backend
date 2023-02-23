@@ -120,25 +120,13 @@ public class FavoriteServiceImplTest {
                 Favorite.builder().id(2L).build(),
                 Favorite.builder().id(3L).build()
         );
-        final Profile profile = Profile.builder().id(profileId).build();
 
-        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
         when(favoriteRepository.findAllByProfileId(profileId)).thenReturn(favorites);
 
         final Set<Favorite> actualFavorites = favoriteService.findAllByProfileId(profileId);
 
         assertEquals(favorites.size(), actualFavorites.size());
         assertTrue(actualFavorites.containsAll(favorites));
-        verify(profileRepository, times(1)).findById(anyLong());
-    }
-
-    @Test
-    public void findAllByProfileIdThatDoesNotExist() {
-        final Long profileId = 1L;
-
-        when(profileRepository.findById(profileId)).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> favoriteService.findAllByProfileId(profileId));
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(favoriteRepository, times(1)).findAllByProfileId(anyLong());
     }
 }

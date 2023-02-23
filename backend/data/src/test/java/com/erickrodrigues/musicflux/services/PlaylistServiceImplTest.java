@@ -92,23 +92,11 @@ public class PlaylistServiceImplTest {
                 Playlist.builder().id(1L).name("heavy metal").build(),
                 Playlist.builder().id(2L).name("cool funk").build()
         );
-        final Profile profile = Profile.builder().id(profileId).build();
 
-        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
         when(playlistRepository.findAllByProfileId(profileId)).thenReturn(playlists);
 
-
         assertEquals(2, playlistService.findAllByProfileId(profileId).size());
-        verify(profileRepository, times(1)).findById(anyLong());
-    }
-
-    @Test
-    public void findAllByProfileIdThatDoesNotExist() {
-        final Long profileId = 1L;
-        when(profileRepository.findById(profileId)).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> playlistService.findAllByProfileId(profileId));
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(playlistRepository, times(1)).findAllByProfileId(anyLong());
     }
 
     @Test
