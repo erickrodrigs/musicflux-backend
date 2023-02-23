@@ -5,6 +5,7 @@ import com.erickrodrigues.musicflux.domain.Profile;
 import com.erickrodrigues.musicflux.domain.Song;
 import com.erickrodrigues.musicflux.repositories.AlbumRepository;
 import com.erickrodrigues.musicflux.repositories.ProfileRepository;
+import com.erickrodrigues.musicflux.repositories.RecentlyListenedRepository;
 import com.erickrodrigues.musicflux.repositories.SongRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,9 @@ public class SongServiceImplTest {
     @Mock
     private AlbumRepository albumRepository;
 
+    @Mock
+    private RecentlyListenedRepository recentlyListenedRepository;
+
     @InjectMocks
     private SongServiceImpl songService;
 
@@ -46,12 +50,12 @@ public class SongServiceImplTest {
         songService.play(profileId, songId);
 
         assertEquals(1, song.getNumberOfPlays());
-        assertEquals(1, profile.getRecentlyListenedSongs().size());
 
         verify(songRepository, times(1)).findById(anyLong());
         verify(profileRepository, times(1)).findById(anyLong());
         verify(songRepository, times(1)).save(any());
         verify(profileRepository, times(1)).save(any());
+        verify(recentlyListenedRepository, times(1)).save(any());
     }
 
     @Test

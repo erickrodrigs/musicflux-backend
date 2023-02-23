@@ -50,6 +50,8 @@ public class FavoriteServiceImpl extends BaseService implements FavoriteService 
 
     @Override
     public Set<Favorite> findAllByProfileId(Long profileId) {
-        return super.getEntityOrThrowException(profileId, profileRepository, Profile.class).getFavorites();
+        super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
+
+        return favoriteRepository.findAllByProfileId(profileId);
     }
 }

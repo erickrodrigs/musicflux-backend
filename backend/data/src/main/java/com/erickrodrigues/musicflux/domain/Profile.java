@@ -4,10 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,32 +13,15 @@ import java.util.Set;
 @Table(name = "profiles")
 public class Profile extends BaseEntity {
 
-    @OneToOne
-    private User user;
+    @Column(name = "name")
+    private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
-    @Builder.Default
-    private Set<Playlist> playlists = new HashSet<>();
+    @Column(name = "username")
+    private String username;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
-    @Builder.Default
-    private Set<Favorite> favorites = new HashSet<>();
+    @Column(name = "email")
+    private String email;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "profile")
-    @Builder.Default
-    private Set<RecentlyListened> recentlyListenedSongs = new HashSet<>();
-
-    public void addPlaylist(Playlist playlist) {
-        playlists.add(playlist);
-    }
-
-    public void addRecentlyListenedSong(Song song) {
-        recentlyListenedSongs.add(
-                RecentlyListened.builder()
-                        .profile(this)
-                        .song(song)
-                        .createdAt(LocalDateTime.now())
-                        .build()
-        );
-    }
+    @Column(name = "password")
+    private String password;
 }

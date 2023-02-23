@@ -120,9 +120,10 @@ public class FavoriteServiceImplTest {
                 Favorite.builder().id(2L).build(),
                 Favorite.builder().id(3L).build()
         );
-        final Profile profile = Profile.builder().id(profileId).favorites(favorites).build();
+        final Profile profile = Profile.builder().id(profileId).build();
 
         when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
+        when(favoriteRepository.findAllByProfileId(profileId)).thenReturn(favorites);
 
         final Set<Favorite> actualFavorites = favoriteService.findAllByProfileId(profileId);
 
