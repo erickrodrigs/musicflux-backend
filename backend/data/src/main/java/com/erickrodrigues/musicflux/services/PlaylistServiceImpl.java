@@ -39,6 +39,11 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
     }
 
     @Override
+    public Playlist findById(Long playlistId) {
+        return super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
+    }
+
+    @Override
     public Set<Playlist> findAllByName(String name) {
         return playlistRepository.findAllByNameContainingIgnoreCase(name);
     }
@@ -68,5 +73,11 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
 
         playlist.removeSong(song);
         return playlistRepository.save(playlist);
+    }
+
+    @Override
+    public void deleteById(Long profileId, Long playlistId) {
+        super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
+        playlistRepository.deleteById(playlistId);
     }
 }
