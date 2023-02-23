@@ -72,6 +72,26 @@ public class PlaylistServiceImplTest {
     }
 
     @Test
+    public void findById() {
+        final Long playlistId = 1L;
+        final Playlist playlist = Playlist.builder().id(playlistId).name("these are my fav songs").build();
+
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
+
+        assertEquals(playlist.getId(), playlistService.findById(playlistId).getId());
+        verify(playlistRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
+    public void findByIdThatDoesNotExist() {
+        final Long playlistId = 1L;
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> playlistService.findById(playlistId));
+        verify(playlistRepository, times(1)).findById(anyLong());
+    }
+
+    @Test
     public void findAllByName() {
         String name = "my fav songs";
         Set<Playlist> playlists = Set.of(
@@ -210,5 +230,24 @@ public class PlaylistServiceImplTest {
         assertThrows(RuntimeException.class, () -> playlistService.removeSong(1L, 1L, 1L));
         verify(profileRepository, times(1)).findById(anyLong());
         verify(playlistRepository, times(0)).save(any());
+    }
+
+    @Test
+    public void deleteById() {
+        final Long profileId = 1L, playlistId = 1L;
+        when(profileRepository.findById(profileId)).thenReturn(Optional.of(Profile.builder().id(profileId).build()));
+
+        playlistService.deleteById(profileId, playlistId);
+
+        verify(playlistRepository, times(1)).deleteById(anyLong());
+    }
+
+    @Test
+    public void deleteByIdWhenProfileDoesNotExist() {
+        final Long profileId = 1L, playlistId = 1L;
+        when(profileRepository.findById(profileId)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> playlistService.deleteById(profileId, playlistId));
+        verify(playlistRepository, times(0)).deleteById(anyLong());
     }
 }

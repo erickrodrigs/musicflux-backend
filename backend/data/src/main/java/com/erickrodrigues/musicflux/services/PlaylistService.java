@@ -8,6 +8,8 @@ public interface PlaylistService {
 
     Playlist create(Long profileId, String name);
 
+    Playlist findById(Long playlistId);
+
     Set<Playlist> findAllByName(String name);
 
     Set<Playlist> findAllByProfileId(Long profileId);
@@ -15,4 +17,6 @@ public interface PlaylistService {
     Playlist addSong(Long profileId, Long playlistId, Long songId);
 
     Playlist removeSong(Long profileId, Long playlistId, Long songId);
+
+    void deleteById(Long profileId, Long playlistId);
 }
