@@ -35,11 +35,7 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
                 .profile(profile)
                 .build();
 
-        profile.addPlaylist(playlist);
-        playlist = playlistRepository.save(playlist);
-        profileRepository.save(profile);
-
-        return playlist;
+        return playlistRepository.save(playlist);
     }
 
     @Override
@@ -49,7 +45,9 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
 
     @Override
     public Set<Playlist> findAllByProfileId(Long profileId) {
-        return super.getEntityOrThrowException(profileId, profileRepository, Profile.class).getPlaylists();
+        super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
+
+        return playlistRepository.findAllByProfileId(profileId);
     }
 
     @Transactional

@@ -2,9 +2,11 @@ package com.erickrodrigues.musicflux.services;
 
 import com.erickrodrigues.musicflux.domain.Album;
 import com.erickrodrigues.musicflux.domain.Profile;
+import com.erickrodrigues.musicflux.domain.RecentlyListened;
 import com.erickrodrigues.musicflux.domain.Song;
 import com.erickrodrigues.musicflux.repositories.AlbumRepository;
 import com.erickrodrigues.musicflux.repositories.ProfileRepository;
+import com.erickrodrigues.musicflux.repositories.RecentlyListenedRepository;
 import com.erickrodrigues.musicflux.repositories.SongRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,13 +20,16 @@ public class SongServiceImpl extends BaseService implements SongService {
     private final SongRepository songRepository;
     private final ProfileRepository profileRepository;
     private final AlbumRepository albumRepository;
+    private final RecentlyListenedRepository recentlyListenedRepository;
 
     public SongServiceImpl(SongRepository songRepository,
                            ProfileRepository profileRepository,
-                           AlbumRepository albumRepository) {
+                           AlbumRepository albumRepository,
+                           RecentlyListenedRepository recentlyListenedRepository) {
         this.songRepository = songRepository;
         this.profileRepository = profileRepository;
         this.albumRepository = albumRepository;
+        this.recentlyListenedRepository = recentlyListenedRepository;
     }
 
     @Transactional
@@ -34,10 +39,15 @@ public class SongServiceImpl extends BaseService implements SongService {
         final Profile profile = super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
 
         song.play();
-        profile.addRecentlyListenedSong(song);
+
+        final RecentlyListened recentlyListened = RecentlyListened.builder()
+                .profile(profile)
+                .song(song)
+                .build();
 
         songRepository.save(song);
         profileRepository.save(profile);
+        recentlyListenedRepository.save(recentlyListened);
     }
 
     @Override

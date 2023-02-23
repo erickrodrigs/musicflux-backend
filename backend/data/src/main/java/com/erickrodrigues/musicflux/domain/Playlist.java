@@ -3,6 +3,8 @@ package com.erickrodrigues.musicflux.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +23,7 @@ public class Playlist extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "profile_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Profile profile;
 
     @ManyToMany
