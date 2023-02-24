@@ -39,7 +39,7 @@ public class AlbumServiceImplTest {
 
         when(albumRepository.findAllByTitleContainingIgnoreCase(title)).thenReturn(albums);
 
-        assertEquals(2, albumService.findAllByTitle(title).size());
+        assertEquals(2, albumService.findAllByTitleContainingIgnoreCase(title).size());
         verify(albumRepository, times(1)).findAllByTitleContainingIgnoreCase(anyString());
     }
 

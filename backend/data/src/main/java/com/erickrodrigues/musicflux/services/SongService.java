@@ -8,7 +8,7 @@ public interface SongService {
 
     void play(Long profileId, Long songId);
 
-    Set<Song> findAllByTitle(String title);
+    Set<Song> findAllByTitleContainingIgnoreCase(String text);
 
     Set<Song> findAllByAlbumId(Long albumId);
 

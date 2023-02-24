@@ -30,10 +30,10 @@ public class SearchServiceImpl implements SearchService {
 
         types.forEach(type -> {
             switch (type) {
-                case ARTIST -> searchResult.setArtists(artistService.findAllByName(text));
-                case ALBUM -> searchResult.setAlbums(albumService.findAllByTitle(text));
-                case SONG -> searchResult.setSongs(songService.findAllByTitle(text));
-                case PLAYLIST -> searchResult.setPlaylists(playlistService.findAllByName(text));
+                case ARTIST -> searchResult.setArtists(artistService.findAllByNameContainingIgnoreCase(text));
+                case ALBUM -> searchResult.setAlbums(albumService.findAllByTitleContainingIgnoreCase(text));
+                case SONG -> searchResult.setSongs(songService.findAllByTitleContainingIgnoreCase(text));
+                case PLAYLIST -> searchResult.setPlaylists(playlistService.findAllByNameContainingIgnoreCase(text));
             }
         });
 

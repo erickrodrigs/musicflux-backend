@@ -101,7 +101,7 @@ public class PlaylistServiceImplTest {
 
         when(playlistRepository.findAllByNameContainingIgnoreCase(name)).thenReturn(playlists);
 
-        assertEquals(2, playlistService.findAllByName(name).size());
+        assertEquals(2, playlistService.findAllByNameContainingIgnoreCase(name).size());
         verify(playlistRepository, times(1)).findAllByNameContainingIgnoreCase(anyString());
     }
 

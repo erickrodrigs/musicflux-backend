@@ -44,8 +44,8 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
     }
 
     @Override
-    public Set<Playlist> findAllByName(String name) {
-        return playlistRepository.findAllByNameContainingIgnoreCase(name);
+    public Set<Playlist> findAllByNameContainingIgnoreCase(String text) {
+        return playlistRepository.findAllByNameContainingIgnoreCase(text);
     }
 
     @Override

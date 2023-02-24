@@ -51,8 +51,8 @@ public class SongServiceImpl extends BaseService implements SongService {
     }
 
     @Override
-    public Set<Song> findAllByTitle(String title) {
-        return songRepository.findAllByTitleContainingIgnoreCase(title);
+    public Set<Song> findAllByTitleContainingIgnoreCase(String text) {
+        return songRepository.findAllByTitleContainingIgnoreCase(text);
     }
 
     @Override

@@ -56,10 +56,10 @@ public class SearchServiceImplTest {
                 Playlist.builder().id(2L).build()
         );
 
-        when(artistService.findAllByName(anyString())).thenReturn(artists);
-        when(albumService.findAllByTitle(anyString())).thenReturn(albums);
-        when(songService.findAllByTitle(anyString())).thenReturn(songs);
-        when(playlistService.findAllByName(anyString())).thenReturn(playlists);
+        when(artistService.findAllByNameContainingIgnoreCase(anyString())).thenReturn(artists);
+        when(albumService.findAllByTitleContainingIgnoreCase(anyString())).thenReturn(albums);
+        when(songService.findAllByTitleContainingIgnoreCase(anyString())).thenReturn(songs);
+        when(playlistService.findAllByNameContainingIgnoreCase(anyString())).thenReturn(playlists);
     }
 
     @Test
@@ -78,9 +78,9 @@ public class SearchServiceImplTest {
         assertEquals(2, searchResult.getAlbums().size());
         assertEquals(2, searchResult.getSongs().size());
         assertEquals(2, searchResult.getPlaylists().size());
-        verify(artistService, times(1)).findAllByName(anyString());
-        verify(albumService, times(1)).findAllByTitle(anyString());
-        verify(songService, times(1)).findAllByTitle(anyString());
-        verify(playlistService, times(1)).findAllByName(anyString());
+        verify(artistService, times(1)).findAllByNameContainingIgnoreCase(anyString());
+        verify(albumService, times(1)).findAllByTitleContainingIgnoreCase(anyString());
+        verify(songService, times(1)).findAllByTitleContainingIgnoreCase(anyString());
+        verify(playlistService, times(1)).findAllByNameContainingIgnoreCase(anyString());
     }
 }
