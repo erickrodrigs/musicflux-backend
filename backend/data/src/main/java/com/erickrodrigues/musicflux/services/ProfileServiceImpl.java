@@ -5,8 +5,6 @@ import com.erickrodrigues.musicflux.repositories.ProfileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 public class ProfileServiceImpl extends BaseService implements ProfileService {
 
@@ -18,28 +16,27 @@ public class ProfileServiceImpl extends BaseService implements ProfileService {
 
     @Override
     public Profile login(String username, String password) {
-        final Optional<Profile> optionalProfile = profileRepository.findByUsernameAndPassword(username, password);
-
-        if (optionalProfile.isEmpty()) {
-            throw new RuntimeException("Username or password invalid");
-        }
-
-        return optionalProfile.get();
+        return profileRepository
+                .findByUsernameAndPassword(username, password)
+                .orElseThrow(() -> new RuntimeException("Username or password invalid"));
     }
 
     @Transactional
     @Override
     public Profile signUp(String name, String username, String email, String password) {
-        if (profileRepository.findByUsernameOrEmail(username, email).isPresent()) {
-            throw new RuntimeException("Username or email already exist");
-        }
+        profileRepository
+                .findByUsernameOrEmail(username, email)
+                .ifPresent((s) -> {
+                    throw new RuntimeException("Username or email already exist");
+                });
 
-        return profileRepository.save(Profile.builder()
-                .name(name)
-                .username(username)
-                .email(email)
-                .password(password)
-                .build()
+        return profileRepository.save(
+                Profile.builder()
+                        .name(name)
+                        .username(username)
+                        .email(email)
+                        .password(password)
+                        .build()
         );
     }
 }
