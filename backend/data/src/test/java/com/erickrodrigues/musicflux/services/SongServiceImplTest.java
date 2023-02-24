@@ -80,7 +80,7 @@ public class SongServiceImplTest {
 
         when(songRepository.findAllByTitleContainingIgnoreCase(title)).thenReturn(songs);
 
-        assertEquals(2, songService.findAllByTitle(title).size());
+        assertEquals(2, songService.findAllByTitleContainingIgnoreCase(title).size());
         verify(songRepository, times(1)).findAllByTitleContainingIgnoreCase(anyString());
     }
 

@@ -10,7 +10,7 @@ public interface PlaylistService {
 
     Playlist findById(Long playlistId);
 
-    Set<Playlist> findAllByName(String name);
+    Set<Playlist> findAllByNameContainingIgnoreCase(String text);
 
     Set<Playlist> findAllByProfileId(Long profileId);
 

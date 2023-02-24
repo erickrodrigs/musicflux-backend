@@ -6,7 +6,7 @@ import java.util.Set;
 
 public interface AlbumService {
 
-    Set<Album> findAllByTitle(String title);
+    Set<Album> findAllByTitleContainingIgnoreCase(String text);
 
     Set<Album> findAllByArtistId(Long artistId);
 }

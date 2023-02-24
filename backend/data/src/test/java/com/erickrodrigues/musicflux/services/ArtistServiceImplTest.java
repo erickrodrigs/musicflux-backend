@@ -32,7 +32,7 @@ public class ArtistServiceImplTest {
 
         when(artistRepository.findAllByNameContainingIgnoreCase(name)).thenReturn(artists);
 
-        assertEquals(2, artistService.findAllByName(name).size());
+        assertEquals(2, artistService.findAllByNameContainingIgnoreCase(name).size());
         verify(artistRepository, times(1)).findAllByNameContainingIgnoreCase(anyString());
     }
 }

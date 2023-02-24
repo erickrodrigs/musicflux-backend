@@ -6,5 +6,5 @@ import java.util.Set;
 
 public interface ArtistService {
 
-    Set<Artist> findAllByName(String name);
+    Set<Artist> findAllByNameContainingIgnoreCase(String text);
 }

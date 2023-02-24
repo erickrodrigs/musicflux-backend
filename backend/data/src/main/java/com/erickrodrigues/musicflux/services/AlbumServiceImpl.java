@@ -20,8 +20,8 @@ public class AlbumServiceImpl extends BaseService implements AlbumService {
     }
 
     @Override
-    public Set<Album> findAllByTitle(String title) {
-        return albumRepository.findAllByTitleContainingIgnoreCase(title);
+    public Set<Album> findAllByTitleContainingIgnoreCase(String text) {
+        return albumRepository.findAllByTitleContainingIgnoreCase(text);
     }
 
     @Override

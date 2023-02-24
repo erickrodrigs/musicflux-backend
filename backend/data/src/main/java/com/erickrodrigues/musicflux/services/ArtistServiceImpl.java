@@ -16,7 +16,7 @@ public class ArtistServiceImpl extends BaseService implements ArtistService {
     }
 
     @Override
-    public Set<Artist> findAllByName(String name) {
-        return artistRepository.findAllByNameContainingIgnoreCase(name);
+    public Set<Artist> findAllByNameContainingIgnoreCase(String text) {
+        return artistRepository.findAllByNameContainingIgnoreCase(text);
     }
 }
