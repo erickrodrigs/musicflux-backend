@@ -137,4 +137,33 @@ public class PlaylistControllerTest {
         verify(playlistService, times(1)).addSong(anyLong(), anyLong(), anyLong());
         verify(playlistMapper, times(1)).toPlaylistDetailsDto(any());
     }
+
+    @Test
+    public void removeSong() throws Exception {
+        final Long profileId = 1L, playlistId = 1L, songId = 1L;
+        final Playlist playlist = Playlist.builder().id(1L).name("playlist").build();
+        final PlaylistDetailsDto playlistDetailsDto = PlaylistDetailsDto.builder()
+                .id(playlist.getId())
+                .name(playlist.getName())
+                .profileId(profileId)
+                .build();
+
+        when(playlistService.removeSong(profileId, playlistId, songId)).thenReturn(playlist);
+        when(playlistMapper.toPlaylistDetailsDto(playlist)).thenReturn(playlistDetailsDto);
+
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
+        final MvcResult mvcResult = mockMvc.perform(delete("/profiles/" + profileId + "/playlists/" + playlistId + "/songs/" + songId))
+                .andExpect(status().isOk())
+                .andReturn();
+        final PlaylistDetailsDto actualResult = new ObjectMapper().readValue(
+                mvcResult.getResponse().getContentAsString(),
+                PlaylistDetailsDto.class
+        );
+
+        assertEquals(playlistDetailsDto.getId(), actualResult.getId());
+        assertEquals(playlistDetailsDto.getName(), actualResult.getName());
+        assertEquals(playlistDetailsDto.getProfileId(), actualResult.getProfileId());
+        verify(playlistService, times(1)).removeSong(anyLong(), anyLong(), anyLong());
+        verify(playlistMapper, times(1)).toPlaylistDetailsDto(any());
+    }
 }

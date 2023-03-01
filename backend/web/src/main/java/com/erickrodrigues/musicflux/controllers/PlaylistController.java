@@ -50,4 +50,12 @@ public class PlaylistController {
                 playlistService.addSong(profileId, playlistId, addSongDto.getSongId())
         );
     }
+
+    @DeleteMapping("/{playlist_id}/songs/{song_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public PlaylistDetailsDto removeSong(@PathVariable("profile_id") Long profileId,
+                                         @PathVariable("playlist_id") Long playlistId,
+                                         @PathVariable("song_id") Long songId) {
+        return playlistMapper.toPlaylistDetailsDto(playlistService.removeSong(profileId, playlistId, songId));
+    }
 }
