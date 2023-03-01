@@ -16,8 +16,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.List;
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,5 +70,37 @@ public class PlaylistControllerTest {
         assertEquals(playlistDetailsDto.getProfileId(), actualResult.getProfileId());
         verify(playlistService, times(1)).create(anyLong(), anyString());
         verify(playlistMapper, times(1)).toPlaylistDetailsDto(any());
+    }
+
+    @Test
+    public void findAllByProfileId() throws Exception {
+        final List<Playlist> playlists = List.of(
+                Playlist.builder().id(1L).name("GREATEST ONES").build(),
+                Playlist.builder().id(2L).name("HEAVY METAL").build()
+        );
+        final List<PlaylistDetailsDto> playlistsDetailsDto = List.of(
+                PlaylistDetailsDto.builder().id(1L).name("GREATEST ONES").profileId(1L).build(),
+                PlaylistDetailsDto.builder().id(2L).name("HEAVY METAL").profileId(1L).build()
+        );
+        final Long profileId = 1L;
+
+        when(playlistService.findAllByProfileId(profileId)).thenReturn(Set.copyOf(playlists));
+        when(playlistMapper.toPlaylistDetailsDto(playlists.get(0))).thenReturn(playlistsDetailsDto.get(0));
+        when(playlistMapper.toPlaylistDetailsDto(playlists.get(1))).thenReturn(playlistsDetailsDto.get(1));
+
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
+        final MvcResult mvcResult = mockMvc.perform(get("/profiles/" + profileId + "/playlists"))
+                .andExpect(status().isOk())
+                .andReturn();
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final Set<PlaylistDetailsDto> actualResult = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                objectMapper.getTypeFactory().constructCollectionType(Set.class, PlaylistDetailsDto.class)
+        );
+
+        assertEquals(playlistsDetailsDto.size(), actualResult.size());
+        assertTrue(actualResult.containsAll(playlistsDetailsDto));
+        verify(playlistService, times(1)).findAllByProfileId(anyLong());
+        verify(playlistMapper, times(2)).toPlaylistDetailsDto(any());
     }
 }
