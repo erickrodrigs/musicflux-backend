@@ -58,4 +58,11 @@ public class PlaylistController {
                                          @PathVariable("song_id") Long songId) {
         return playlistMapper.toPlaylistDetailsDto(playlistService.removeSong(profileId, playlistId, songId));
     }
+
+    @DeleteMapping("/{playlist_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void deletePlaylist(@PathVariable("profile_id") Long profileId,
+                               @PathVariable("playlist_id") Long playlistId) {
+        playlistService.deleteById(profileId, playlistId);
+    }
 }

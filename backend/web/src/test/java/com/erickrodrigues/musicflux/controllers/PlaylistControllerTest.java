@@ -166,4 +166,15 @@ public class PlaylistControllerTest {
         verify(playlistService, times(1)).removeSong(anyLong(), anyLong(), anyLong());
         verify(playlistMapper, times(1)).toPlaylistDetailsDto(any());
     }
+
+    @Test
+    public void deletePlaylist() throws Exception {
+        final long profileId = 1L, playlistId = 1L;
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
+
+        mockMvc.perform(delete("/profiles/" + profileId + "/playlists/" + playlistId))
+                .andExpect(status().isOk());
+
+        verify(playlistService, times(1)).deleteById(anyLong(), anyLong());
+    }
 }
