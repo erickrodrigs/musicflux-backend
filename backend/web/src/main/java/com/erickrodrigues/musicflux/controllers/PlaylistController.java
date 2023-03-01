@@ -1,5 +1,6 @@
 package com.erickrodrigues.musicflux.controllers;
 
+import com.erickrodrigues.musicflux.dtos.AddSongDto;
 import com.erickrodrigues.musicflux.dtos.CreatePlaylistDto;
 import com.erickrodrigues.musicflux.dtos.PlaylistDetailsDto;
 import com.erickrodrigues.musicflux.mappers.PlaylistMapper;
@@ -38,5 +39,15 @@ public class PlaylistController {
                 .stream()
                 .map(playlistMapper::toPlaylistDetailsDto)
                 .collect(Collectors.toSet());
+    }
+
+    @PutMapping("/{playlist_id}/songs")
+    @ResponseStatus(HttpStatus.CREATED)
+    public PlaylistDetailsDto addSong(@PathVariable("profile_id") Long profileId,
+                                      @PathVariable("playlist_id") Long playlistId,
+                                      @RequestBody @Valid AddSongDto addSongDto) {
+        return playlistMapper.toPlaylistDetailsDto(
+                playlistService.addSong(profileId, playlistId, addSongDto.getSongId())
+        );
     }
 }

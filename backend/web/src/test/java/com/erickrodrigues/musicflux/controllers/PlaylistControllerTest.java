@@ -1,6 +1,7 @@
 package com.erickrodrigues.musicflux.controllers;
 
 import com.erickrodrigues.musicflux.domain.Playlist;
+import com.erickrodrigues.musicflux.dtos.AddSongDto;
 import com.erickrodrigues.musicflux.dtos.CreatePlaylistDto;
 import com.erickrodrigues.musicflux.dtos.PlaylistDetailsDto;
 import com.erickrodrigues.musicflux.mappers.PlaylistMapper;
@@ -21,8 +22,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -102,5 +102,39 @@ public class PlaylistControllerTest {
         assertTrue(actualResult.containsAll(playlistsDetailsDto));
         verify(playlistService, times(1)).findAllByProfileId(anyLong());
         verify(playlistMapper, times(2)).toPlaylistDetailsDto(any());
+    }
+
+    @Test
+    public void addSong() throws Exception {
+        final Long profileId = 1L, songId = 1L;
+        final AddSongDto addSongDto = AddSongDto.builder().songId(songId).build();
+        final Playlist playlist = Playlist.builder().id(1L).name("playlist").build();
+        final PlaylistDetailsDto playlistDetailsDto = PlaylistDetailsDto.builder()
+                .id(playlist.getId())
+                .name(playlist.getName())
+                .profileId(profileId)
+                .build();
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final String json = objectMapper.writeValueAsString(addSongDto);
+
+        when(playlistService.addSong(profileId, playlist.getId(), songId)).thenReturn(playlist);
+        when(playlistMapper.toPlaylistDetailsDto(playlist)).thenReturn(playlistDetailsDto);
+
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
+        final MvcResult mvcResult = mockMvc.perform(put("/profiles/" + profileId + "/playlists/" + playlist.getId() + "/songs")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(json))
+                .andExpect(status().isCreated())
+                .andReturn();
+        final PlaylistDetailsDto actualResult = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                PlaylistDetailsDto.class
+        );
+
+        assertEquals(playlistDetailsDto.getId(), actualResult.getId());
+        assertEquals(playlistDetailsDto.getName(), actualResult.getName());
+        assertEquals(playlistDetailsDto.getProfileId(), actualResult.getProfileId());
+        verify(playlistService, times(1)).addSong(anyLong(), anyLong(), anyLong());
+        verify(playlistMapper, times(1)).toPlaylistDetailsDto(any());
     }
 }
