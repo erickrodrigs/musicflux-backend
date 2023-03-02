@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,6 +36,17 @@ public class SongControllerTest {
 
     @InjectMocks
     private SongController songController;
+
+    @Test
+    public void playSong() throws Exception {
+        final long profileId = 1L, songId = 1L;
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(songController).build();
+
+        mockMvc.perform(put("/profiles/" + profileId + "/songs/" + songId))
+                .andExpect(status().isOk());
+
+        verify(songService, times(1)).play(anyLong(), anyLong());
+    }
 
     @Test
     public void findAllByAlbumId() throws Exception {
