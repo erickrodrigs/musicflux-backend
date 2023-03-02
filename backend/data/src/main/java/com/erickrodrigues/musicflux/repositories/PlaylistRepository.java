@@ -3,11 +3,11 @@ package com.erickrodrigues.musicflux.repositories;
 import com.erickrodrigues.musicflux.domain.Playlist;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Set;
+import java.util.List;
 
 public interface PlaylistRepository extends CrudRepository<Playlist, Long> {
 
-    Set<Playlist> findAllByNameContainingIgnoreCase(String name);
+    List<Playlist> findAllByNameContainingIgnoreCase(String name);
 
-    Set<Playlist> findAllByProfileId(Long profileId);
+    List<Playlist> findAllByProfileId(Long profileId);
 }

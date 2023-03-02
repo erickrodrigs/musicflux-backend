@@ -11,7 +11,8 @@ import com.erickrodrigues.musicflux.repositories.SongRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,25 +52,26 @@ public class SongServiceImpl extends BaseService implements SongService {
     }
 
     @Override
-    public Set<Song> findAllByTitleContainingIgnoreCase(String text) {
+    public List<Song> findAllByTitleContainingIgnoreCase(String text) {
         return songRepository.findAllByTitleContainingIgnoreCase(text);
     }
 
     @Override
-    public Set<Song> findAllByAlbumId(Long albumId) {
+    public List<Song> findAllByAlbumId(Long albumId) {
         return super.getEntityOrThrowException(albumId, albumRepository, Album.class).getSongs();
     }
 
     @Override
-    public Set<Song> findMostListenedSongsByArtistId(Long artistId) {
-        final Set<Album> albums = albumRepository.findAllByArtistsIn(Set.of(artistId));
-        final TreeSet<Song> allSongs = new TreeSet<>();
+    public List<Song> findMostListenedSongsByArtistId(Long artistId) {
+        final List<Album> albums = albumRepository.findAllByArtistsIn(List.of(artistId));
+        final List<Song> allSongs = new ArrayList<>();
 
         albums.forEach(album -> allSongs.addAll(album.getSongs()));
 
         return allSongs
                 .stream()
+                .sorted()
                 .limit(5)
-                .collect(Collectors.toCollection(TreeSet::new));
+                .collect(Collectors.toList());
     }
 }

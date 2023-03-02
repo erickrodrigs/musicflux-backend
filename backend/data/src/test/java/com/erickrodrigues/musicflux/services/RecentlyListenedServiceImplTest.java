@@ -59,8 +59,8 @@ public class RecentlyListenedServiceImplTest {
 
         final Page<RecentlyListened> page = recentlyListenedService.findAllByProfileId(pageable, profileId);
 
-        assertEquals(3, page.toSet().size());
-        assertTrue(page.toSet().contains(recentlyListened3));
+        assertEquals(3, page.toList().size());
+        assertTrue(page.toList().contains(recentlyListened3));
 
         verify(recentlyListenedRepository, times(1)).findAllByProfileIdOrderByCreatedAtDesc(any(), eq(profileId));
     }

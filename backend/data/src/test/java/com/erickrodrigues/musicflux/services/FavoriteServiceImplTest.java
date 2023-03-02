@@ -12,8 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -115,7 +115,7 @@ public class FavoriteServiceImplTest {
     @Test
     public void findAllByProfileId() {
         final Long profileId = 1L;
-        final Set<Favorite> favorites = Set.of(
+        final List<Favorite> favorites = List.of(
                 Favorite.builder().id(1L).build(),
                 Favorite.builder().id(2L).build(),
                 Favorite.builder().id(3L).build()
@@ -123,7 +123,7 @@ public class FavoriteServiceImplTest {
 
         when(favoriteRepository.findAllByProfileId(profileId)).thenReturn(favorites);
 
-        final Set<Favorite> actualFavorites = favoriteService.findAllByProfileId(profileId);
+        final List<Favorite> actualFavorites = favoriteService.findAllByProfileId(profileId);
 
         assertEquals(favorites.size(), actualFavorites.size());
         assertTrue(actualFavorites.containsAll(favorites));

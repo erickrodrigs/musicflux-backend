@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,7 +25,7 @@ public class ArtistServiceImplTest {
     @Test
     public void findAllByName() {
         String name = "iron";
-        Set<Artist> artists = Set.of(
+        List<Artist> artists = List.of(
                 Artist.builder().id(1L).name("Iron Maiden").build(),
                 Artist.builder().id(2L).name("Iron Savior").build()
         );

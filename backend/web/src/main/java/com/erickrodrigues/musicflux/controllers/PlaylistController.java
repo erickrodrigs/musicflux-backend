@@ -9,7 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -33,12 +33,12 @@ public class PlaylistController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Set<PlaylistDetailsDto> findAllByProfileId(@PathVariable("profile_id") Long profileId) {
+    public List<PlaylistDetailsDto> findAllByProfileId(@PathVariable("profile_id") Long profileId) {
         return playlistService
                 .findAllByProfileId(profileId)
                 .stream()
                 .map(playlistMapper::toPlaylistDetailsDto)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     @PutMapping("/{playlist_id}/songs")

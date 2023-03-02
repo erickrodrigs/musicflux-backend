@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +21,7 @@ public class SongDetailsDto {
 
     private Long numberOfPlays;
 
-    private Set<String> genres;
+    private List<String> genres;
 
     private Long albumId;
 }

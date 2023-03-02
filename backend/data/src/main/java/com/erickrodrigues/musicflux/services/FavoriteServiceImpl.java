@@ -9,7 +9,7 @@ import com.erickrodrigues.musicflux.repositories.SongRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class FavoriteServiceImpl extends BaseService implements FavoriteService {
@@ -49,7 +49,7 @@ public class FavoriteServiceImpl extends BaseService implements FavoriteService 
     }
 
     @Override
-    public Set<Favorite> findAllByProfileId(Long profileId) {
+    public List<Favorite> findAllByProfileId(Long profileId) {
         return favoriteRepository.findAllByProfileId(profileId);
     }
 }

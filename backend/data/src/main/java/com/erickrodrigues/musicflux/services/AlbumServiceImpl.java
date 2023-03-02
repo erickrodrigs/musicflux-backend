@@ -6,7 +6,7 @@ import com.erickrodrigues.musicflux.repositories.AlbumRepository;
 import com.erickrodrigues.musicflux.repositories.ArtistRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class AlbumServiceImpl extends BaseService implements AlbumService {
@@ -20,12 +20,12 @@ public class AlbumServiceImpl extends BaseService implements AlbumService {
     }
 
     @Override
-    public Set<Album> findAllByTitleContainingIgnoreCase(String text) {
+    public List<Album> findAllByTitleContainingIgnoreCase(String text) {
         return albumRepository.findAllByTitleContainingIgnoreCase(text);
     }
 
     @Override
-    public Set<Album> findAllByArtistId(Long artistId) {
+    public List<Album> findAllByArtistId(Long artistId) {
         return super.getEntityOrThrowException(artistId, artistRepository, Artist.class).getAlbums();
     }
 }

@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -73,7 +73,7 @@ public class SongServiceImplTest {
     @Test
     public void findAllByTitle() {
         String title = "I wanna love you";
-        Set<Song> songs = Set.of(
+        List<Song> songs = List.of(
                 Song.builder().id(1L).title("i wanna love you").build(),
                 Song.builder().id(2L).title("all i know is i wanna love you").build()
         );
@@ -87,7 +87,7 @@ public class SongServiceImplTest {
     @Test
     public void findAllByAlbumId() {
         final Long albumId = 1L;
-        final Set<Song> songs = Set.of(
+        final List<Song> songs = List.of(
                 Song.builder().id(1L).title("i wanna love you").build(),
                 Song.builder().id(2L).title("all i know is i wanna love you").build()
         );
@@ -110,11 +110,11 @@ public class SongServiceImplTest {
 
     @Test
     public void findAllByArtistId() {
-        Set<Album> albums = Set.of(
+        List<Album> albums = List.of(
                 Album.builder()
                         .id(1L)
                         .songs(
-                                Set.of(Song.builder().id(1L).numberOfPlays(5400L).build(),
+                                List.of(Song.builder().id(1L).numberOfPlays(5400L).build(),
                                         Song.builder().id(2L).numberOfPlays(400L).build(),
                                         Song.builder().id(3L).numberOfPlays(7600L).build())
                         )
@@ -122,14 +122,14 @@ public class SongServiceImplTest {
                 Album.builder()
                         .id(2L)
                         .songs(
-                                Set.of(Song.builder().id(4L).numberOfPlays(1000L).build(),
+                                List.of(Song.builder().id(4L).numberOfPlays(1000L).build(),
                                         Song.builder().id(5L).numberOfPlays(9000L).build(),
                                         Song.builder().id(6L).numberOfPlays(7200L).build())
                         )
                         .build()
         );
 
-        when(albumRepository.findAllByArtistsIn(Set.of(1L))).thenReturn(albums);
+        when(albumRepository.findAllByArtistsIn(List.of(1L))).thenReturn(albums);
 
         String topSongsIds = songService.findMostListenedSongsByArtistId(1L)
                 .stream()
@@ -142,18 +142,18 @@ public class SongServiceImplTest {
 
     @Test
     public void findAllByArtistIdWhenArtistHasLessThanFiveSongs() {
-        Set<Album> albums = Set.of(
+        List<Album> albums = List.of(
                 Album.builder()
                         .id(1L)
                         .songs(
-                                Set.of(Song.builder().id(1L).numberOfPlays(5400L).build(),
+                                List.of(Song.builder().id(1L).numberOfPlays(5400L).build(),
                                         Song.builder().id(2L).numberOfPlays(400L).build(),
                                         Song.builder().id(3L).numberOfPlays(7600L).build())
                         )
                         .build()
         );
 
-        when(albumRepository.findAllByArtistsIn(Set.of(1L))).thenReturn(albums);
+        when(albumRepository.findAllByArtistsIn(List.of(1L))).thenReturn(albums);
 
         String topSongsIds = songService.findMostListenedSongsByArtistId(1L)
                 .stream()

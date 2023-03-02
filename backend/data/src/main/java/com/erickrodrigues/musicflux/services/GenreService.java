@@ -2,9 +2,9 @@ package com.erickrodrigues.musicflux.services;
 
 import com.erickrodrigues.musicflux.domain.Genre;
 
-import java.util.Set;
+import java.util.List;
 
 public interface GenreService {
 
-    Set<Genre> findAll();
+    List<Genre> findAll();
 }

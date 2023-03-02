@@ -2,7 +2,7 @@ package com.erickrodrigues.musicflux.services;
 
 import com.erickrodrigues.musicflux.domain.Favorite;
 
-import java.util.Set;
+import java.util.List;
 
 public interface FavoriteService {
 
@@ -10,5 +10,5 @@ public interface FavoriteService {
 
     void dislikeSong(Long profileId, Long favoriteId);
 
-    Set<Favorite> findAllByProfileId(Long profileId);
+    List<Favorite> findAllByProfileId(Long profileId);
 }

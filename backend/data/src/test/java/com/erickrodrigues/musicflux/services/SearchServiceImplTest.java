@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -39,19 +39,19 @@ public class SearchServiceImplTest {
 
     @BeforeEach
     public void setUp() {
-        final Set<Artist> artists = Set.of(
+        final List<Artist> artists = List.of(
                 Artist.builder().id(1L).build(),
                 Artist.builder().id(2L).build()
         );
-        final Set<Album> albums = Set.of(
+        final List<Album> albums = List.of(
                 Album.builder().id(1L).build(),
                 Album.builder().id(2L).build()
         );
-        final Set<Song> songs = Set.of(
+        final List<Song> songs = List.of(
                 Song.builder().id(1L).build(),
                 Song.builder().id(2L).build()
         );
-        final Set<Playlist> playlists = Set.of(
+        final List<Playlist> playlists = List.of(
                 Playlist.builder().id(1L).build(),
                 Playlist.builder().id(2L).build()
         );
@@ -65,7 +65,7 @@ public class SearchServiceImplTest {
     @Test
     public void execute() {
         final String text = "something not important";
-        final Set<SearchableType> types = Set.of(
+        final List<SearchableType> types = List.of(
                 SearchableType.ARTIST,
                 SearchableType.ALBUM,
                 SearchableType.SONG,

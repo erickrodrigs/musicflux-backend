@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -56,16 +56,16 @@ public class FavoriteRepositoryTest {
         favoriteRepository.save(favorite2);
         favoriteRepository.save(favorite3);
 
-        final Set<Favorite> favorites = favoriteRepository.findAllByProfileId(profileId);
+        final List<Favorite> favorites = favoriteRepository.findAllByProfileId(profileId);
 
         assertEquals(3, favorites.size());
-        assertTrue(favorites.containsAll(Set.of(favorite1, favorite2, favorite3)));
+        assertTrue(favorites.containsAll(List.of(favorite1, favorite2, favorite3)));
     }
 
     @Test
     public void findAllByProfileIdWhenItDoesNotExist() {
         final Long unknownProfileId = 3L;
-        final Set<Favorite> favorites = favoriteRepository.findAllByProfileId(unknownProfileId);
+        final List<Favorite> favorites = favoriteRepository.findAllByProfileId(unknownProfileId);
 
         assertNotNull(favorites);
         assertEquals(0, favorites.size());

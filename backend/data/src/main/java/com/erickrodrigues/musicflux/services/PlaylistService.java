@@ -2,7 +2,7 @@ package com.erickrodrigues.musicflux.services;
 
 import com.erickrodrigues.musicflux.domain.Playlist;
 
-import java.util.Set;
+import java.util.List;
 
 public interface PlaylistService {
 
@@ -10,9 +10,9 @@ public interface PlaylistService {
 
     Playlist findById(Long playlistId);
 
-    Set<Playlist> findAllByNameContainingIgnoreCase(String text);
+    List<Playlist> findAllByNameContainingIgnoreCase(String text);
 
-    Set<Playlist> findAllByProfileId(Long profileId);
+    List<Playlist> findAllByProfileId(Long profileId);
 
     Playlist addSong(Long profileId, Long playlistId, Long songId);
 
