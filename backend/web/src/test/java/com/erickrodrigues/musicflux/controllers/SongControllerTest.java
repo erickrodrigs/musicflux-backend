@@ -91,4 +91,46 @@ public class SongControllerTest {
         verify(songService, times(1)).findAllByAlbumId(anyLong());
         verify(songMapper, times(2)).toSongDetailsDto(any());
     }
+
+    @Test
+    public void findMostListenedSongsByArtistId() throws Exception {
+        final Long artistId = 1L;
+        final List<Song> songs = List.of(
+                Song.builder().id(1L).title("Sing This Song").build(),
+                Song.builder().id(2L).title("Love").build()
+        );
+        final List<SongDetailsDto> songsDetailsDto = List.of(
+                SongDetailsDto.builder()
+                        .id(1L)
+                        .title("Sing This Song")
+                        .length(60L)
+                        .genres(Set.of("Synth Pop"))
+                        .build(),
+                SongDetailsDto.builder()
+                        .id(2L)
+                        .title("Love")
+                        .length(60L)
+                        .genres(Set.of("Synth Pop"))
+                        .build()
+        );
+
+        when(songService.findMostListenedSongsByArtistId(artistId)).thenReturn(Set.copyOf(songs));
+        when(songMapper.toSongDetailsDto(songs.get(0))).thenReturn(songsDetailsDto.get(0));
+        when(songMapper.toSongDetailsDto(songs.get(1))).thenReturn(songsDetailsDto.get(1));
+
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(songController).build();
+        final MvcResult mvcResult = mockMvc.perform(get("/artists/" + artistId + "/most_played_songs"))
+                .andExpect(status().isOk())
+                .andReturn();
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final Set<SongDetailsDto> actualResult = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                objectMapper.getTypeFactory().constructCollectionType(Set.class, SongDetailsDto.class)
+        );
+
+        assertEquals(songsDetailsDto.size(), actualResult.size());
+        assertTrue(actualResult.containsAll(songsDetailsDto));
+        verify(songService, times(1)).findMostListenedSongsByArtistId(anyLong());
+        verify(songMapper, times(2)).toSongDetailsDto(any());
+    }
 }
