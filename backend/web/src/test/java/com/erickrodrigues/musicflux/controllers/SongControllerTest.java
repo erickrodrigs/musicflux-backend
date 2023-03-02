@@ -15,7 +15,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -60,19 +59,19 @@ public class SongControllerTest {
                         .id(1L)
                         .title("Sing This Song")
                         .length(60L)
-                        .genres(Set.of("Synth Pop"))
+                        .genres(List.of("Synth Pop"))
                         .albumId(albumId)
                         .build(),
                 SongDetailsDto.builder()
                         .id(2L)
                         .title("Love")
                         .length(60L)
-                        .genres(Set.of("Synth Pop"))
+                        .genres(List.of("Synth Pop"))
                         .albumId(albumId)
                         .build()
         );
 
-        when(songService.findAllByAlbumId(albumId)).thenReturn(Set.copyOf(songs));
+        when(songService.findAllByAlbumId(albumId)).thenReturn(songs);
         when(songMapper.toSongDetailsDto(songs.get(0))).thenReturn(songsDetailsDto.get(0));
         when(songMapper.toSongDetailsDto(songs.get(1))).thenReturn(songsDetailsDto.get(1));
 
@@ -81,9 +80,9 @@ public class SongControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         final ObjectMapper objectMapper = new ObjectMapper();
-        final Set<SongDetailsDto> actualResult = objectMapper.readValue(
+        final List<SongDetailsDto> actualResult = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(),
-                objectMapper.getTypeFactory().constructCollectionType(Set.class, SongDetailsDto.class)
+                objectMapper.getTypeFactory().constructCollectionType(List.class, SongDetailsDto.class)
         );
 
         assertEquals(songsDetailsDto.size(), actualResult.size());
@@ -104,17 +103,17 @@ public class SongControllerTest {
                         .id(1L)
                         .title("Sing This Song")
                         .length(60L)
-                        .genres(Set.of("Synth Pop"))
+                        .genres(List.of("Synth Pop"))
                         .build(),
                 SongDetailsDto.builder()
                         .id(2L)
                         .title("Love")
                         .length(60L)
-                        .genres(Set.of("Synth Pop"))
+                        .genres(List.of("Synth Pop"))
                         .build()
         );
 
-        when(songService.findMostListenedSongsByArtistId(artistId)).thenReturn(Set.copyOf(songs));
+        when(songService.findMostListenedSongsByArtistId(artistId)).thenReturn(songs);
         when(songMapper.toSongDetailsDto(songs.get(0))).thenReturn(songsDetailsDto.get(0));
         when(songMapper.toSongDetailsDto(songs.get(1))).thenReturn(songsDetailsDto.get(1));
 
@@ -123,9 +122,9 @@ public class SongControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         final ObjectMapper objectMapper = new ObjectMapper();
-        final Set<SongDetailsDto> actualResult = objectMapper.readValue(
+        final List<SongDetailsDto> actualResult = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(),
-                objectMapper.getTypeFactory().constructCollectionType(Set.class, SongDetailsDto.class)
+                objectMapper.getTypeFactory().constructCollectionType(List.class, SongDetailsDto.class)
         );
 
         assertEquals(songsDetailsDto.size(), actualResult.size());

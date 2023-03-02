@@ -6,8 +6,8 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -32,7 +32,7 @@ public class Playlist extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "song_id")
     )
     @Builder.Default
-    private Set<Song> songs = new HashSet<>();
+    private List<Song> songs = new ArrayList<>();
 
     public void addSong(Song song) {
         if (songs.contains(song)) {

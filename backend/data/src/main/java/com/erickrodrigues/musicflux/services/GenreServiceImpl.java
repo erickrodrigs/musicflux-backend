@@ -4,8 +4,8 @@ import com.erickrodrigues.musicflux.domain.Genre;
 import com.erickrodrigues.musicflux.repositories.GenreRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class GenreServiceImpl extends BaseService implements GenreService {
@@ -17,8 +17,8 @@ public class GenreServiceImpl extends BaseService implements GenreService {
     }
 
     @Override
-    public Set<Genre> findAll() {
-        final Set<Genre> genres = new HashSet<>();
+    public List<Genre> findAll() {
+        final List<Genre> genres = new ArrayList<>();
         genreRepository.findAll().forEach(genres::add);
         return genres;
     }

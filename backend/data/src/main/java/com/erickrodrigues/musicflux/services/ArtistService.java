@@ -2,9 +2,9 @@ package com.erickrodrigues.musicflux.services;
 
 import com.erickrodrigues.musicflux.domain.Artist;
 
-import java.util.Set;
+import java.util.List;
 
 public interface ArtistService {
 
-    Set<Artist> findAllByNameContainingIgnoreCase(String text);
+    List<Artist> findAllByNameContainingIgnoreCase(String text);
 }

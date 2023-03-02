@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -84,7 +83,7 @@ public class PlaylistControllerTest {
         );
         final Long profileId = 1L;
 
-        when(playlistService.findAllByProfileId(profileId)).thenReturn(Set.copyOf(playlists));
+        when(playlistService.findAllByProfileId(profileId)).thenReturn(playlists);
         when(playlistMapper.toPlaylistDetailsDto(playlists.get(0))).thenReturn(playlistsDetailsDto.get(0));
         when(playlistMapper.toPlaylistDetailsDto(playlists.get(1))).thenReturn(playlistsDetailsDto.get(1));
 
@@ -93,9 +92,9 @@ public class PlaylistControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         final ObjectMapper objectMapper = new ObjectMapper();
-        final Set<PlaylistDetailsDto> actualResult = objectMapper.readValue(
+        final List<PlaylistDetailsDto> actualResult = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(),
-                objectMapper.getTypeFactory().constructCollectionType(Set.class, PlaylistDetailsDto.class)
+                objectMapper.getTypeFactory().constructCollectionType(List.class, PlaylistDetailsDto.class)
         );
 
         assertEquals(playlistsDetailsDto.size(), actualResult.size());

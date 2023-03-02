@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -24,7 +24,7 @@ public class GenreServiceImplTest {
 
     @Test
     public void findAll() {
-        Set<Genre> genres = Set.of(
+        List<Genre> genres = List.of(
                 Genre.builder().id(1L).name("Rock").build(),
                 Genre.builder().id(2L).name("Synth pop").build(),
                 Genre.builder().id(3L).name("Dance").build(),

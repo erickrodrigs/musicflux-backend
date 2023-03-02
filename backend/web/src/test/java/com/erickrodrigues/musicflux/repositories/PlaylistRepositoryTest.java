@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,12 +41,12 @@ public class PlaylistRepositoryTest {
 
     @Test
     public void findAllByNameContainingIgnoreCase() {
-        Set<Playlist> playlists;
+        List<Playlist> playlists;
 
         playlists = playlistRepository.findAllByNameContainingIgnoreCase("my fav songs");
 
         assertEquals(2, playlists.size());
-        assertTrue(playlists.containsAll(Set.of(playlist1, playlist2)));
+        assertTrue(playlists.containsAll(List.of(playlist1, playlist2)));
 
         playlists = playlistRepository.findAllByNameContainingIgnoreCase("unk");
 
@@ -56,16 +56,16 @@ public class PlaylistRepositoryTest {
 
     @Test
     public void findAllByProfileId() {
-        final Set<Playlist> playlists = playlistRepository.findAllByProfileId(profile.getId());
+        final List<Playlist> playlists = playlistRepository.findAllByProfileId(profile.getId());
 
         assertEquals(3, playlists.size());
-        assertTrue(playlists.containsAll(Set.of(playlist1, playlist2, playlist3)));
+        assertTrue(playlists.containsAll(List.of(playlist1, playlist2, playlist3)));
     }
 
     @Test
     public void findAllByProfileIdWhenItDoesNotExist() {
         final Long unknownProfileId = 4235L;
-        final Set<Playlist> playlists = playlistRepository.findAllByProfileId(unknownProfileId);
+        final List<Playlist> playlists = playlistRepository.findAllByProfileId(unknownProfileId);
 
         assertNotNull(playlists);
         assertEquals(0, playlists.size());

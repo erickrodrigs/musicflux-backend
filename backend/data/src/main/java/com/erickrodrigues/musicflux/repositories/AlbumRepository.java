@@ -3,11 +3,11 @@ package com.erickrodrigues.musicflux.repositories;
 import com.erickrodrigues.musicflux.domain.Album;
 import org.springframework.data.repository.CrudRepository;
 
-import java.util.Set;
+import java.util.List;
 
 public interface AlbumRepository extends CrudRepository<Album, Long> {
 
-    Set<Album> findAllByTitleContainingIgnoreCase(String title);
+    List<Album> findAllByTitleContainingIgnoreCase(String title);
 
-    Set<Album> findAllByArtistsIn(Set<Long> artistIds);
+    List<Album> findAllByArtistsIn(List<Long> artistIds);
 }

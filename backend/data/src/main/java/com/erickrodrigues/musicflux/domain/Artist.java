@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -29,5 +29,5 @@ public class Artist extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "album_id")
     )
     @Builder.Default
-    private Set<Album> albums = new HashSet<>();
+    private List<Album> albums = new ArrayList<>();
 }

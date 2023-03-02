@@ -9,7 +9,7 @@ import com.erickrodrigues.musicflux.repositories.SongRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Set;
+import java.util.List;
 
 @Service
 public class PlaylistServiceImpl extends BaseService implements PlaylistService {
@@ -44,12 +44,12 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
     }
 
     @Override
-    public Set<Playlist> findAllByNameContainingIgnoreCase(String text) {
+    public List<Playlist> findAllByNameContainingIgnoreCase(String text) {
         return playlistRepository.findAllByNameContainingIgnoreCase(text);
     }
 
     @Override
-    public Set<Playlist> findAllByProfileId(Long profileId) {
+    public List<Playlist> findAllByProfileId(Long profileId) {
         return playlistRepository.findAllByProfileId(profileId);
     }
 

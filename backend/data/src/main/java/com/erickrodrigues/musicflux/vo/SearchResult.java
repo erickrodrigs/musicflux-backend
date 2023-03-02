@@ -7,13 +7,13 @@ import com.erickrodrigues.musicflux.domain.Song;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
 public class SearchResult {
-    private Set<Artist> artists;
-    private Set<Album> albums;
-    private Set<Song> songs;
-    private Set<Playlist> playlists;
+    private List<Artist> artists;
+    private List<Album> albums;
+    private List<Song> songs;
+    private List<Playlist> playlists;
 }

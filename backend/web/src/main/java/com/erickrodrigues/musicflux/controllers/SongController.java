@@ -6,7 +6,7 @@ import com.erickrodrigues.musicflux.services.SongService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -29,19 +29,19 @@ public class SongController {
 
     @GetMapping("/albums/{album_id}/songs")
     @ResponseStatus(HttpStatus.OK)
-    public Set<SongDetailsDto> findAllByAlbumId(@PathVariable("album_id") Long albumId) {
+    public List<SongDetailsDto> findAllByAlbumId(@PathVariable("album_id") Long albumId) {
         return songService.findAllByAlbumId(albumId)
                 .stream()
                 .map(songMapper::toSongDetailsDto)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/artists/{artist_id}/most_played_songs")
     @ResponseStatus(HttpStatus.OK)
-    public Set<SongDetailsDto> findMostListenedSongsByArtistId(@PathVariable("artist_id") Long artistId) {
+    public List<SongDetailsDto> findMostListenedSongsByArtistId(@PathVariable("artist_id") Long artistId) {
         return songService.findMostListenedSongsByArtistId(artistId)
                 .stream()
                 .map(songMapper::toSongDetailsDto)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }

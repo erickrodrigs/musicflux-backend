@@ -5,8 +5,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,9 +28,9 @@ public class Album extends BaseEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "album")
     @Builder.Default
-    private Set<Song> songs = new HashSet<>();
+    private List<Song> songs = new ArrayList<>();
 
     @ManyToMany(mappedBy = "albums")
     @Builder.Default
-    private Set<Artist> artists = new HashSet<>();
+    private List<Artist> artists = new ArrayList<>();
 }

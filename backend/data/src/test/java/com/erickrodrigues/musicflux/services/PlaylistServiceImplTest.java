@@ -12,9 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -94,7 +94,7 @@ public class PlaylistServiceImplTest {
     @Test
     public void findAllByName() {
         String name = "my fav songs";
-        Set<Playlist> playlists = Set.of(
+        List<Playlist> playlists = List.of(
                 Playlist.builder().id(1L).name("these are my fav songs").build(),
                 Playlist.builder().id(2L).name("MY FAV SONGS OF ALL TIME").build()
         );
@@ -108,7 +108,7 @@ public class PlaylistServiceImplTest {
     @Test
     public void findAllByProfileId() {
         final Long profileId = 1L;
-        final Set<Playlist> playlists = Set.of(
+        final List<Playlist> playlists = List.of(
                 Playlist.builder().id(1L).name("heavy metal").build(),
                 Playlist.builder().id(2L).name("cool funk").build()
         );
@@ -131,7 +131,7 @@ public class PlaylistServiceImplTest {
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
         when(songRepository.findById(songId)).thenReturn(Optional.of(song));
 
-        Playlist expectedPlaylist = Playlist.builder().id(playlistId).songs(Set.of(song)).build();
+        Playlist expectedPlaylist = Playlist.builder().id(playlistId).songs(List.of(song)).build();
 
         when(playlistRepository.save(any())).thenReturn(expectedPlaylist);
 
@@ -182,13 +182,13 @@ public class PlaylistServiceImplTest {
 
         Profile profile = Profile.builder().id(profileId).build();
         Song song = Song.builder().id(songId).build();
-        Playlist playlist = Playlist.builder().id(playlistId).songs(new HashSet<>(Set.of(song))).build();
+        Playlist playlist = Playlist.builder().id(playlistId).songs(new ArrayList<>(List.of(song))).build();
 
         when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
         when(songRepository.findById(songId)).thenReturn(Optional.of(song));
 
-        Playlist expectedPlaylist = Playlist.builder().id(playlistId).songs(Set.of()).build();
+        Playlist expectedPlaylist = Playlist.builder().id(playlistId).songs(List.of()).build();
 
         when(playlistRepository.save(any())).thenReturn(expectedPlaylist);
 

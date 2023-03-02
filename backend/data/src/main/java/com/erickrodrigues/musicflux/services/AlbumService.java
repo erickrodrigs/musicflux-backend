@@ -2,11 +2,11 @@ package com.erickrodrigues.musicflux.services;
 
 import com.erickrodrigues.musicflux.domain.Album;
 
-import java.util.Set;
+import java.util.List;
 
 public interface AlbumService {
 
-    Set<Album> findAllByTitleContainingIgnoreCase(String text);
+    List<Album> findAllByTitleContainingIgnoreCase(String text);
 
-    Set<Album> findAllByArtistId(Long artistId);
+    List<Album> findAllByArtistId(Long artistId);
 }

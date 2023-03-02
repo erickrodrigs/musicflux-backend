@@ -5,8 +5,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Duration;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,7 +37,7 @@ public class Song extends BaseEntity implements Comparable<Song> {
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     @Builder.Default
-    private Set<Genre> genres = new HashSet<>();
+    private List<Genre> genres = new ArrayList<>();
 
     public void play() {
         this.numberOfPlays += 1;

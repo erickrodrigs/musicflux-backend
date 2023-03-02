@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,16 +36,16 @@ public class SongRepositoryTest {
 
     @Test
     public void findAllByTitleIsContainingIgnoreCase() {
-        Set<Song> songs;
+        List<Song> songs;
 
         songs = songRepository.findAllByTitleContainingIgnoreCase("I WANNA LOVE YOU");
 
         assertEquals(2, songs.size());
-        assertTrue(songs.containsAll(Set.of(song2, song3)));
+        assertTrue(songs.containsAll(List.of(song2, song3)));
 
         songs = songRepository.findAllByTitleContainingIgnoreCase("DOWN");
 
         assertEquals(2, songs.size());
-        assertTrue(songs.containsAll(Set.of(song1, song4)));
+        assertTrue(songs.containsAll(List.of(song1, song4)));
     }
 }

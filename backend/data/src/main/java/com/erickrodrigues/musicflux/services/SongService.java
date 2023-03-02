@@ -2,15 +2,15 @@ package com.erickrodrigues.musicflux.services;
 
 import com.erickrodrigues.musicflux.domain.Song;
 
-import java.util.Set;
+import java.util.List;
 
 public interface SongService {
 
     void play(Long profileId, Long songId);
 
-    Set<Song> findAllByTitleContainingIgnoreCase(String text);
+    List<Song> findAllByTitleContainingIgnoreCase(String text);
 
-    Set<Song> findAllByAlbumId(Long albumId);
+    List<Song> findAllByAlbumId(Long albumId);
 
-    Set<Song> findMostListenedSongsByArtistId(Long artistId);
+    List<Song> findMostListenedSongsByArtistId(Long artistId);
 }

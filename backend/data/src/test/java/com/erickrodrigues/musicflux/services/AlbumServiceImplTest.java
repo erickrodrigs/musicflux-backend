@@ -10,8 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -32,7 +32,7 @@ public class AlbumServiceImplTest {
     @Test
     public void findAllByTitle() {
         String title = "untitled";
-        Set<Album> albums = Set.of(
+        List<Album> albums = List.of(
                 Album.builder().id(1L).title("my untitled album").build(),
                 Album.builder().id(2L).title("THESE ALBUM IS UNTITLED").build()
         );
@@ -50,9 +50,9 @@ public class AlbumServiceImplTest {
         Album album1 = Album.builder().id(1L).title("Master of Puppets").build();
         Album album2 = Album.builder().id(2L).title("Ride the Lightning").build();
 
-        artist.setAlbums(Set.of(album1, album2));
-        album1.setArtists(Set.of(artist));
-        album2.setArtists(Set.of(artist));
+        artist.setAlbums(List.of(album1, album2));
+        album1.setArtists(List.of(artist));
+        album2.setArtists(List.of(artist));
 
         when(artistRepository.findById(artistId)).thenReturn(Optional.of(artist));
 

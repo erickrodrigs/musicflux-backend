@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,11 +40,11 @@ public class AlbumRepositoryTest {
         albumRepository.save(album2);
         albumRepository.save(album3);
 
-        artist1.setAlbums(Set.of(album1, album2));
-        artist2.setAlbums(Set.of(album1, album3));
-        album1.setArtists(Set.of(artist1, artist2));
-        album2.setArtists(Set.of(artist1));
-        album3.setArtists(Set.of(artist2));
+        artist1.setAlbums(List.of(album1, album2));
+        artist2.setAlbums(List.of(album1, album3));
+        album1.setArtists(List.of(artist1, artist2));
+        album2.setArtists(List.of(artist1));
+        album3.setArtists(List.of(artist2));
 
         artistRepository.save(artist1);
         artistRepository.save(artist2);
@@ -55,24 +55,24 @@ public class AlbumRepositoryTest {
 
     @Test
     public void findAllByTitleContainingIgnoreCase() {
-        Set<Album> albums = albumRepository.findAllByTitleContainingIgnoreCase("untitled");
+        List<Album> albums = albumRepository.findAllByTitleContainingIgnoreCase("untitled");
 
         assertEquals(2, albums.size());
-        assertTrue(albums.containsAll(Set.of(album1, album2)));
+        assertTrue(albums.containsAll(List.of(album1, album2)));
     }
 
     @Test
     void findAllByArtistsIn() {
-        Set<Album> albums;
+        List<Album> albums;
 
-        albums = albumRepository.findAllByArtistsIn(Set.of(artist1.getId()));
-
-        assertEquals(2, albums.size());
-        assertTrue(albums.containsAll(Set.of(album1, album2)));
-
-        albums = albumRepository.findAllByArtistsIn(Set.of(artist2.getId()));
+        albums = albumRepository.findAllByArtistsIn(List.of(artist1.getId()));
 
         assertEquals(2, albums.size());
-        assertTrue(albums.containsAll(Set.of(album1, album3)));
+        assertTrue(albums.containsAll(List.of(album1, album2)));
+
+        albums = albumRepository.findAllByArtistsIn(List.of(artist2.getId()));
+
+        assertEquals(2, albums.size());
+        assertTrue(albums.containsAll(List.of(album1, album3)));
     }
 }
