@@ -4,16 +4,27 @@ import com.erickrodrigues.musicflux.domain.Album;
 import com.erickrodrigues.musicflux.domain.Artist;
 import com.erickrodrigues.musicflux.domain.Playlist;
 import com.erickrodrigues.musicflux.domain.Song;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class SearchResult {
-    private List<Artist> artists;
-    private List<Album> albums;
-    private List<Song> songs;
-    private List<Playlist> playlists;
+
+    @Builder.Default
+    private List<Artist> artists = new ArrayList<>();
+
+    @Builder.Default
+    private List<Album> albums = new ArrayList<>();
+
+    @Builder.Default
+    private List<Song> songs = new ArrayList<>();
+
+    @Builder.Default
+    private List<Playlist> playlists = new ArrayList<>();
 }
