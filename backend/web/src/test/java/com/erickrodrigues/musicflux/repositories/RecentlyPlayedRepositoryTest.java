@@ -1,7 +1,7 @@
 package com.erickrodrigues.musicflux.repositories;
 
 import com.erickrodrigues.musicflux.domain.Profile;
-import com.erickrodrigues.musicflux.domain.RecentlyListened;
+import com.erickrodrigues.musicflux.domain.RecentlyPlayed;
 import com.erickrodrigues.musicflux.domain.Song;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,10 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class RecentlyListenedRepositoryTest {
+public class RecentlyPlayedRepositoryTest {
 
     @Autowired
-    private RecentlyListenedRepository recentlyListenedRepository;
+    private RecentlyPlayedRepository recentlyPlayedRepository;
 
     @Autowired
     private ProfileRepository profileRepository;
@@ -35,19 +35,19 @@ public class RecentlyListenedRepositoryTest {
     final Song song1 = Song.builder().id(1L).build();
     final Song song2 = Song.builder().id(2L).build();
     final Song song3 = Song.builder().id(3L).build();
-    final RecentlyListened recentlyListened1 = RecentlyListened.builder()
+    final RecentlyPlayed recentlyPlayed1 = RecentlyPlayed.builder()
             .id(1L)
             .song(song1)
             .profile(profile)
             .createdAt(LocalDateTime.now())
             .build();
-    final RecentlyListened recentlyListened2 = RecentlyListened.builder()
+    final RecentlyPlayed recentlyPlayed2 = RecentlyPlayed.builder()
             .id(2L)
             .song(song2)
             .profile(profile)
             .createdAt(LocalDateTime.now().plusDays(2))
             .build();
-    final RecentlyListened recentlyListened3 = RecentlyListened.builder()
+    final RecentlyPlayed recentlyPlayed3 = RecentlyPlayed.builder()
             .id(3L)
             .song(song3)
             .profile(profile)
@@ -60,36 +60,36 @@ public class RecentlyListenedRepositoryTest {
         songRepository.save(song2);
         songRepository.save(song3);
         profileRepository.save(profile);
-        recentlyListenedRepository.save(recentlyListened1);
-        recentlyListenedRepository.save(recentlyListened2);
-        recentlyListenedRepository.save(recentlyListened3);
+        recentlyPlayedRepository.save(recentlyPlayed1);
+        recentlyPlayedRepository.save(recentlyPlayed2);
+        recentlyPlayedRepository.save(recentlyPlayed3);
     }
 
     @Test
     public void findAllByProfileIdOrderByCreatedAtDesc() {
         Pageable pageable;
-        Page<RecentlyListened> page;
+        Page<RecentlyPlayed> page;
 
         pageable = PageRequest.of(0, 1);
-        page = recentlyListenedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
+        page = recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
 
         assertEquals(1, page.toSet().size());
-        assertTrue(page.toSet().contains(recentlyListened3));
+        assertTrue(page.toSet().contains(recentlyPlayed3));
 
         pageable = PageRequest.of(1, 1);
-        page = recentlyListenedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
+        page = recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
 
         assertEquals(1, page.toSet().size());
-        assertTrue(page.toSet().contains(recentlyListened2));
+        assertTrue(page.toSet().contains(recentlyPlayed2));
 
         pageable = PageRequest.of(2, 1);
-        page = recentlyListenedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
+        page = recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
 
         assertEquals(1, page.toSet().size());
-        assertTrue(page.toSet().contains(recentlyListened1));
+        assertTrue(page.toSet().contains(recentlyPlayed1));
 
         pageable = PageRequest.of(3, 1);
-        page = recentlyListenedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
+        page = recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
 
         assertTrue(page.isEmpty());
     }
@@ -98,7 +98,7 @@ public class RecentlyListenedRepositoryTest {
     public void findAllByProfileIdOrderByCreatedAtDescWhenProfileDoesNotExist() {
         final Long unknownProfileId = 5L;
         final Pageable pageable = PageRequest.of(0, 3);
-        final Page<RecentlyListened> page = recentlyListenedRepository.findAllByProfileIdOrderByCreatedAtDesc(
+        final Page<RecentlyPlayed> page = recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(
                 pageable, unknownProfileId
         );
 

@@ -12,5 +12,5 @@ public interface SongService {
 
     List<Song> findAllByAlbumId(Long albumId);
 
-    List<Song> findMostListenedSongsByArtistId(Long artistId);
+    List<Song> findMostPlayedSongsByArtistId(Long artistId);
 }

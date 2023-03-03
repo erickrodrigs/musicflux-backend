@@ -92,7 +92,7 @@ public class SongControllerTest {
     }
 
     @Test
-    public void findMostListenedSongsByArtistId() throws Exception {
+    public void findMostPlayedSongsByArtistId() throws Exception {
         final Long artistId = 1L;
         final List<Song> songs = List.of(
                 Song.builder().id(1L).title("Sing This Song").build(),
@@ -113,7 +113,7 @@ public class SongControllerTest {
                         .build()
         );
 
-        when(songService.findMostListenedSongsByArtistId(artistId)).thenReturn(songs);
+        when(songService.findMostPlayedSongsByArtistId(artistId)).thenReturn(songs);
         when(songMapper.toSongDetailsDto(songs.get(0))).thenReturn(songsDetailsDto.get(0));
         when(songMapper.toSongDetailsDto(songs.get(1))).thenReturn(songsDetailsDto.get(1));
 
@@ -129,7 +129,7 @@ public class SongControllerTest {
 
         assertEquals(songsDetailsDto.size(), actualResult.size());
         assertTrue(actualResult.containsAll(songsDetailsDto));
-        verify(songService, times(1)).findMostListenedSongsByArtistId(anyLong());
+        verify(songService, times(1)).findMostPlayedSongsByArtistId(anyLong());
         verify(songMapper, times(2)).toSongDetailsDto(any());
     }
 }
