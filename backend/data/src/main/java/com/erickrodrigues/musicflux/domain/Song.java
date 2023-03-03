@@ -45,6 +45,12 @@ public class Song extends BaseEntity implements Comparable<Song> {
 
     @Override
     public int compareTo(Song o) {
-        return (int) (o.getNumberOfPlays() - this.getNumberOfPlays());
+        final int comparison = o.getNumberOfPlays().compareTo(this.getNumberOfPlays());
+
+        if (comparison == 0) {
+            return this.getTitle().compareTo(o.getTitle());
+        }
+
+        return comparison;
     }
 }
