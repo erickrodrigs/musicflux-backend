@@ -38,8 +38,8 @@ public class SongController {
 
     @GetMapping("/artists/{artist_id}/most_played_songs")
     @ResponseStatus(HttpStatus.OK)
-    public List<SongDetailsDto> findMostListenedSongsByArtistId(@PathVariable("artist_id") Long artistId) {
-        return songService.findMostListenedSongsByArtistId(artistId)
+    public List<SongDetailsDto> findMostPlayedSongsByArtistId(@PathVariable("artist_id") Long artistId) {
+        return songService.findMostPlayedSongsByArtistId(artistId)
                 .stream()
                 .map(songMapper::toSongDetailsDto)
                 .collect(Collectors.toList());

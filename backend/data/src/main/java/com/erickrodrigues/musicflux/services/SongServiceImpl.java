@@ -2,11 +2,11 @@ package com.erickrodrigues.musicflux.services;
 
 import com.erickrodrigues.musicflux.domain.Album;
 import com.erickrodrigues.musicflux.domain.Profile;
-import com.erickrodrigues.musicflux.domain.RecentlyListened;
+import com.erickrodrigues.musicflux.domain.RecentlyPlayed;
 import com.erickrodrigues.musicflux.domain.Song;
 import com.erickrodrigues.musicflux.repositories.AlbumRepository;
 import com.erickrodrigues.musicflux.repositories.ProfileRepository;
-import com.erickrodrigues.musicflux.repositories.RecentlyListenedRepository;
+import com.erickrodrigues.musicflux.repositories.RecentlyPlayedRepository;
 import com.erickrodrigues.musicflux.repositories.SongRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,16 +21,16 @@ public class SongServiceImpl extends BaseService implements SongService {
     private final SongRepository songRepository;
     private final ProfileRepository profileRepository;
     private final AlbumRepository albumRepository;
-    private final RecentlyListenedRepository recentlyListenedRepository;
+    private final RecentlyPlayedRepository recentlyPlayedRepository;
 
     public SongServiceImpl(SongRepository songRepository,
                            ProfileRepository profileRepository,
                            AlbumRepository albumRepository,
-                           RecentlyListenedRepository recentlyListenedRepository) {
+                           RecentlyPlayedRepository recentlyPlayedRepository) {
         this.songRepository = songRepository;
         this.profileRepository = profileRepository;
         this.albumRepository = albumRepository;
-        this.recentlyListenedRepository = recentlyListenedRepository;
+        this.recentlyPlayedRepository = recentlyPlayedRepository;
     }
 
     @Transactional
@@ -41,14 +41,14 @@ public class SongServiceImpl extends BaseService implements SongService {
 
         song.play();
 
-        final RecentlyListened recentlyListened = RecentlyListened.builder()
+        final RecentlyPlayed recentlyPlayed = RecentlyPlayed.builder()
                 .profile(profile)
                 .song(song)
                 .build();
 
         songRepository.save(song);
         profileRepository.save(profile);
-        recentlyListenedRepository.save(recentlyListened);
+        recentlyPlayedRepository.save(recentlyPlayed);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class SongServiceImpl extends BaseService implements SongService {
     }
 
     @Override
-    public List<Song> findMostListenedSongsByArtistId(Long artistId) {
+    public List<Song> findMostPlayedSongsByArtistId(Long artistId) {
         final List<Album> albums = albumRepository.findAllByArtistsIn(List.of(artistId));
         final List<Song> allSongs = new ArrayList<>();
 

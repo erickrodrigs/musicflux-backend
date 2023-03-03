@@ -5,7 +5,7 @@ import com.erickrodrigues.musicflux.domain.Profile;
 import com.erickrodrigues.musicflux.domain.Song;
 import com.erickrodrigues.musicflux.repositories.AlbumRepository;
 import com.erickrodrigues.musicflux.repositories.ProfileRepository;
-import com.erickrodrigues.musicflux.repositories.RecentlyListenedRepository;
+import com.erickrodrigues.musicflux.repositories.RecentlyPlayedRepository;
 import com.erickrodrigues.musicflux.repositories.SongRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +32,7 @@ public class SongServiceImplTest {
     private AlbumRepository albumRepository;
 
     @Mock
-    private RecentlyListenedRepository recentlyListenedRepository;
+    private RecentlyPlayedRepository recentlyPlayedRepository;
 
     @InjectMocks
     private SongServiceImpl songService;
@@ -55,7 +55,7 @@ public class SongServiceImplTest {
         verify(profileRepository, times(1)).findById(anyLong());
         verify(songRepository, times(1)).save(any());
         verify(profileRepository, times(1)).save(any());
-        verify(recentlyListenedRepository, times(1)).save(any());
+        verify(recentlyPlayedRepository, times(1)).save(any());
     }
 
     @Test
@@ -131,7 +131,7 @@ public class SongServiceImplTest {
 
         when(albumRepository.findAllByArtistsIn(List.of(1L))).thenReturn(albums);
 
-        String topSongsIds = songService.findMostListenedSongsByArtistId(1L)
+        String topSongsIds = songService.findMostPlayedSongsByArtistId(1L)
                 .stream()
                 .map(Song::getId)
                 .toList()
@@ -155,7 +155,7 @@ public class SongServiceImplTest {
 
         when(albumRepository.findAllByArtistsIn(List.of(1L))).thenReturn(albums);
 
-        String topSongsIds = songService.findMostListenedSongsByArtistId(1L)
+        String topSongsIds = songService.findMostPlayedSongsByArtistId(1L)
                 .stream()
                 .map(Song::getId)
                 .toList()

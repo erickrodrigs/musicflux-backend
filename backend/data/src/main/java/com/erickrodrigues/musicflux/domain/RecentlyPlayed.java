@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "recently_listened_songs")
-public class RecentlyListened extends BaseEntity {
+@Table(name = "recently_played_songs")
+public class RecentlyPlayed extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "profile_id")
