@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -15,7 +16,7 @@ import java.util.List;
 @SuperBuilder
 @Entity
 @Table(name = "albums")
-public class Album extends BaseEntity {
+public class Album extends BaseEntity implements Comparable<Album> {
 
     @Column(name = "title")
     private String title;
@@ -33,4 +34,13 @@ public class Album extends BaseEntity {
     @ManyToMany(mappedBy = "albums")
     @Builder.Default
     private List<Artist> artists = new ArrayList<>();
+
+    @Override
+    public int compareTo(Album o) {
+        if (Objects.isNull(this.getReleaseDate()) || Objects.isNull(o.getReleaseDate())) {
+            return this.getId().compareTo(o.getId());
+        }
+
+        return this.getReleaseDate().compareTo(o.getReleaseDate());
+    }
 }
