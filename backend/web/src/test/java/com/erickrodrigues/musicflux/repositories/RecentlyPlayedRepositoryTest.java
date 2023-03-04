@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -70,25 +71,13 @@ public class RecentlyPlayedRepositoryTest {
         Pageable pageable;
         Page<RecentlyPlayed> page;
 
-        pageable = PageRequest.of(0, 1);
+        pageable = PageRequest.of(0, 3);
         page = recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
 
-        assertEquals(1, page.toSet().size());
-        assertTrue(page.toSet().contains(recentlyPlayed3));
+        assertEquals(3, page.toSet().size());
+        assertTrue(page.toSet().containsAll(List.of(recentlyPlayed1, recentlyPlayed2, recentlyPlayed3)));
 
-        pageable = PageRequest.of(1, 1);
-        page = recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
-
-        assertEquals(1, page.toSet().size());
-        assertTrue(page.toSet().contains(recentlyPlayed2));
-
-        pageable = PageRequest.of(2, 1);
-        page = recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
-
-        assertEquals(1, page.toSet().size());
-        assertTrue(page.toSet().contains(recentlyPlayed1));
-
-        pageable = PageRequest.of(3, 1);
+        pageable = PageRequest.of(1, 3);
         page = recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
 
         assertTrue(page.isEmpty());
