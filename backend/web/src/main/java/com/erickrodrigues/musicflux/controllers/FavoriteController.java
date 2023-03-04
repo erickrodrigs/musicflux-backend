@@ -8,6 +8,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/profiles/{profile_id}/favorites")
 public class FavoriteController {
@@ -34,5 +36,15 @@ public class FavoriteController {
     public void dislikeSong(@PathVariable("profile_id") Long profileId,
                             @PathVariable("favorite_id") Long favoriteId) {
         favoriteService.dislikeSong(profileId, favoriteId);
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<FavoriteDetailsDto> findAllByProfileId(@PathVariable("profile_id") Long profileId) {
+        return favoriteService
+                .findAllByProfileId(profileId)
+                .stream()
+                .map(favoriteMapper::toFavoriteDetailsDto)
+                .toList();
     }
 }

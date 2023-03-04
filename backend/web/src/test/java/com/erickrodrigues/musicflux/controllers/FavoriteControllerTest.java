@@ -17,10 +17,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -80,5 +81,46 @@ public class FavoriteControllerTest {
                 .andExpect(status().isOk());
 
         verify(favoriteService, times(1)).dislikeSong(anyLong(), anyLong());
+    }
+
+    @Test
+    public void findAllByProfileId() throws Exception {
+        final Long profileId = 1L;
+        final List<Favorite> favorites = List.of(
+                Favorite.builder().id(1L).build(),
+                Favorite.builder().id(2L).build()
+        );
+        final List<FavoriteDetailsDto> favoritesDetailsDto = List.of(
+                FavoriteDetailsDto.builder()
+                        .id(1L)
+                        .song(SongDetailsDto.builder().id(1L).build())
+                        .profileId(profileId)
+                        .build(),
+                FavoriteDetailsDto.builder()
+                        .id(2L)
+                        .song(SongDetailsDto.builder().id(2L).build())
+                        .profileId(profileId)
+                        .build()
+        );
+
+        when(favoriteService.findAllByProfileId(profileId)).thenReturn(favorites);
+        when(favoriteMapper.toFavoriteDetailsDto(favorites.get(0))).thenReturn(favoritesDetailsDto.get(0));
+        when(favoriteMapper.toFavoriteDetailsDto(favorites.get(1))).thenReturn(favoritesDetailsDto.get(1));
+
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(favoriteController).build();
+        final MvcResult mvcResult = mockMvc.perform(get("/profiles/" + profileId + "/favorites"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final List<FavoriteDetailsDto> actualResult = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                objectMapper.getTypeFactory().constructCollectionType(List.class, FavoriteDetailsDto.class)
+        );
+
+        assertEquals(favoritesDetailsDto.size(), actualResult.size());
+        assertTrue(actualResult.containsAll(favoritesDetailsDto));
+        verify(favoriteService, times(1)).findAllByProfileId(anyLong());
+        verify(favoriteMapper, times(2)).toFavoriteDetailsDto(any());
     }
 }
