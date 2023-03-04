@@ -28,4 +28,11 @@ public class FavoriteController {
                 favoriteService.likeSong(profileId, createFavoriteDto.getSongId())
         );
     }
+
+    @DeleteMapping("/{favorite_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public void dislikeSong(@PathVariable("profile_id") Long profileId,
+                            @PathVariable("favorite_id") Long favoriteId) {
+        favoriteService.dislikeSong(profileId, favoriteId);
+    }
 }

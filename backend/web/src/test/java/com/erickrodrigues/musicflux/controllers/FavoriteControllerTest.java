@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,5 +69,16 @@ public class FavoriteControllerTest {
         assertEquals(favoriteDetailsDto.getProfileId(), actualResult.getProfileId());
         verify(favoriteService, times(1)).likeSong(anyLong(), anyLong());
         verify(favoriteMapper, times(1)).toFavoriteDetailsDto(any());
+    }
+
+    @Test
+    public void dislikeSong() throws Exception {
+        final long profileId = 1L, favoriteId = 1L;
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(favoriteController).build();
+
+        mockMvc.perform(delete("/profiles/" + profileId + "/favorites/" + favoriteId))
+                .andExpect(status().isOk());
+
+        verify(favoriteService, times(1)).dislikeSong(anyLong(), anyLong());
     }
 }
