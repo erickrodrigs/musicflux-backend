@@ -26,6 +26,10 @@ public class AlbumServiceImpl extends BaseService implements AlbumService {
 
     @Override
     public List<Album> findAllByArtistId(Long artistId) {
-        return super.getEntityOrThrowException(artistId, artistRepository, Artist.class).getAlbums();
+        return super.getEntityOrThrowException(artistId, artistRepository, Artist.class)
+                .getAlbums()
+                .stream()
+                .sorted()
+                .toList();
     }
 }
