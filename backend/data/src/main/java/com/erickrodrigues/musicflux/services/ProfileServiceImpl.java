@@ -1,6 +1,8 @@
 package com.erickrodrigues.musicflux.services;
 
 import com.erickrodrigues.musicflux.domain.Profile;
+import com.erickrodrigues.musicflux.exceptions.InvalidCredentialsException;
+import com.erickrodrigues.musicflux.exceptions.ResourceAlreadyExistsException;
 import com.erickrodrigues.musicflux.repositories.ProfileRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +20,7 @@ public class ProfileServiceImpl extends BaseService implements ProfileService {
     public Profile login(String username, String password) {
         return profileRepository
                 .findByUsernameAndPassword(username, password)
-                .orElseThrow(() -> new RuntimeException("Username or password invalid"));
+                .orElseThrow(() -> new InvalidCredentialsException("Username or password invalid"));
     }
 
     @Transactional
@@ -27,7 +29,7 @@ public class ProfileServiceImpl extends BaseService implements ProfileService {
         profileRepository
                 .findByUsernameOrEmail(username, email)
                 .ifPresent((s) -> {
-                    throw new RuntimeException("Username or email already exist");
+                    throw new ResourceAlreadyExistsException("Username or email already exist");
                 });
 
         return profileRepository.save(

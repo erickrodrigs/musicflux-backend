@@ -1,5 +1,7 @@
 package com.erickrodrigues.musicflux.domain;
 
+import com.erickrodrigues.musicflux.exceptions.ResourceAlreadyExistsException;
+import com.erickrodrigues.musicflux.exceptions.ResourceNotFoundException;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -36,7 +38,7 @@ public class Playlist extends BaseEntity {
 
     public void addSong(Song song) {
         if (songs.contains(song)) {
-            throw new RuntimeException("Song already included in the playlist");
+            throw new ResourceAlreadyExistsException("Song already included in the playlist");
         }
 
         songs.add(song);
@@ -44,7 +46,7 @@ public class Playlist extends BaseEntity {
 
     public void removeSong(Song song) {
         if (!songs.contains(song)) {
-            throw new RuntimeException("Song is not included in the playlist");
+            throw new ResourceNotFoundException("Song is not included in the playlist");
         }
 
         songs.remove(song);
