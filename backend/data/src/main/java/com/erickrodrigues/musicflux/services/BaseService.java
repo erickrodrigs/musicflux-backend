@@ -1,5 +1,6 @@
 package com.erickrodrigues.musicflux.services;
 
+import com.erickrodrigues.musicflux.exceptions.ResourceNotFoundException;
 import org.springframework.data.repository.CrudRepository;
 
 public abstract class BaseService {
@@ -9,6 +10,6 @@ public abstract class BaseService {
                                                   final Class<T> tClass) {
         return repository
                 .findById(entityId)
-                .orElseThrow(() -> new RuntimeException(tClass.getSimpleName() + " with that ID does not exist"));
+                .orElseThrow(() -> new ResourceNotFoundException(tClass.getSimpleName() + " with that ID does not exist"));
     }
 }
