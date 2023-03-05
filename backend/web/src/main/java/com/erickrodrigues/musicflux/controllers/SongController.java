@@ -20,7 +20,7 @@ public class SongController {
         this.songMapper = songMapper;
     }
 
-    @PutMapping("/profiles/{profile_id}/songs/{song_id}")
+    @PutMapping("/profiles/{profile_id}/songs/{song_id}/play")
     @ResponseStatus(HttpStatus.OK)
     public void playSong(@PathVariable("profile_id") Long profileId,
                          @PathVariable("song_id") Long songId) {
