@@ -41,7 +41,7 @@ public class SongControllerTest {
         final long profileId = 1L, songId = 1L;
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(songController).build();
 
-        mockMvc.perform(put("/profiles/" + profileId + "/songs/" + songId))
+        mockMvc.perform(put("/profiles/" + profileId + "/songs/" + songId + "/play"))
                 .andExpect(status().isOk());
 
         verify(songService, times(1)).play(anyLong(), anyLong());
