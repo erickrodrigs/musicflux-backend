@@ -3,6 +3,8 @@ package com.erickrodrigues.musicflux.controllers;
 import com.erickrodrigues.musicflux.dtos.AlbumDetailsDto;
 import com.erickrodrigues.musicflux.mappers.AlbumMapper;
 import com.erickrodrigues.musicflux.services.AlbumService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@Tag(name = "albums")
 @RestController
 public class AlbumController {
 
@@ -22,6 +25,7 @@ public class AlbumController {
         this.albumMapper = albumMapper;
     }
 
+    @Operation(summary = "Get all albums by an artist by their id")
     @GetMapping("/artists/{artist_id}/albums")
     @ResponseStatus(HttpStatus.OK)
     public List<AlbumDetailsDto> findAllByArtistId(@PathVariable("artist_id") Long artistId) {

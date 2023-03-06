@@ -5,10 +5,13 @@ import com.erickrodrigues.musicflux.dtos.LoginDto;
 import com.erickrodrigues.musicflux.dtos.ProfileDetailsDto;
 import com.erickrodrigues.musicflux.mappers.ProfileMapper;
 import com.erickrodrigues.musicflux.services.ProfileService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "profiles")
 @RestController
 @RequestMapping("/profiles")
 public class ProfileController {
@@ -21,6 +24,7 @@ public class ProfileController {
         this.profileMapper = profileMapper;
     }
 
+    @Operation(summary = "Log in")
     @PostMapping("/login")
     public ProfileDetailsDto login(@RequestBody @Valid LoginDto loginDto) {
         var profile = profileService.login(
@@ -31,6 +35,7 @@ public class ProfileController {
         return profileMapper.toProfileDetailsDto(profile);
     }
 
+    @Operation(summary = "Create a new profile")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProfileDetailsDto createProfile(@RequestBody @Valid CreateProfileDto createProfileDto) {

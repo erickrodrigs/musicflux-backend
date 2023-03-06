@@ -7,11 +7,14 @@ import com.erickrodrigues.musicflux.mappers.PlaylistMapper;
 import com.erickrodrigues.musicflux.mappers.SongMapper;
 import com.erickrodrigues.musicflux.services.SearchService;
 import com.erickrodrigues.musicflux.vo.SearchableType;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "catalogue")
 @RestController
 @RequestMapping("/catalogue")
 public class SearchController {
@@ -34,6 +37,7 @@ public class SearchController {
         this.playlistMapper = playlistMapper;
     }
 
+    @Operation(summary = "Search for artists, albums, songs and/or playlists")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public SearchResultDto search(@RequestParam("types") List<SearchableType> types,

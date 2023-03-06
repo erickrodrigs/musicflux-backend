@@ -3,12 +3,15 @@ package com.erickrodrigues.musicflux.controllers;
 import com.erickrodrigues.musicflux.dtos.SongDetailsDto;
 import com.erickrodrigues.musicflux.mappers.SongMapper;
 import com.erickrodrigues.musicflux.services.SongService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Tag(name = "songs")
 @RestController
 public class SongController {
 
@@ -20,6 +23,7 @@ public class SongController {
         this.songMapper = songMapper;
     }
 
+    @Operation(summary = "Play a song by its id")
     @PutMapping("/profiles/{profile_id}/songs/{song_id}/play")
     @ResponseStatus(HttpStatus.OK)
     public void playSong(@PathVariable("profile_id") Long profileId,
@@ -27,6 +31,7 @@ public class SongController {
         songService.play(profileId, songId);
     }
 
+    @Operation(summary = "Get all songs in an album by its id")
     @GetMapping("/albums/{album_id}/songs")
     @ResponseStatus(HttpStatus.OK)
     public List<SongDetailsDto> findAllByAlbumId(@PathVariable("album_id") Long albumId) {
@@ -36,6 +41,7 @@ public class SongController {
                 .collect(Collectors.toList());
     }
 
+    @Operation(summary = "Get the top five most played songs by an artist by their id")
     @GetMapping("/artists/{artist_id}/most_played_songs")
     @ResponseStatus(HttpStatus.OK)
     public List<SongDetailsDto> findMostPlayedSongsByArtistId(@PathVariable("artist_id") Long artistId) {

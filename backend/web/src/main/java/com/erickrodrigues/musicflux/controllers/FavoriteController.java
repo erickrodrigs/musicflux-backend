@@ -4,12 +4,15 @@ import com.erickrodrigues.musicflux.dtos.CreateFavoriteDto;
 import com.erickrodrigues.musicflux.dtos.FavoriteDetailsDto;
 import com.erickrodrigues.musicflux.mappers.FavoriteMapper;
 import com.erickrodrigues.musicflux.services.FavoriteService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "favorites")
 @RestController
 @RequestMapping("/profiles/{profile_id}/favorites")
 public class FavoriteController {
@@ -22,6 +25,7 @@ public class FavoriteController {
         this.favoriteMapper = favoriteMapper;
     }
 
+    @Operation(summary = "Like a song")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public FavoriteDetailsDto likeSong(@PathVariable("profile_id") Long profileId,
@@ -31,6 +35,7 @@ public class FavoriteController {
         );
     }
 
+    @Operation(summary = "Dislike a song")
     @DeleteMapping("/{favorite_id}")
     @ResponseStatus(HttpStatus.OK)
     public void dislikeSong(@PathVariable("profile_id") Long profileId,
@@ -38,6 +43,7 @@ public class FavoriteController {
         favoriteService.dislikeSong(profileId, favoriteId);
     }
 
+    @Operation(summary = "Get all liked songs by a profile by their id")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<FavoriteDetailsDto> findAllByProfileId(@PathVariable("profile_id") Long profileId) {
