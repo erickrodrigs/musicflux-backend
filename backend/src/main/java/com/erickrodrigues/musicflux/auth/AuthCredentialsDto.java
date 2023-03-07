@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.profile;
+package com.erickrodrigues.musicflux.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LoginDto {
+public class AuthCredentialsDto {
 
     @NotBlank(message = "Username is mandatory")
     private String username;

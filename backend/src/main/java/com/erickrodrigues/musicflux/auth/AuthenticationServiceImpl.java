@@ -1,18 +1,20 @@
 package com.erickrodrigues.musicflux.auth;
 
 import com.erickrodrigues.musicflux.profile.Profile;
-import com.erickrodrigues.musicflux.profile.ProfileRepository;
+import com.erickrodrigues.musicflux.profile.ProfileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final ProfileRepository profileRepository;
+    private final ProfileService profileService;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -20,15 +22,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String register(String name, String username, String email, String password) {
-        var profile = Profile.builder()
-                .name(name)
-                .username(username)
-                .email(email)
-                .password(passwordEncoder.encode(password))
-                .build();
-        var savedProfile = profileRepository.save(profile);
-        var jwtToken = jwtService.generateToken(savedProfile);
-        saveProfileToken(profile, jwtToken);
+        final Profile savedProfile = profileService.register(name, username, email, passwordEncoder.encode(password));
+        final String jwtToken = jwtService.generateToken(savedProfile);
+
+        saveProfileToken(savedProfile, jwtToken);
 
         return jwtToken;
     }
@@ -37,9 +34,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public String authenticate(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-        var profile = profileRepository.findByUsername(username)
-                .orElseThrow();
-        var jwtToken = jwtService.generateToken(profile);
+        final Profile profile = profileService.findByUsername(username);
+        final String jwtToken = jwtService.generateToken(profile);
+
         revokeAllProfileTokens(profile);
         saveProfileToken(profile, jwtToken);
 
@@ -47,7 +44,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private void saveProfileToken(Profile profile, String jwtToken) {
-        var token = Token.builder()
+        final Token token = Token.builder()
                 .profile(profile)
                 .token(jwtToken)
                 .tokenType(TokenType.BEARER)
@@ -59,7 +56,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     private void revokeAllProfileTokens(Profile profile) {
-        var validProfileTokens = tokenRepository.findAllValidTokensByProfile(profile.getId());
+        final List<Token> validProfileTokens = tokenRepository.findAllValidTokensByProfile(profile.getId());
+
         if (validProfileTokens.isEmpty()) return;
 
         validProfileTokens.forEach(token -> {

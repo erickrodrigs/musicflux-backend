@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.profile;
+package com.erickrodrigues.musicflux.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateProfileDto {
+public class AuthRegistrationDto {
 
     @NotBlank(message = "Name is mandatory")
     private String name;
