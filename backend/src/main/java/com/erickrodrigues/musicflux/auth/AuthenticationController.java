@@ -1,12 +1,13 @@
 package com.erickrodrigues.musicflux.auth;
 
-import com.erickrodrigues.musicflux.profile.CreateProfileDto;
-import com.erickrodrigues.musicflux.profile.LoginDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "auth")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -14,28 +15,30 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
+    @Operation(summary = "Register a new profile")
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public AuthTokenDto register(@RequestBody @Valid CreateProfileDto createProfileDto) {
+    public AuthTokenDto register(@RequestBody @Valid AuthRegistrationDto authRegistrationDto) {
         return AuthTokenDto
                 .builder()
                 .token(authenticationService.register(
-                        createProfileDto.getName(),
-                        createProfileDto.getUsername(),
-                        createProfileDto.getEmail(),
-                        createProfileDto.getPassword()
+                        authRegistrationDto.getName(),
+                        authRegistrationDto.getUsername(),
+                        authRegistrationDto.getEmail(),
+                        authRegistrationDto.getPassword()
                 ))
                 .build();
     }
 
+    @Operation(summary = "Authenticate as a valid profile")
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public AuthTokenDto authenticate(@RequestBody @Valid LoginDto loginDto) {
+    public AuthTokenDto authenticate(@RequestBody @Valid AuthCredentialsDto authCredentialsDto) {
         return AuthTokenDto
                 .builder()
                 .token(authenticationService.authenticate(
-                        loginDto.getUsername(),
-                        loginDto.getPassword()
+                        authCredentialsDto.getUsername(),
+                        authCredentialsDto.getPassword()
                 ))
                 .build();
     }
