@@ -22,27 +22,6 @@ public class ProfileServiceImplTest {
     private ProfileServiceImpl profileService;
 
     @Test
-    public void login() {
-        final Profile profile = Profile.builder().id(1L).username("erick666").password("scooby-doo").build();
-
-        when(profileRepository.findByUsernameAndPassword(anyString(), anyString())).thenReturn(Optional.of(profile));
-
-        final Profile actualProfile = profileService.login(profile.getUsername(), profile.getPassword());
-
-        assertNotNull(actualProfile);
-        assertEquals(profile.getId(), actualProfile.getId());
-        verify(profileRepository, times(1)).findByUsernameAndPassword(anyString(), anyString());
-    }
-
-    @Test
-    public void loginWhenUsernameOrPasswordDoNotExist() {
-        when(profileRepository.findByUsernameAndPassword(anyString(), anyString())).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> profileService.login("erick666", "scooby-doo"));
-        verify(profileRepository, times(1)).findByUsernameAndPassword(anyString(), anyString());
-    }
-
-    @Test
     public void signUp() {
         final String name = "Erick", username = "erick666", email = "erick@erick.com", password = "scooby-doo";
         final Profile profile = Profile.builder()
@@ -56,7 +35,7 @@ public class ProfileServiceImplTest {
         when(profileRepository.findByUsernameOrEmail(anyString(), anyString())).thenReturn(Optional.empty());
         when(profileRepository.save(any())).thenReturn(profile);
 
-        final Profile actualProfile = profileService.signUp(name, username, email, password);
+        final Profile actualProfile = profileService.register(name, username, email, password);
 
         assertNotNull(actualProfile);
         assertEquals(profile.getId(), actualProfile.getId());
@@ -77,7 +56,7 @@ public class ProfileServiceImplTest {
 
         when(profileRepository.findByUsernameOrEmail(anyString(), anyString())).thenReturn(Optional.of(profile));
 
-        assertThrows(RuntimeException.class, () -> profileService.signUp(name, username, email, password));
+        assertThrows(RuntimeException.class, () -> profileService.register(name, username, email, password));
         verify(profileRepository, times(1)).findByUsernameOrEmail(anyString(), anyString());
         verify(profileRepository, times(0)).save(any());
     }

@@ -2,7 +2,7 @@ package com.erickrodrigues.musicflux.profile;
 
 public interface ProfileService {
 
-    Profile login(String username, String password);
+    Profile findByUsername(String username);
 
-    Profile signUp(String name, String username, String email, String password);
+    Profile register(String name, String username, String email, String password);
 }
