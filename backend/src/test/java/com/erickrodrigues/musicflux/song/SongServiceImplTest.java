@@ -1,9 +1,9 @@
 package com.erickrodrigues.musicflux.song;
 
 import com.erickrodrigues.musicflux.album.Album;
-import com.erickrodrigues.musicflux.profile.Profile;
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.album.AlbumRepository;
-import com.erickrodrigues.musicflux.profile.ProfileRepository;
+import com.erickrodrigues.musicflux.user.UserRepository;
 import com.erickrodrigues.musicflux.recently_played.RecentlyPlayedRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ public class SongServiceImplTest {
     private SongRepository songRepository;
 
     @Mock
-    private ProfileRepository profileRepository;
+    private UserRepository userRepository;
 
     @Mock
     private AlbumRepository albumRepository;
@@ -37,22 +37,22 @@ public class SongServiceImplTest {
 
     @Test
     public void play() {
-        Long songId = 1L, profileId = 1L;
+        Long songId = 1L, userId = 1L;
 
-        Profile profile = Profile.builder().id(profileId).build();
+        User user = User.builder().id(userId).build();
         Song song = Song.builder().id(songId).build();
 
         when(songRepository.findById(songId)).thenReturn(Optional.of(song));
-        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
-        songService.play(profileId, songId);
+        songService.play(userId, songId);
 
         assertEquals(1, song.getNumberOfPlays());
 
         verify(songRepository, times(1)).findById(anyLong());
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
         verify(songRepository, times(1)).save(any());
-        verify(profileRepository, times(1)).save(any());
+        verify(userRepository, times(1)).save(any());
         verify(recentlyPlayedRepository, times(1)).save(any());
     }
 
@@ -63,7 +63,7 @@ public class SongServiceImplTest {
         assertThrows(RuntimeException.class, () -> songService.play(1L, 1L));
 
         when(songRepository.findById(anyLong())).thenReturn(Optional.of(Song.builder().build()));
-        when(profileRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> songService.play(1L, 1L));
     }

@@ -16,5 +16,5 @@ public class FavoriteDetailsDto {
 
     private SongDetailsDto song;
 
-    private Long profileId;
+    private Long userId;
 }

@@ -18,11 +18,11 @@ public class SongController {
     private final SongMapper songMapper;
 
     @Operation(summary = "Play a song by its id")
-    @PutMapping("/profiles/{profile_id}/songs/{song_id}/play")
+    @PutMapping("/users/{user_id}/songs/{song_id}/play")
     @ResponseStatus(HttpStatus.OK)
-    public void playSong(@PathVariable("profile_id") Long profileId,
+    public void playSong(@PathVariable("user_id") Long userId,
                          @PathVariable("song_id") Long songId) {
-        songService.play(profileId, songId);
+        songService.play(userId, songId);
     }
 
     @Operation(summary = "Get all songs in an album by its id")

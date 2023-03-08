@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.profile;
+package com.erickrodrigues.musicflux.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProfileDetailsDto {
+public class UserDetailsDto {
 
     private Long id;
 

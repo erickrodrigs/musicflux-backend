@@ -1,8 +1,8 @@
 package com.erickrodrigues.musicflux.playlist;
 
-import com.erickrodrigues.musicflux.profile.ProfileRepository;
+import com.erickrodrigues.musicflux.user.UserRepository;
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.SongRepository;
-import com.erickrodrigues.musicflux.profile.Profile;
 import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.shared.BaseService;
 import lombok.RequiredArgsConstructor;
@@ -16,16 +16,16 @@ import java.util.List;
 public class PlaylistServiceImpl extends BaseService implements PlaylistService {
 
     private final PlaylistRepository playlistRepository;
-    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
     private final SongRepository songRepository;
 
     @Transactional
     @Override
-    public Playlist create(Long profileId, String name) {
-        final Profile profile = super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
+    public Playlist create(Long userId, String name) {
+        final User user = super.getEntityOrThrowException(userId, userRepository, User.class);
         Playlist playlist = Playlist.builder()
                 .name(name)
-                .profile(profile)
+                .user(user)
                 .build();
 
         return playlistRepository.save(playlist);
@@ -42,16 +42,16 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
     }
 
     @Override
-    public List<Playlist> findAllByProfileId(Long profileId) {
-        return playlistRepository.findAllByProfileId(profileId);
+    public List<Playlist> findAllByUserId(Long userId) {
+        return playlistRepository.findAllByUserId(userId);
     }
 
     @Transactional
     @Override
-    public Playlist addSong(Long profileId, Long playlistId, Long songId) {
+    public Playlist addSong(Long userId, Long playlistId, Long songId) {
         final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
         final Song song = super.getEntityOrThrowException(songId, songRepository, Song.class);
-        super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
+        super.getEntityOrThrowException(userId, userRepository, User.class);
 
         playlist.addSong(song);
         return playlistRepository.save(playlist);
@@ -59,18 +59,18 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
 
     @Transactional
     @Override
-    public Playlist removeSong(Long profileId, Long playlistId, Long songId) {
+    public Playlist removeSong(Long userId, Long playlistId, Long songId) {
         final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
         final Song song = super.getEntityOrThrowException(songId, songRepository, Song.class);
-        super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
+        super.getEntityOrThrowException(userId, userRepository, User.class);
 
         playlist.removeSong(song);
         return playlistRepository.save(playlist);
     }
 
     @Override
-    public void deleteById(Long profileId, Long playlistId) {
-        super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
+    public void deleteById(Long userId, Long playlistId) {
+        super.getEntityOrThrowException(userId, userRepository, User.class);
         playlistRepository.deleteById(playlistId);
     }
 }

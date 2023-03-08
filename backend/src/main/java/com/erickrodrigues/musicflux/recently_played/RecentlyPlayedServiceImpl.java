@@ -15,7 +15,7 @@ public class RecentlyPlayedServiceImpl extends BaseService implements RecentlyPl
 
     @Transactional(readOnly = true)
     @Override
-    public Page<RecentlyPlayed> findAllByProfileId(Pageable pageable, Long profileId) {
-        return recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId);
+    public Page<RecentlyPlayed> findAllByUserId(Pageable pageable, Long userId) {
+        return recentlyPlayedRepository.findAllByUserIdOrderByCreatedAtDesc(pageable, userId);
     }
 }

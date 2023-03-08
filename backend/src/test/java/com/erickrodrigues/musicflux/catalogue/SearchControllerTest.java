@@ -84,7 +84,7 @@ public class SearchControllerTest {
                 SongDetailsDto.builder().id(1L).title("Dark Fantasy").genres(List.of("Hip-hop")).albumId(1L).build()
         );
         final List<PlaylistDetailsDto> playlistsDetailsDto = List.of(
-                PlaylistDetailsDto.builder().id(1L).name("The Most Dark and Depressive Songs").profileId(1L).build()
+                PlaylistDetailsDto.builder().id(1L).name("The Most Dark and Depressive Songs").userId(1L).build()
         );
 
         when(searchService.execute(types, text)).thenReturn(

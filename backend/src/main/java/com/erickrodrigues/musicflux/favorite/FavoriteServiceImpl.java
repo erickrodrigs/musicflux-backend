@@ -1,8 +1,8 @@
 package com.erickrodrigues.musicflux.favorite;
 
-import com.erickrodrigues.musicflux.profile.ProfileRepository;
+import com.erickrodrigues.musicflux.user.UserRepository;
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.SongRepository;
-import com.erickrodrigues.musicflux.profile.Profile;
 import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.shared.BaseService;
 import lombok.RequiredArgsConstructor;
@@ -16,16 +16,16 @@ import java.util.List;
 public class FavoriteServiceImpl extends BaseService implements FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
-    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
     private final SongRepository songRepository;
 
     @Transactional
     @Override
-    public Favorite likeSong(Long profileId, Long songId) {
+    public Favorite likeSong(Long userId, Long songId) {
         final Song song = super.getEntityOrThrowException(songId, songRepository, Song.class);
-        final Profile profile = super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
+        final User user = super.getEntityOrThrowException(userId, userRepository, User.class);
         final Favorite favorite = Favorite.builder()
-                .profile(profile)
+                .user(user)
                 .song(song)
                 .build();
 
@@ -34,15 +34,15 @@ public class FavoriteServiceImpl extends BaseService implements FavoriteService 
 
     @Transactional
     @Override
-    public void dislikeSong(Long profileId, Long favoriteId) {
+    public void dislikeSong(Long userId, Long favoriteId) {
         final Favorite favorite = super.getEntityOrThrowException(favoriteId, favoriteRepository, Favorite.class);
-        super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
+        super.getEntityOrThrowException(userId, userRepository, User.class);
 
         favoriteRepository.delete(favorite);
     }
 
     @Override
-    public List<Favorite> findAllByProfileId(Long profileId) {
-        return favoriteRepository.findAllByProfileId(profileId);
+    public List<Favorite> findAllByUserId(Long userId) {
+        return favoriteRepository.findAllByUserId(userId);
     }
 }

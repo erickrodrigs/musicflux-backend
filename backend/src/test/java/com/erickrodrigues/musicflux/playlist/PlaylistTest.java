@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.playlist;
 
-import com.erickrodrigues.musicflux.profile.Profile;
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ public class PlaylistTest {
     public void setUp() {
         playlist = Playlist.builder()
                 .name("MyPlaylist")
-                .profile(Profile.builder().build())
+                .user(User.builder().build())
                 .build();
     }
 

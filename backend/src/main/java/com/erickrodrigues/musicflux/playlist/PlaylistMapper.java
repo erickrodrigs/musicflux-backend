@@ -6,6 +6,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PlaylistMapper {
 
-    @Mapping(target = "profileId", source = "playlist.profile.id")
+    @Mapping(target = "userId", source = "playlist.user.id")
     PlaylistDetailsDto toPlaylistDetailsDto(Playlist playlist);
 }

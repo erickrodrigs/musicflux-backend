@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface FavoriteService {
 
-    Favorite likeSong(Long profileId, Long songId);
+    Favorite likeSong(Long userId, Long songId);
 
-    void dislikeSong(Long profileId, Long favoriteId);
+    void dislikeSong(Long userId, Long favoriteId);
 
-    List<Favorite> findAllByProfileId(Long profileId);
+    List<Favorite> findAllByUserId(Long userId);
 }

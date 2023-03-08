@@ -1,7 +1,7 @@
 package com.erickrodrigues.musicflux.recently_played;
 
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
-import com.erickrodrigues.musicflux.profile.Profile;
 import com.erickrodrigues.musicflux.shared.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,9 +22,9 @@ import java.time.LocalDateTime;
 public class RecentlyPlayed extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "profile_id")
+    @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Profile profile;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "song_id")

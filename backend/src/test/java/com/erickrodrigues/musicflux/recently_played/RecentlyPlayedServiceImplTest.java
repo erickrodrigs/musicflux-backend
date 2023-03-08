@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.recently_played;
 
-import com.erickrodrigues.musicflux.profile.Profile;
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,38 +28,38 @@ public class RecentlyPlayedServiceImplTest {
     private RecentlyPlayedServiceImpl recentlyPlayedService;
 
     @Test
-    public void findAllByProfileId() {
-        final Long profileId = 1L;
-        final Profile profile = Profile.builder().id(profileId).build();
+    public void findAllByUserId() {
+        final Long userId = 1L;
+        final User user = User.builder().id(userId).build();
         final RecentlyPlayed recentlyPlayed1 = RecentlyPlayed.builder()
                 .id(1L)
                 .song(Song.builder().build())
-                .profile(profile)
+                .user(user)
                 .createdAt(LocalDateTime.now())
                 .build();
         final RecentlyPlayed recentlyPlayed2 = RecentlyPlayed.builder()
                 .id(2L)
                 .song(Song.builder().build())
-                .profile(profile)
+                .user(user)
                 .createdAt(LocalDateTime.now().plusDays(2))
                 .build();
         final RecentlyPlayed recentlyPlayed3 = RecentlyPlayed.builder()
                 .id(3L)
                 .song(Song.builder().build())
-                .profile(profile)
+                .user(user)
                 .createdAt(LocalDateTime.now().plusDays(4))
                 .build();
 
         final Pageable pageable = PageRequest.of(0, 1);
-        when(recentlyPlayedRepository.findAllByProfileIdOrderByCreatedAtDesc(pageable, profileId)).thenReturn(
+        when(recentlyPlayedRepository.findAllByUserIdOrderByCreatedAtDesc(pageable, userId)).thenReturn(
                 new PageImpl<>(List.of(recentlyPlayed3, recentlyPlayed2, recentlyPlayed1))
         );
 
-        final Page<RecentlyPlayed> page = recentlyPlayedService.findAllByProfileId(pageable, profileId);
+        final Page<RecentlyPlayed> page = recentlyPlayedService.findAllByUserId(pageable, userId);
 
         assertEquals(3, page.toList().size());
         assertTrue(page.toList().contains(recentlyPlayed3));
 
-        verify(recentlyPlayedRepository, times(1)).findAllByProfileIdOrderByCreatedAtDesc(any(), eq(profileId));
+        verify(recentlyPlayedRepository, times(1)).findAllByUserIdOrderByCreatedAtDesc(any(), eq(userId));
     }
 }

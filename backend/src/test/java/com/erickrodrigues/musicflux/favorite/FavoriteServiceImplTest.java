@@ -1,8 +1,8 @@
 package com.erickrodrigues.musicflux.favorite;
 
-import com.erickrodrigues.musicflux.profile.Profile;
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
-import com.erickrodrigues.musicflux.profile.ProfileRepository;
+import com.erickrodrigues.musicflux.user.UserRepository;
 import com.erickrodrigues.musicflux.song.SongRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ public class FavoriteServiceImplTest {
     private FavoriteRepository favoriteRepository;
 
     @Mock
-    private ProfileRepository profileRepository;
+    private UserRepository userRepository;
 
     @Mock
     private SongRepository songRepository;
@@ -34,23 +34,23 @@ public class FavoriteServiceImplTest {
 
     @Test
     public void likeSong() {
-        final Long profileId = 1L, songId = 1L;
-        final Profile profile = Profile.builder().id(profileId).build();
+        final Long userId = 1L, songId = 1L;
+        final User user = User.builder().id(userId).build();
         final Song song = Song.builder().id(songId).build();
-        final Favorite favorite = Favorite.builder().id(1L).profile(profile).song(song).build();
+        final Favorite favorite = Favorite.builder().id(1L).user(user).song(song).build();
 
-        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(songRepository.findById(songId)).thenReturn(Optional.of(song));
         when(favoriteRepository.save(any())).thenReturn(favorite);
 
-        final Favorite actualFavorite = favoriteService.likeSong(profileId, songId);
+        final Favorite actualFavorite = favoriteService.likeSong(userId, songId);
 
         assertNotNull(actualFavorite);
         assertNotNull(actualFavorite.getId());
         assertEquals(favorite.getId(), actualFavorite.getId());
-        assertEquals(favorite.getProfile().getId(), profile.getId());
+        assertEquals(favorite.getUser().getId(), user.getId());
         assertEquals(favorite.getSong().getId(), song.getId());
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
         verify(songRepository, times(1)).findById(anyLong());
         verify(favoriteRepository, times(1)).save(any());
     }
@@ -65,28 +65,28 @@ public class FavoriteServiceImplTest {
     }
 
     @Test
-    public void likeSongWhenProfileDoesNotExist() {
+    public void likeSongWhenUserDoesNotExist() {
         when(songRepository.findById(anyLong())).thenReturn(Optional.of(Song.builder().build()));
-        when(profileRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> favoriteService.likeSong(1L, 1L));
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
         verify(favoriteRepository, times(0)).save(any());
     }
 
     @Test
     public void dislikeSong() {
-        final Long profileId = 1L, songId = 1L, favoriteId = 1L;
-        final Profile profile = Profile.builder().id(profileId).build();
+        final Long userId = 1L, songId = 1L, favoriteId = 1L;
+        final User user = User.builder().id(userId).build();
         final Song song = Song.builder().id(songId).build();
-        final Favorite favorite = Favorite.builder().id(favoriteId).profile(profile).song(song).build();
+        final Favorite favorite = Favorite.builder().id(favoriteId).user(user).song(song).build();
 
-        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(favoriteRepository.findById(favoriteId)).thenReturn(Optional.of(favorite));
 
-        favoriteService.dislikeSong(profileId, favoriteId);
+        favoriteService.dislikeSong(userId, favoriteId);
 
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
         verify(favoriteRepository, times(1)).findById(anyLong());
         verify(favoriteRepository, times(1)).delete(favorite);
     }
@@ -101,30 +101,30 @@ public class FavoriteServiceImplTest {
     }
 
     @Test
-    public void dislikeSongWhenProfileDoesNotExist() {
+    public void dislikeSongWhenUserDoesNotExist() {
         when(favoriteRepository.findById(anyLong())).thenReturn(Optional.of(Favorite.builder().build()));
-        when(profileRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> favoriteService.dislikeSong(1L, 1L));
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
         verify(favoriteRepository, times(0)).delete(any());
     }
 
     @Test
-    public void findAllByProfileId() {
-        final Long profileId = 1L;
+    public void findAllByUserId() {
+        final Long userId = 1L;
         final List<Favorite> favorites = List.of(
                 Favorite.builder().id(1L).build(),
                 Favorite.builder().id(2L).build(),
                 Favorite.builder().id(3L).build()
         );
 
-        when(favoriteRepository.findAllByProfileId(profileId)).thenReturn(favorites);
+        when(favoriteRepository.findAllByUserId(userId)).thenReturn(favorites);
 
-        final List<Favorite> actualFavorites = favoriteService.findAllByProfileId(profileId);
+        final List<Favorite> actualFavorites = favoriteService.findAllByUserId(userId);
 
         assertEquals(favorites.size(), actualFavorites.size());
         assertTrue(actualFavorites.containsAll(favorites));
-        verify(favoriteRepository, times(1)).findAllByProfileId(anyLong());
+        verify(favoriteRepository, times(1)).findAllByUserId(anyLong());
     }
 }

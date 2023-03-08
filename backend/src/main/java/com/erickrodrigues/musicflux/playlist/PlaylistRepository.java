@@ -9,5 +9,5 @@ public interface PlaylistRepository extends CrudRepository<Playlist, Long> {
 
     List<Playlist> findAllByNameContainingIgnoreCase(String name);
 
-    List<Playlist> findAllByProfileId(Long profileId);
+    List<Playlist> findAllByUserId(Long userId);
 }

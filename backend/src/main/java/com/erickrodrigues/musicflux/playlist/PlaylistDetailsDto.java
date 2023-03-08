@@ -15,5 +15,5 @@ public class PlaylistDetailsDto {
 
     private String name;
 
-    private Long profileId;
+    private Long userId;
 }

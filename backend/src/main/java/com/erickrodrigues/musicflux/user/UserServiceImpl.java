@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.profile;
+package com.erickrodrigues.musicflux.user;
 
 import com.erickrodrigues.musicflux.shared.ResourceAlreadyExistsException;
 import com.erickrodrigues.musicflux.shared.BaseService;
@@ -11,28 +11,28 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ProfileServiceImpl extends BaseService implements ProfileService, UserDetailsService {
+public class UserServiceImpl extends BaseService implements UserService, UserDetailsService {
 
-    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
 
     @Override
-    public Profile findByUsername(String username) {
-        return profileRepository
+    public User findByUsername(String username) {
+        return userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
     }
 
     @Transactional
     @Override
-    public Profile register(String name, String username, String email, String password) {
-        profileRepository
+    public User register(String name, String username, String email, String password) {
+        userRepository
                 .findByUsernameOrEmail(username, email)
                 .ifPresent((s) -> {
                     throw new ResourceAlreadyExistsException("Username or email already exist");
                 });
 
-        return profileRepository.save(
-                Profile.builder()
+        return userRepository.save(
+                User.builder()
                         .name(name)
                         .username(username)
                         .email(email)

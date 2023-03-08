@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RecentlyPlayedRepository extends JpaRepository<RecentlyPlayed, Long> {
 
-    Page<RecentlyPlayed> findAllByProfileIdOrderByCreatedAtDesc(Pageable pageable, Long profileId);
+    Page<RecentlyPlayed> findAllByUserIdOrderByCreatedAtDesc(Pageable pageable, Long userId);
 }

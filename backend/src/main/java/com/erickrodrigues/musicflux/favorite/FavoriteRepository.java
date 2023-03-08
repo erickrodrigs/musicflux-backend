@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface FavoriteRepository extends CrudRepository<Favorite, Long> {
 
-    List<Favorite> findAllByProfileId(Long profileId);
+    List<Favorite> findAllByUserId(Long userId);
 }
