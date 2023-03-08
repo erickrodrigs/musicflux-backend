@@ -1,11 +1,14 @@
 package com.erickrodrigues.musicflux.handlers;
 
-import com.erickrodrigues.musicflux.shared.InvalidCredentialsException;
 import com.erickrodrigues.musicflux.shared.ResourceAlreadyExistsException;
 import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -15,7 +18,7 @@ import java.time.LocalDateTime;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({ ResourceNotFoundException.class })
-    public ResponseEntity<ApiError> resourceNotFoundHandler(ResourceNotFoundException exception,
+    public ResponseEntity<ApiError> resourceNotFoundHandler(Exception exception,
                                                             HttpServletRequest request) {
         return new ResponseEntity<>(
                 ApiError.builder()
@@ -30,7 +33,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({ ResourceAlreadyExistsException.class })
-    public ResponseEntity<ApiError> resourceAlreadyExistsHandler(ResourceAlreadyExistsException exception,
+    public ResponseEntity<ApiError> resourceAlreadyExistsHandler(Exception exception,
                                                                  HttpServletRequest request) {
         return new ResponseEntity<>(
                 ApiError.builder()
@@ -44,8 +47,13 @@ public class GlobalExceptionHandler {
         );
     }
 
-    @ExceptionHandler({ InvalidCredentialsException.class })
-    public ResponseEntity<ApiError> invalidCredentialsHandler(InvalidCredentialsException exception,
+    @ExceptionHandler({
+            AuthenticationException.class,
+            UsernameNotFoundException.class,
+            ExpiredJwtException.class,
+            SignatureException.class
+    })
+    public ResponseEntity<ApiError> authenticationHandler(Exception exception,
                                                               HttpServletRequest request) {
         return new ResponseEntity<>(
                 ApiError.builder()
@@ -60,7 +68,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({ RuntimeException.class })
-    public ResponseEntity<ApiError> internalErrorHandler(RuntimeException exception,
+    public ResponseEntity<ApiError> internalErrorHandler(Exception exception,
                                                          HttpServletRequest request) {
         return new ResponseEntity<>(
                 ApiError.builder()
