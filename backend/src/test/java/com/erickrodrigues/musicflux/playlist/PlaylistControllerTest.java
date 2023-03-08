@@ -72,31 +72,55 @@ public class PlaylistControllerTest {
                 Playlist.builder().id(1L).name("GREATEST ONES").build(),
                 Playlist.builder().id(2L).name("HEAVY METAL").build()
         );
-        final List<PlaylistDetailsDto> playlistsDetailsDto = List.of(
-                PlaylistDetailsDto.builder().id(1L).name("GREATEST ONES").userId(1L).build(),
-                PlaylistDetailsDto.builder().id(2L).name("HEAVY METAL").userId(1L).build()
+        final List<PlaylistDto> playlistsDto = List.of(
+                PlaylistDto.builder().id(1L).name("GREATEST ONES").userId(1L).build(),
+                PlaylistDto.builder().id(2L).name("HEAVY METAL").userId(1L).build()
         );
         final Long userId = 1L;
 
         when(playlistService.findAllByUserId(userId)).thenReturn(playlists);
-        when(playlistMapper.toPlaylistDetailsDto(playlists.get(0))).thenReturn(playlistsDetailsDto.get(0));
-        when(playlistMapper.toPlaylistDetailsDto(playlists.get(1))).thenReturn(playlistsDetailsDto.get(1));
+        when(playlistMapper.toPlaylistDto(playlists.get(0))).thenReturn(playlistsDto.get(0));
+        when(playlistMapper.toPlaylistDto(playlists.get(1))).thenReturn(playlistsDto.get(1));
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
-        final MvcResult mvcResult = mockMvc.perform(get("/users/me/playlists")
-                        .requestAttr("userId", userId))
+        final MvcResult mvcResult = mockMvc.perform(get("/users/" + userId + "/playlists"))
                 .andExpect(status().isOk())
                 .andReturn();
         final ObjectMapper objectMapper = new ObjectMapper();
-        final List<PlaylistDetailsDto> actualResult = objectMapper.readValue(
+        final List<PlaylistDto> actualResult = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, PlaylistDetailsDto.class)
+                objectMapper.getTypeFactory().constructCollectionType(List.class, PlaylistDto.class)
         );
 
-        assertEquals(playlistsDetailsDto.size(), actualResult.size());
-        assertTrue(actualResult.containsAll(playlistsDetailsDto));
+        assertEquals(playlistsDto.size(), actualResult.size());
+        assertTrue(actualResult.containsAll(playlistsDto));
         verify(playlistService, times(1)).findAllByUserId(anyLong());
-        verify(playlistMapper, times(2)).toPlaylistDetailsDto(any());
+        verify(playlistMapper, times(2)).toPlaylistDto(any());
+    }
+
+    @Test
+    public void findById() throws Exception {
+        final Playlist playlist = Playlist.builder().id(1L).name("GREATEST ONES").build();
+        final PlaylistDetailsDto playlistDetailsDto = PlaylistDetailsDto.builder().id(1L).name("GREATEST ONES").userId(1L).build();
+        final Long playlistId = 1L;
+
+        when(playlistService.findById(playlistId)).thenReturn(playlist);
+        when(playlistMapper.toPlaylistDetailsDto(playlist)).thenReturn(playlistDetailsDto);
+
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
+        final MvcResult mvcResult = mockMvc.perform(get("/playlists/" + playlistId))
+                .andExpect(status().isOk())
+                .andReturn();
+        final PlaylistDetailsDto actualResult = new ObjectMapper().readValue(
+                mvcResult.getResponse().getContentAsString(),
+                PlaylistDetailsDto.class
+        );
+
+        assertEquals(playlistDetailsDto.getId(), actualResult.getId());
+        assertEquals(playlistDetailsDto.getName(), actualResult.getName());
+        assertEquals(playlistDetailsDto.getUserId(), actualResult.getUserId());
+        verify(playlistService, times(1)).findById(anyLong());
+        verify(playlistMapper, times(1)).toPlaylistDetailsDto(any());
     }
 
     @Test

@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 @Tag(name = "playlists")
 @RestController
-@RequestMapping("/users/me/playlists")
 @RequiredArgsConstructor
 public class PlaylistController {
 
@@ -21,7 +20,7 @@ public class PlaylistController {
     private final PlaylistMapper playlistMapper;
 
     @Operation(summary = "Create a new playlist")
-    @PostMapping
+    @PostMapping("/users/me/playlists")
     @ResponseStatus(HttpStatus.CREATED)
     public PlaylistDetailsDto createPlaylist(HttpServletRequest request,
                                              @RequestBody @Valid CreatePlaylistDto createPlaylistDto) {
@@ -30,19 +29,25 @@ public class PlaylistController {
     }
 
     @Operation(summary = "Get all playlists by a user by their id")
-    @GetMapping
+    @GetMapping("/users/{user_id}/playlists")
     @ResponseStatus(HttpStatus.OK)
-    public List<PlaylistDetailsDto> findAllByUserId(HttpServletRequest request) {
-        final Long userId = (Long) request.getAttribute("userId");
+    public List<PlaylistDto> findAllByUserId(@PathVariable("user_id") Long userId) {
         return playlistService
                 .findAllByUserId(userId)
                 .stream()
-                .map(playlistMapper::toPlaylistDetailsDto)
+                .map(playlistMapper::toPlaylistDto)
                 .collect(Collectors.toList());
     }
 
+    @Operation(summary = "Get a specific playlist by their id")
+    @GetMapping("/playlists/{playlist_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public PlaylistDetailsDto findById(@PathVariable("playlist_id") Long playlistId) {
+        return playlistMapper.toPlaylistDetailsDto(playlistService.findById(playlistId));
+    }
+
     @Operation(summary = "Add a new song to a playlist")
-    @PutMapping("/{playlist_id}/songs")
+    @PutMapping("/users/me/playlists/{playlist_id}/songs")
     @ResponseStatus(HttpStatus.CREATED)
     public PlaylistDetailsDto addSong(HttpServletRequest request,
                                       @PathVariable("playlist_id") Long playlistId,
@@ -54,7 +59,7 @@ public class PlaylistController {
     }
 
     @Operation(summary = "Remove a song from a playlist")
-    @DeleteMapping("/{playlist_id}/songs/{song_id}")
+    @DeleteMapping("/users/me/playlists/{playlist_id}/songs/{song_id}")
     @ResponseStatus(HttpStatus.OK)
     public PlaylistDetailsDto removeSong(HttpServletRequest request,
                                          @PathVariable("playlist_id") Long playlistId,
@@ -64,7 +69,7 @@ public class PlaylistController {
     }
 
     @Operation(summary = "Delete a playlist by its id")
-    @DeleteMapping("/{playlist_id}")
+    @DeleteMapping("/users/me/playlists/{playlist_id}")
     @ResponseStatus(HttpStatus.OK)
     public void deletePlaylist(HttpServletRequest request,
                                @PathVariable("playlist_id") Long playlistId) {
