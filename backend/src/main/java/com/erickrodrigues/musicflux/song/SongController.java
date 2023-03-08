@@ -2,6 +2,7 @@ package com.erickrodrigues.musicflux.song;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,10 +19,11 @@ public class SongController {
     private final SongMapper songMapper;
 
     @Operation(summary = "Play a song by its id")
-    @PutMapping("/users/{user_id}/songs/{song_id}/play")
+    @PutMapping("/users/me/songs/{song_id}/play")
     @ResponseStatus(HttpStatus.OK)
-    public void playSong(@PathVariable("user_id") Long userId,
+    public void playSong(HttpServletRequest request,
                          @PathVariable("song_id") Long songId) {
+        final Long userId = (Long) request.getAttribute("userId");
         songService.play(userId, songId);
     }
 

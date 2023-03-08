@@ -48,7 +48,8 @@ public class FavoriteControllerTest {
         final ObjectMapper objectMapper = new ObjectMapper();
         final String json = objectMapper.writeValueAsString(createFavoriteDto);
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(favoriteController).build();
-        final MvcResult mvcResult = mockMvc.perform(post("/users/" + userId + "/favorites")
+        final MvcResult mvcResult = mockMvc.perform(post("/users/me/favorites")
+                        .requestAttr("userId", userId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
@@ -72,7 +73,8 @@ public class FavoriteControllerTest {
         final long userId = 1L, favoriteId = 1L;
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(favoriteController).build();
 
-        mockMvc.perform(delete("/users/" + userId + "/favorites/" + favoriteId))
+        mockMvc.perform(delete("/users/me/favorites/" + favoriteId)
+                        .requestAttr("userId", userId))
                 .andExpect(status().isOk());
 
         verify(favoriteService, times(1)).dislikeSong(anyLong(), anyLong());
@@ -103,7 +105,8 @@ public class FavoriteControllerTest {
         when(favoriteMapper.toFavoriteDetailsDto(favorites.get(1))).thenReturn(favoritesDetailsDto.get(1));
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(favoriteController).build();
-        final MvcResult mvcResult = mockMvc.perform(get("/users/" + userId + "/favorites"))
+        final MvcResult mvcResult = mockMvc.perform(get("/users/me/favorites")
+                        .requestAttr("userId", userId))
                 .andExpect(status().isOk())
                 .andReturn();
 
