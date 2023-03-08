@@ -1,8 +1,8 @@
 package com.erickrodrigues.musicflux.playlist;
 
-import com.erickrodrigues.musicflux.profile.Profile;
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
-import com.erickrodrigues.musicflux.profile.ProfileRepository;
+import com.erickrodrigues.musicflux.user.UserRepository;
 import com.erickrodrigues.musicflux.song.SongRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,7 @@ public class PlaylistServiceImplTest {
     private PlaylistRepository playlistRepository;
 
     @Mock
-    private ProfileRepository profileRepository;
+    private UserRepository userRepository;
 
     @Mock
     private SongRepository songRepository;
@@ -34,38 +34,38 @@ public class PlaylistServiceImplTest {
 
     @Test
     public void create() {
-        Long profileId = 1L;
-        Profile profile = Profile.builder().id(profileId).build();
+        Long userId = 1L;
+        User user = User.builder().id(userId).build();
         String playlistName = "my fav songs";
         Playlist mockedPlaylist = Playlist.builder()
                 .id(1L)
                 .name(playlistName)
-                .profile(profile)
+                .user(user)
                 .build();
 
-        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(playlistRepository.save(any())).thenReturn(mockedPlaylist);
 
-        Playlist actualPlaylist = playlistService.create(profileId, playlistName);
+        Playlist actualPlaylist = playlistService.create(userId, playlistName);
 
         assertNotNull(actualPlaylist);
         assertNotNull(actualPlaylist.getId());
         assertEquals(playlistName, actualPlaylist.getName());
-        assertEquals(profileId, actualPlaylist.getProfile().getId());
-        verify(profileRepository, times(1)).findById(anyLong());
+        assertEquals(userId, actualPlaylist.getUser().getId());
+        verify(userRepository, times(1)).findById(anyLong());
         verify(playlistRepository, times(1)).save(any());
     }
 
     @Test
-    public void createWithProfileThatDoesNotExist() {
-        Long profileId = 1L;
+    public void createWithUserThatDoesNotExist() {
+        Long userId = 1L;
         String playlistName = "my fav songs";
 
-        when(profileRepository.findById(profileId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> playlistService.create(profileId, playlistName));
-        verify(profileRepository, times(1)).findById(anyLong());
-        verify(profileRepository, times(0)).save(any());
+        assertThrows(RuntimeException.class, () -> playlistService.create(userId, playlistName));
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(0)).save(any());
         verify(playlistRepository, times(0)).save(any());
     }
 
@@ -104,28 +104,28 @@ public class PlaylistServiceImplTest {
     }
 
     @Test
-    public void findAllByProfileId() {
-        final Long profileId = 1L;
+    public void findAllByUserId() {
+        final Long userId = 1L;
         final List<Playlist> playlists = List.of(
                 Playlist.builder().id(1L).name("heavy metal").build(),
                 Playlist.builder().id(2L).name("cool funk").build()
         );
 
-        when(playlistRepository.findAllByProfileId(profileId)).thenReturn(playlists);
+        when(playlistRepository.findAllByUserId(userId)).thenReturn(playlists);
 
-        assertEquals(2, playlistService.findAllByProfileId(profileId).size());
-        verify(playlistRepository, times(1)).findAllByProfileId(anyLong());
+        assertEquals(2, playlistService.findAllByUserId(userId).size());
+        verify(playlistRepository, times(1)).findAllByUserId(anyLong());
     }
 
     @Test
     public void addSong() {
-        final Long profileId = 1L, playlistId = 1L, songId = 1L;
+        final Long userId = 1L, playlistId = 1L, songId = 1L;
 
-        Profile profile = Profile.builder().id(profileId).build();
+        User user = User.builder().id(userId).build();
         Playlist playlist = Playlist.builder().id(playlistId).build();
         Song song = Song.builder().id(songId).build();
 
-        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
         when(songRepository.findById(songId)).thenReturn(Optional.of(song));
 
@@ -133,12 +133,12 @@ public class PlaylistServiceImplTest {
 
         when(playlistRepository.save(any())).thenReturn(expectedPlaylist);
 
-        Playlist actualPlaylist = playlistService.addSong(profileId, playlistId, songId);
+        Playlist actualPlaylist = playlistService.addSong(userId, playlistId, songId);
 
-        assertEquals(profileId, actualPlaylist.getId());
+        assertEquals(userId, actualPlaylist.getId());
         assertEquals(expectedPlaylist.getSongs().size(), actualPlaylist.getSongs().size());
         assertTrue(actualPlaylist.getSongs().containsAll(expectedPlaylist.getSongs()));
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
         verify(playlistRepository, times(1)).findById(anyLong());
         verify(songRepository, times(1)).findById(anyLong());
         verify(playlistRepository, times(1)).save(any());
@@ -164,25 +164,25 @@ public class PlaylistServiceImplTest {
     }
 
     @Test
-    public void addSongWhenProfileDoesNotExist() {
-        when(profileRepository.findById(anyLong())).thenReturn(Optional.empty());
+    public void addSongWhenUserDoesNotExist() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
         when(playlistRepository.findById(anyLong())).thenReturn(Optional.of(Playlist.builder().build()));
         when(songRepository.findById(anyLong())).thenReturn(Optional.of(Song.builder().build()));
 
         assertThrows(RuntimeException.class, () -> playlistService.addSong(1L, 1L, 1L));
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
         verify(playlistRepository, times(0)).save(any());
     }
 
     @Test
     public void removeSong() {
-        final Long profileId = 1L, playlistId = 1L, songId = 1L;
+        final Long userId = 1L, playlistId = 1L, songId = 1L;
 
-        Profile profile = Profile.builder().id(profileId).build();
+        User user = User.builder().id(userId).build();
         Song song = Song.builder().id(songId).build();
         Playlist playlist = Playlist.builder().id(playlistId).songs(new ArrayList<>(List.of(song))).build();
 
-        when(profileRepository.findById(profileId)).thenReturn(Optional.of(profile));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
         when(songRepository.findById(songId)).thenReturn(Optional.of(song));
 
@@ -190,11 +190,11 @@ public class PlaylistServiceImplTest {
 
         when(playlistRepository.save(any())).thenReturn(expectedPlaylist);
 
-        Playlist actualPlaylist = playlistService.removeSong(profileId, playlistId, songId);
+        Playlist actualPlaylist = playlistService.removeSong(userId, playlistId, songId);
 
-        assertEquals(profileId, actualPlaylist.getId());
+        assertEquals(userId, actualPlaylist.getId());
         assertEquals(expectedPlaylist.getSongs().size(), actualPlaylist.getSongs().size());
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
         verify(playlistRepository, times(1)).findById(anyLong());
         verify(songRepository, times(1)).findById(anyLong());
         verify(playlistRepository, times(1)).save(any());
@@ -220,32 +220,32 @@ public class PlaylistServiceImplTest {
     }
 
     @Test
-    public void removeSongWhenProfileDoesNotExist() {
-        when(profileRepository.findById(anyLong())).thenReturn(Optional.empty());
+    public void removeSongWhenUserDoesNotExist() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
         when(playlistRepository.findById(anyLong())).thenReturn(Optional.of(Playlist.builder().build()));
         when(songRepository.findById(anyLong())).thenReturn(Optional.of(Song.builder().build()));
 
         assertThrows(RuntimeException.class, () -> playlistService.removeSong(1L, 1L, 1L));
-        verify(profileRepository, times(1)).findById(anyLong());
+        verify(userRepository, times(1)).findById(anyLong());
         verify(playlistRepository, times(0)).save(any());
     }
 
     @Test
     public void deleteById() {
-        final Long profileId = 1L, playlistId = 1L;
-        when(profileRepository.findById(profileId)).thenReturn(Optional.of(Profile.builder().id(profileId).build()));
+        final Long userId = 1L, playlistId = 1L;
+        when(userRepository.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).build()));
 
-        playlistService.deleteById(profileId, playlistId);
+        playlistService.deleteById(userId, playlistId);
 
         verify(playlistRepository, times(1)).deleteById(anyLong());
     }
 
     @Test
-    public void deleteByIdWhenProfileDoesNotExist() {
-        final Long profileId = 1L, playlistId = 1L;
-        when(profileRepository.findById(profileId)).thenReturn(Optional.empty());
+    public void deleteByIdWhenUserDoesNotExist() {
+        final Long userId = 1L, playlistId = 1L;
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> playlistService.deleteById(profileId, playlistId));
+        assertThrows(RuntimeException.class, () -> playlistService.deleteById(userId, playlistId));
         verify(playlistRepository, times(0)).deleteById(anyLong());
     }
 }

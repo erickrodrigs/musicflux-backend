@@ -1,7 +1,7 @@
 package com.erickrodrigues.musicflux.playlist;
 
-import com.erickrodrigues.musicflux.profile.Profile;
-import com.erickrodrigues.musicflux.profile.ProfileRepository;
+import com.erickrodrigues.musicflux.user.User;
+import com.erickrodrigues.musicflux.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +20,20 @@ public class PlaylistRepositoryTest {
     private PlaylistRepository playlistRepository;
 
     @Autowired
-    private ProfileRepository profileRepository;
+    private UserRepository userRepository;
 
-    private Profile profile;
+    private User user;
 
     private Playlist playlist1, playlist2, playlist3;
 
     @BeforeEach
     public void setUp() {
-        profile = Profile.builder().id(1L).build();
-        playlist1 = Playlist.builder().id(1L).profile(profile).name("my fav songs - heavy metal").build();
-        playlist2 = Playlist.builder().id(2L).profile(profile).name("THESE ARE MY FAV SONGS OF ALL TIME").build();
-        playlist3 = Playlist.builder().id(3L).profile(profile).name("funk").build();
+        user = User.builder().id(1L).build();
+        playlist1 = Playlist.builder().id(1L).user(user).name("my fav songs - heavy metal").build();
+        playlist2 = Playlist.builder().id(2L).user(user).name("THESE ARE MY FAV SONGS OF ALL TIME").build();
+        playlist3 = Playlist.builder().id(3L).user(user).name("funk").build();
 
-        profileRepository.save(profile);
+        userRepository.save(user);
         playlistRepository.save(playlist1);
         playlistRepository.save(playlist2);
         playlistRepository.save(playlist3);
@@ -55,17 +55,17 @@ public class PlaylistRepositoryTest {
     }
 
     @Test
-    public void findAllByProfileId() {
-        final List<Playlist> playlists = playlistRepository.findAllByProfileId(profile.getId());
+    public void findAllByUserId() {
+        final List<Playlist> playlists = playlistRepository.findAllByUserId(user.getId());
 
         assertEquals(3, playlists.size());
         assertTrue(playlists.containsAll(List.of(playlist1, playlist2, playlist3)));
     }
 
     @Test
-    public void findAllByProfileIdWhenItDoesNotExist() {
-        final Long unknownProfileId = 4235L;
-        final List<Playlist> playlists = playlistRepository.findAllByProfileId(unknownProfileId);
+    public void findAllByUserIdWhenItDoesNotExist() {
+        final Long unknownUserId = 4235L;
+        final List<Playlist> playlists = playlistRepository.findAllByUserId(unknownUserId);
 
         assertNotNull(playlists);
         assertEquals(0, playlists.size());

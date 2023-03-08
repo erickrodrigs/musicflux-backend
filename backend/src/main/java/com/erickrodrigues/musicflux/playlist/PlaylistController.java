@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Tag(name = "playlists")
 @RestController
-@RequestMapping("/profiles/{profile_id}/playlists")
+@RequestMapping("/users/{user_id}/playlists")
 @RequiredArgsConstructor
 public class PlaylistController {
 
@@ -22,17 +22,17 @@ public class PlaylistController {
     @Operation(summary = "Create a new playlist")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PlaylistDetailsDto createPlaylist(@PathVariable("profile_id") Long profileId,
+    public PlaylistDetailsDto createPlaylist(@PathVariable("user_id") Long userId,
                                              @RequestBody @Valid CreatePlaylistDto createPlaylistDto) {
-        return playlistMapper.toPlaylistDetailsDto(playlistService.create(profileId, createPlaylistDto.getName()));
+        return playlistMapper.toPlaylistDetailsDto(playlistService.create(userId, createPlaylistDto.getName()));
     }
 
-    @Operation(summary = "Get all playlists by a profile by their id")
+    @Operation(summary = "Get all playlists by a user by their id")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<PlaylistDetailsDto> findAllByProfileId(@PathVariable("profile_id") Long profileId) {
+    public List<PlaylistDetailsDto> findAllByUserId(@PathVariable("user_id") Long userId) {
         return playlistService
-                .findAllByProfileId(profileId)
+                .findAllByUserId(userId)
                 .stream()
                 .map(playlistMapper::toPlaylistDetailsDto)
                 .collect(Collectors.toList());
@@ -41,28 +41,28 @@ public class PlaylistController {
     @Operation(summary = "Add a new song to a playlist")
     @PutMapping("/{playlist_id}/songs")
     @ResponseStatus(HttpStatus.CREATED)
-    public PlaylistDetailsDto addSong(@PathVariable("profile_id") Long profileId,
+    public PlaylistDetailsDto addSong(@PathVariable("user_id") Long userId,
                                       @PathVariable("playlist_id") Long playlistId,
                                       @RequestBody @Valid AddSongToPlaylistDto addSongToPlaylistDto) {
         return playlistMapper.toPlaylistDetailsDto(
-                playlistService.addSong(profileId, playlistId, addSongToPlaylistDto.getSongId())
+                playlistService.addSong(userId, playlistId, addSongToPlaylistDto.getSongId())
         );
     }
 
     @Operation(summary = "Remove a song from a playlist")
     @DeleteMapping("/{playlist_id}/songs/{song_id}")
     @ResponseStatus(HttpStatus.OK)
-    public PlaylistDetailsDto removeSong(@PathVariable("profile_id") Long profileId,
+    public PlaylistDetailsDto removeSong(@PathVariable("user_id") Long userId,
                                          @PathVariable("playlist_id") Long playlistId,
                                          @PathVariable("song_id") Long songId) {
-        return playlistMapper.toPlaylistDetailsDto(playlistService.removeSong(profileId, playlistId, songId));
+        return playlistMapper.toPlaylistDetailsDto(playlistService.removeSong(userId, playlistId, songId));
     }
 
     @Operation(summary = "Delete a playlist by its id")
     @DeleteMapping("/{playlist_id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deletePlaylist(@PathVariable("profile_id") Long profileId,
+    public void deletePlaylist(@PathVariable("user_id") Long userId,
                                @PathVariable("playlist_id") Long playlistId) {
-        playlistService.deleteById(profileId, playlistId);
+        playlistService.deleteById(userId, playlistId);
     }
 }

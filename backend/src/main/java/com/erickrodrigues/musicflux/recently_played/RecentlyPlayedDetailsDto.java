@@ -18,7 +18,7 @@ public class RecentlyPlayedDetailsDto {
 
     private SongDetailsDto song;
 
-    private Long profileId;
+    private Long userId;
 
     private LocalDateTime createdAt;
 }

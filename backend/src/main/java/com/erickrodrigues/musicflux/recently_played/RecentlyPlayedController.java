@@ -10,21 +10,21 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "recently played")
 @RestController
-@RequestMapping("/profiles/{profile_id}/recently_played")
+@RequestMapping("/users/{user_id}/recently_played")
 @RequiredArgsConstructor
 public class RecentlyPlayedController {
 
     private final RecentlyPlayedService recentlyPlayedService;
     private final RecentlyPlayedMapper recentlyPlayedMapper;
 
-    @Operation(summary = "Get recently played songs by a profile by their id")
+    @Operation(summary = "Get recently played songs by a user by their id")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Page<RecentlyPlayedDetailsDto> findAllByProfileId(@PathVariable("profile_id") Long profileId,
+    public Page<RecentlyPlayedDetailsDto> findAllByUserId(@PathVariable("user_id") Long userId,
                                                              @RequestParam(name = "page", defaultValue = "0") int page,
                                                              @RequestParam(name = "size", defaultValue = "15") int size) {
         return recentlyPlayedService
-                .findAllByProfileId(PageRequest.of(page, size), profileId)
+                .findAllByUserId(PageRequest.of(page, size), userId)
                 .map(recentlyPlayedMapper::toRecentlyPlayedDetailsDto);
     }
 }

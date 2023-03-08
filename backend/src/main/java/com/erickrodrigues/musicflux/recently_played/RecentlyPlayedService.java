@@ -5,5 +5,5 @@ import org.springframework.data.domain.Pageable;
 
 public interface RecentlyPlayedService {
 
-    Page<RecentlyPlayed> findAllByProfileId(Pageable pageable, Long profileId);
+    Page<RecentlyPlayed> findAllByUserId(Pageable pageable, Long userId);
 }

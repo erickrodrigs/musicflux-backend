@@ -40,8 +40,8 @@ public class RecentlyPlayedControllerTest {
     private RecentlyPlayedController recentlyPlayedController;
 
     @Test
-    public void findAllByProfileId() throws Exception {
-        final Long profileId = 1L;
+    public void findAllByUserId() throws Exception {
+        final Long userId = 1L;
         final List<RecentlyPlayed> recentlyPlayedSongs = List.of(
                 RecentlyPlayed.builder().id(1L).song(Song.builder().id(1L).build()).build(),
                 RecentlyPlayed.builder().id(2L).song(Song.builder().id(2L).build()).build()
@@ -50,19 +50,19 @@ public class RecentlyPlayedControllerTest {
                 RecentlyPlayedDetailsDto.builder()
                         .id(1L)
                         .song(SongDetailsDto.builder().id(1L).build())
-                        .profileId(profileId)
+                        .userId(userId)
                         .createdAt(LocalDateTime.now())
                         .build(),
                 RecentlyPlayedDetailsDto.builder()
                         .id(2L)
                         .song(SongDetailsDto.builder().id(2L).build())
-                        .profileId(profileId)
+                        .userId(userId)
                         .createdAt(LocalDateTime.now().plusDays(1L))
                         .build()
         );
         final Page<RecentlyPlayed> recentlyPlayedSongsPage = new PageImpl<>(recentlyPlayedSongs);
 
-        when(recentlyPlayedService.findAllByProfileId(any(), eq(profileId))).thenReturn(recentlyPlayedSongsPage);
+        when(recentlyPlayedService.findAllByUserId(any(), eq(userId))).thenReturn(recentlyPlayedSongsPage);
         when(recentlyPlayedMapper.toRecentlyPlayedDetailsDto(recentlyPlayedSongs.get(0))).thenReturn(recentlyPlayedDetailsDtos.get(0));
         when(recentlyPlayedMapper.toRecentlyPlayedDetailsDto(recentlyPlayedSongs.get(1))).thenReturn(recentlyPlayedDetailsDtos.get(1));
 
@@ -73,14 +73,14 @@ public class RecentlyPlayedControllerTest {
         final JSONArray listJson = (JSONArray) jsonParser.parse(objectMapper.writeValueAsString(recentlyPlayedDetailsDtos));
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recentlyPlayedController).build();
-        mockMvc.perform(get("/profiles/" + profileId + "/recently_played")
+        mockMvc.perform(get("/users/" + userId + "/recently_played")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content").value(Matchers.containsInAnyOrder(listJson.toArray())))
                 .andReturn();
 
-        verify(recentlyPlayedService, times(1)).findAllByProfileId(any(), anyLong());
+        verify(recentlyPlayedService, times(1)).findAllByUserId(any(), anyLong());
         verify(recentlyPlayedMapper, times(2)).toRecentlyPlayedDetailsDto(any());
     }
 }

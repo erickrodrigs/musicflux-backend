@@ -15,7 +15,7 @@ public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
-    @Operation(summary = "Register a new profile")
+    @Operation(summary = "Register a new user")
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public AuthTokenDto register(@RequestBody @Valid AuthRegistrationDto authRegistrationDto) {
@@ -30,7 +30,7 @@ public class AuthenticationController {
                 .build();
     }
 
-    @Operation(summary = "Authenticate as a valid profile")
+    @Operation(summary = "Authenticate as a valid user")
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
     public AuthTokenDto authenticate(@RequestBody @Valid AuthCredentialsDto authCredentialsDto) {

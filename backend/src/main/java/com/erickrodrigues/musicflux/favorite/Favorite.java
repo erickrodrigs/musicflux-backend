@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.favorite;
 
-import com.erickrodrigues.musicflux.profile.Profile;
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.shared.BaseEntity;
 import jakarta.persistence.Entity;
@@ -22,9 +22,9 @@ import org.hibernate.annotations.OnDeleteAction;
 public class Favorite extends BaseEntity {
 
     @ManyToOne
-    @JoinColumn(name = "profile_id")
+    @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Profile profile;
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "song_id")

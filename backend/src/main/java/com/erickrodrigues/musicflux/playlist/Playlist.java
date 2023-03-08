@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.playlist;
 
-import com.erickrodrigues.musicflux.profile.Profile;
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.shared.ResourceAlreadyExistsException;
 import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
@@ -27,9 +27,9 @@ public class Playlist extends BaseEntity {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "profile_id")
+    @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private Profile profile;
+    private User user;
 
     @ManyToMany
     @JoinTable(name = "playlists_songs",

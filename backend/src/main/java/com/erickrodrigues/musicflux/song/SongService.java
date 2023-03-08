@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface SongService {
 
-    void play(Long profileId, Long songId);
+    void play(Long userId, Long songId);
 
     List<Song> findAllByTitleContainingIgnoreCase(String text);
 

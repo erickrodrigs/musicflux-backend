@@ -7,6 +7,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {SongMapper.class})
 public interface FavoriteMapper {
 
-    @Mapping(target = "profileId", source = "favorite.profile.id")
+    @Mapping(target = "userId", source = "favorite.user.id")
     FavoriteDetailsDto toFavoriteDetailsDto(Favorite favorite);
 }

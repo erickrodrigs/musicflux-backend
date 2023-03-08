@@ -1,10 +1,10 @@
 package com.erickrodrigues.musicflux.song;
 
+import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.recently_played.RecentlyPlayed;
 import com.erickrodrigues.musicflux.album.AlbumRepository;
-import com.erickrodrigues.musicflux.profile.ProfileRepository;
+import com.erickrodrigues.musicflux.user.UserRepository;
 import com.erickrodrigues.musicflux.album.Album;
-import com.erickrodrigues.musicflux.profile.Profile;
 import com.erickrodrigues.musicflux.recently_played.RecentlyPlayedRepository;
 import com.erickrodrigues.musicflux.shared.BaseService;
 import lombok.RequiredArgsConstructor;
@@ -20,25 +20,25 @@ import java.util.stream.Collectors;
 public class SongServiceImpl extends BaseService implements SongService {
 
     private final SongRepository songRepository;
-    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
     private final AlbumRepository albumRepository;
     private final RecentlyPlayedRepository recentlyPlayedRepository;
 
     @Transactional
     @Override
-    public void play(Long profileId, Long songId) {
+    public void play(Long userId, Long songId) {
         final Song song = super.getEntityOrThrowException(songId, songRepository, Song.class);
-        final Profile profile = super.getEntityOrThrowException(profileId, profileRepository, Profile.class);
+        final User user = super.getEntityOrThrowException(userId, userRepository, User.class);
 
         song.play();
 
         final RecentlyPlayed recentlyPlayed = RecentlyPlayed.builder()
-                .profile(profile)
+                .user(user)
                 .song(song)
                 .build();
 
         songRepository.save(song);
-        profileRepository.save(profile);
+        userRepository.save(user);
         recentlyPlayedRepository.save(recentlyPlayed);
     }
 

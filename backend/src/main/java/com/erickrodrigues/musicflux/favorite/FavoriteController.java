@@ -11,7 +11,7 @@ import java.util.List;
 
 @Tag(name = "favorites")
 @RestController
-@RequestMapping("/profiles/{profile_id}/favorites")
+@RequestMapping("/users/{user_id}/favorites")
 @RequiredArgsConstructor
 public class FavoriteController {
 
@@ -21,27 +21,27 @@ public class FavoriteController {
     @Operation(summary = "Like a song")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FavoriteDetailsDto likeSong(@PathVariable("profile_id") Long profileId,
+    public FavoriteDetailsDto likeSong(@PathVariable("user_id") Long userId,
                          @RequestBody @Valid CreateFavoriteDto createFavoriteDto) {
         return favoriteMapper.toFavoriteDetailsDto(
-                favoriteService.likeSong(profileId, createFavoriteDto.getSongId())
+                favoriteService.likeSong(userId, createFavoriteDto.getSongId())
         );
     }
 
     @Operation(summary = "Dislike a song")
     @DeleteMapping("/{favorite_id}")
     @ResponseStatus(HttpStatus.OK)
-    public void dislikeSong(@PathVariable("profile_id") Long profileId,
+    public void dislikeSong(@PathVariable("user_id") Long userId,
                             @PathVariable("favorite_id") Long favoriteId) {
-        favoriteService.dislikeSong(profileId, favoriteId);
+        favoriteService.dislikeSong(userId, favoriteId);
     }
 
-    @Operation(summary = "Get all liked songs by a profile by their id")
+    @Operation(summary = "Get all liked songs by a user by their id")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<FavoriteDetailsDto> findAllByProfileId(@PathVariable("profile_id") Long profileId) {
+    public List<FavoriteDetailsDto> findAllByUserId(@PathVariable("user_id") Long userId) {
         return favoriteService
-                .findAllByProfileId(profileId)
+                .findAllByUserId(userId)
                 .stream()
                 .map(favoriteMapper::toFavoriteDetailsDto)
                 .toList();

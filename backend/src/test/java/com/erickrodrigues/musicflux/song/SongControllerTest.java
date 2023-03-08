@@ -34,10 +34,10 @@ public class SongControllerTest {
 
     @Test
     public void playSong() throws Exception {
-        final long profileId = 1L, songId = 1L;
+        final long userId = 1L, songId = 1L;
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(songController).build();
 
-        mockMvc.perform(put("/profiles/" + profileId + "/songs/" + songId + "/play"))
+        mockMvc.perform(put("/users/" + userId + "/songs/" + songId + "/play"))
                 .andExpect(status().isOk());
 
         verify(songService, times(1)).play(anyLong(), anyLong());

@@ -1,7 +1,7 @@
 package com.erickrodrigues.musicflux.auth;
 
-import com.erickrodrigues.musicflux.profile.Profile;
-import com.erickrodrigues.musicflux.profile.ProfileService;
+import com.erickrodrigues.musicflux.user.User;
+import com.erickrodrigues.musicflux.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final ProfileService profileService;
+    private final UserService userService;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
@@ -22,10 +22,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public String register(String name, String username, String email, String password) {
-        final Profile savedProfile = profileService.register(name, username, email, passwordEncoder.encode(password));
-        final String jwtToken = jwtService.generateToken(savedProfile);
+        final User savedUser = userService.register(name, username, email, passwordEncoder.encode(password));
+        final String jwtToken = jwtService.generateToken(savedUser);
 
-        saveProfileToken(savedProfile, jwtToken);
+        saveUserToken(savedUser, jwtToken);
 
         return jwtToken;
     }
@@ -34,18 +34,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public String authenticate(String username, String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
-        final Profile profile = profileService.findByUsername(username);
-        final String jwtToken = jwtService.generateToken(profile);
+        final User user = userService.findByUsername(username);
+        final String jwtToken = jwtService.generateToken(user);
 
-        revokeAllProfileTokens(profile);
-        saveProfileToken(profile, jwtToken);
+        revokeAllUserTokens(user);
+        saveUserToken(user, jwtToken);
 
         return jwtToken;
     }
 
-    private void saveProfileToken(Profile profile, String jwtToken) {
+    private void saveUserToken(User user, String jwtToken) {
         final Token token = Token.builder()
-                .profile(profile)
+                .user(user)
                 .token(jwtToken)
                 .tokenType(TokenType.BEARER)
                 .expired(false)
@@ -55,16 +55,16 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         tokenRepository.save(token);
     }
 
-    private void revokeAllProfileTokens(Profile profile) {
-        final List<Token> validProfileTokens = tokenRepository.findAllValidTokensByProfile(profile.getId());
+    private void revokeAllUserTokens(User user) {
+        final List<Token> validUserTokens = tokenRepository.findAllValidTokensByUser(user.getId());
 
-        if (validProfileTokens.isEmpty()) return;
+        if (validUserTokens.isEmpty()) return;
 
-        validProfileTokens.forEach(token -> {
+        validUserTokens.forEach(token -> {
             token.setExpired(true);
             token.setRevoked(true);
         });
 
-        tokenRepository.saveAll(validProfileTokens);
+        tokenRepository.saveAll(validUserTokens);
     }
 }

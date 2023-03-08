@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.auth;
 
-import com.erickrodrigues.musicflux.profile.Profile;
+import com.erickrodrigues.musicflux.user.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,6 +29,6 @@ public class Token {
     public boolean expired;
 
     @ManyToOne
-    @JoinColumn(name = "profile_id")
-    public Profile profile;
+    @JoinColumn(name = "user_id")
+    public User user;
 }

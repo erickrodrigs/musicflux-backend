@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.profile;
+package com.erickrodrigues.musicflux.user;
 
 import com.erickrodrigues.musicflux.auth.Token;
 import com.erickrodrigues.musicflux.shared.BaseEntity;
@@ -17,8 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "profiles")
-public class Profile extends BaseEntity implements UserDetails {
+@Table(name = "users")
+public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "name")
     private String name;
@@ -32,7 +32,7 @@ public class Profile extends BaseEntity implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Token> tokens;
 
     @Override

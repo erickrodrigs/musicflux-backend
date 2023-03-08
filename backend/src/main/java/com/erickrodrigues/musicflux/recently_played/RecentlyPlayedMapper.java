@@ -7,6 +7,6 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring", uses = {SongMapper.class})
 public interface RecentlyPlayedMapper {
 
-    @Mapping(target = "profileId", source = "recentlyPlayed.profile.id")
+    @Mapping(target = "userId", source = "recentlyPlayed.user.id")
     RecentlyPlayedDetailsDto toRecentlyPlayedDetailsDto(RecentlyPlayed recentlyPlayed);
 }
