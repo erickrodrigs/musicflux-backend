@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Override
     public String register(String name, String username, String email, String password) {
         final User savedUser = userService.register(name, username, email, passwordEncoder.encode(password));
-        final String jwtToken = jwtService.generateToken(savedUser);
+        final String jwtToken = jwtService.generateToken(Map.of("userId", savedUser.getId()), savedUser);
 
         saveUserToken(savedUser, jwtToken);
 
@@ -35,7 +36,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
         final User user = userService.findByUsername(username);
-        final String jwtToken = jwtService.generateToken(user);
+        final String jwtToken = jwtService.generateToken(Map.of("userId", user.getId()), user);
 
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
