@@ -44,10 +44,6 @@ public class FavoriteController {
     @ResponseStatus(HttpStatus.OK)
     public List<FavoriteDetailsDto> findAllByUserId(HttpServletRequest request) {
         final Long userId = (Long) request.getAttribute("userId");
-        return favoriteService
-                .findAllByUserId(userId)
-                .stream()
-                .map(favoriteMapper::toFavoriteDetailsDto)
-                .toList();
+        return favoriteMapper.toListOfFavoriteDetailsDto(favoriteService.findAllByUserId(userId));
     }
 }

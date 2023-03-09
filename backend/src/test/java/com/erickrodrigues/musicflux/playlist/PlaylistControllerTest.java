@@ -79,8 +79,7 @@ public class PlaylistControllerTest {
         final Long userId = 1L;
 
         when(playlistService.findAllByUserId(userId)).thenReturn(playlists);
-        when(playlistMapper.toPlaylistDto(playlists.get(0))).thenReturn(playlistsDto.get(0));
-        when(playlistMapper.toPlaylistDto(playlists.get(1))).thenReturn(playlistsDto.get(1));
+        when(playlistMapper.toListOfPlaylistDto(playlists)).thenReturn(playlistsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
         final MvcResult mvcResult = mockMvc.perform(get("/users/" + userId + "/playlists"))
@@ -95,7 +94,7 @@ public class PlaylistControllerTest {
         assertEquals(playlistsDto.size(), actualResult.size());
         assertTrue(actualResult.containsAll(playlistsDto));
         verify(playlistService, times(1)).findAllByUserId(anyLong());
-        verify(playlistMapper, times(2)).toPlaylistDto(any());
+        verify(playlistMapper, times(1)).toListOfPlaylistDto(anyList());
     }
 
     @Test

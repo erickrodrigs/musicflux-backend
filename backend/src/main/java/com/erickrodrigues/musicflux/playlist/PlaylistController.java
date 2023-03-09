@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "playlists")
 @RestController
@@ -32,11 +31,7 @@ public class PlaylistController {
     @GetMapping("/users/{user_id}/playlists")
     @ResponseStatus(HttpStatus.OK)
     public List<PlaylistDto> findAllByUserId(@PathVariable("user_id") Long userId) {
-        return playlistService
-                .findAllByUserId(userId)
-                .stream()
-                .map(playlistMapper::toPlaylistDto)
-                .collect(Collectors.toList());
+        return playlistMapper.toListOfPlaylistDto(playlistService.findAllByUserId(userId));
     }
 
     @Operation(summary = "Get a specific playlist by their id")

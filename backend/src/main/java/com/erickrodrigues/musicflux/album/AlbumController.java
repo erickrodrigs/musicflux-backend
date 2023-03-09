@@ -23,10 +23,6 @@ public class AlbumController {
     @GetMapping("/artists/{artist_id}/albums")
     @ResponseStatus(HttpStatus.OK)
     public List<AlbumDetailsDto> findAllByArtistId(@PathVariable("artist_id") Long artistId) {
-        return albumService
-                .findAllByArtistId(artistId)
-                .stream()
-                .map(albumMapper::toAlbumDetailsDto)
-                .toList();
+        return albumMapper.toListOfAlbumDetailsDto(albumService.findAllByArtistId(artistId));
     }
 }

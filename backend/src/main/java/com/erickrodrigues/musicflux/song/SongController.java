@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Tag(name = "songs")
 @RestController
@@ -31,19 +30,13 @@ public class SongController {
     @GetMapping("/albums/{album_id}/songs")
     @ResponseStatus(HttpStatus.OK)
     public List<SongDetailsDto> findAllByAlbumId(@PathVariable("album_id") Long albumId) {
-        return songService.findAllByAlbumId(albumId)
-                .stream()
-                .map(songMapper::toSongDetailsDto)
-                .collect(Collectors.toList());
+        return songMapper.toListOfSongDetailsDto(songService.findAllByAlbumId(albumId));
     }
 
     @Operation(summary = "Get the top five most played songs by an artist by their id")
     @GetMapping("/artists/{artist_id}/most_played_songs")
     @ResponseStatus(HttpStatus.OK)
     public List<SongDetailsDto> findMostPlayedSongsByArtistId(@PathVariable("artist_id") Long artistId) {
-        return songService.findMostPlayedSongsByArtistId(artistId)
-                .stream()
-                .map(songMapper::toSongDetailsDto)
-                .collect(Collectors.toList());
+        return songMapper.toListOfSongDetailsDto(songService.findMostPlayedSongsByArtistId(artistId));
     }
 }

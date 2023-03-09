@@ -101,8 +101,7 @@ public class FavoriteControllerTest {
         );
 
         when(favoriteService.findAllByUserId(userId)).thenReturn(favorites);
-        when(favoriteMapper.toFavoriteDetailsDto(favorites.get(0))).thenReturn(favoritesDetailsDto.get(0));
-        when(favoriteMapper.toFavoriteDetailsDto(favorites.get(1))).thenReturn(favoritesDetailsDto.get(1));
+        when(favoriteMapper.toListOfFavoriteDetailsDto(favorites)).thenReturn(favoritesDetailsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(favoriteController).build();
         final MvcResult mvcResult = mockMvc.perform(get("/users/me/favorites")
@@ -119,6 +118,6 @@ public class FavoriteControllerTest {
         assertEquals(favoritesDetailsDto.size(), actualResult.size());
         assertTrue(actualResult.containsAll(favoritesDetailsDto));
         verify(favoriteService, times(1)).findAllByUserId(anyLong());
-        verify(favoriteMapper, times(2)).toFavoriteDetailsDto(any());
+        verify(favoriteMapper, times(1)).toListOfFavoriteDetailsDto(anyList());
     }
 }

@@ -4,13 +4,9 @@ import com.erickrodrigues.musicflux.album.Album;
 import com.erickrodrigues.musicflux.album.AlbumDetailsDto;
 import com.erickrodrigues.musicflux.artist.Artist;
 import com.erickrodrigues.musicflux.artist.ArtistDetailsDto;
-import com.erickrodrigues.musicflux.album.AlbumMapper;
-import com.erickrodrigues.musicflux.artist.ArtistMapper;
 import com.erickrodrigues.musicflux.genre.Genre;
-import com.erickrodrigues.musicflux.playlist.PlaylistDetailsDto;
-import com.erickrodrigues.musicflux.playlist.PlaylistMapper;
+import com.erickrodrigues.musicflux.playlist.PlaylistDto;
 import com.erickrodrigues.musicflux.song.SongDetailsDto;
-import com.erickrodrigues.musicflux.song.SongMapper;
 import com.erickrodrigues.musicflux.playlist.Playlist;
 import com.erickrodrigues.musicflux.song.Song;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,16 +37,7 @@ public class CatalogueControllerTest {
     private CatalogueService catalogueService;
 
     @Mock
-    private ArtistMapper artistMapper;
-
-    @Mock
-    private AlbumMapper albumMapper;
-
-    @Mock
-    private SongMapper songMapper;
-
-    @Mock
-    private PlaylistMapper playlistMapper;
+    private CatalogueMapper catalogueMapper;
 
     @InjectMocks
     private CatalogueController catalogueController;
@@ -61,44 +48,39 @@ public class CatalogueControllerTest {
                 SearchableType.ARTIST, SearchableType.ALBUM, SearchableType.SONG, SearchableType.PLAYLIST
         );
         final String text = "dark";
-        final List<Artist> artists = List.of(
-                Artist.builder().id(1L).name("Dark Angel").build()
-        );
-        final List<Album> albums = List.of(
-                Album.builder().id(2L).title("The Dark Side Of The Moon").releaseDate(LocalDate.of(1973, 3, 1)).build()
-        );
-        final List<Song> songs = List.of(
-                Song.builder().id(1L).title("Dark Fantasy").genres(List.of(Genre.builder().name("Hip-hop").build())).build()
-        );
-        final List<Playlist> playlists = List.of(
-                Playlist.builder().id(1L).name("The Most Dark and Depressive Songs").build()
-        );
+        final CatalogueResult catalogueResult = CatalogueResult
+                .builder()
+                .artists(List.of(
+                        Artist.builder().id(1L).name("Dark Angel").build()
+                ))
+                .albums(List.of(
+                        Album.builder().id(2L).title("The Dark Side Of The Moon").releaseDate(LocalDate.of(1973, 3, 1)).build()
+                ))
+                .songs(List.of(
+                        Song.builder().id(1L).title("Dark Fantasy").genres(List.of(Genre.builder().name("Hip-hop").build())).build()
+                ))
+                .playlists(List.of(
+                        Playlist.builder().id(1L).name("The Most Dark and Depressive Songs").build()
+                ))
+                .build();
+        final CatalogueResultDto catalogueResultDto = CatalogueResultDto
+                .builder()
+                .artists(List.of(
+                        ArtistDetailsDto.builder().id(1L).name("Dark Angel").build()
+                ))
+                .albums(List.of(
+                        AlbumDetailsDto.builder().id(2L).title("The Dark Side Of The Moon").releaseDate(LocalDate.of(1973, 3, 1)).artistsIds(List.of(1L)).build()
+                ))
+                .songs(List.of(
+                        SongDetailsDto.builder().id(1L).title("Dark Fantasy").genres(List.of("Hip-hop")).albumId(1L).build()
+                ))
+                .playlists(List.of(
+                        PlaylistDto.builder().id(1L).name("The Most Dark and Depressive Songs").userId(1L).build()
+                ))
+                .build();
 
-        final List<ArtistDetailsDto> artistsDetailsDto = List.of(
-                ArtistDetailsDto.builder().id(1L).name("Dark Angel").build()
-        );
-        final List<AlbumDetailsDto> albumsDetailsDto = List.of(
-                AlbumDetailsDto.builder().id(2L).title("The Dark Side Of The Moon").releaseDate(LocalDate.of(1973, 3, 1)).artistsIds(List.of(1L)).build()
-        );
-        final List<SongDetailsDto> songsDetailsDto = List.of(
-                SongDetailsDto.builder().id(1L).title("Dark Fantasy").genres(List.of("Hip-hop")).albumId(1L).build()
-        );
-        final List<PlaylistDetailsDto> playlistsDetailsDto = List.of(
-                PlaylistDetailsDto.builder().id(1L).name("The Most Dark and Depressive Songs").userId(1L).build()
-        );
-
-        when(catalogueService.findAllByTypesAndText(types, text)).thenReturn(
-                CatalogueResult.builder()
-                        .artists(artists)
-                        .albums(albums)
-                        .songs(songs)
-                        .playlists(playlists)
-                        .build()
-        );
-        when(artistMapper.toArtistDetailsDto(artists.get(0))).thenReturn(artistsDetailsDto.get(0));
-        when(albumMapper.toAlbumDetailsDto(albums.get(0))).thenReturn(albumsDetailsDto.get(0));
-        when(songMapper.toSongDetailsDto(songs.get(0))).thenReturn(songsDetailsDto.get(0));
-        when(playlistMapper.toPlaylistDetailsDto(playlists.get(0))).thenReturn(playlistsDetailsDto.get(0));
+        when(catalogueService.findAllByTypesAndText(types, text)).thenReturn(catalogueResult);
+        when(catalogueMapper.toCatalogueResultDto(catalogueResult)).thenReturn(catalogueResultDto);
 
         final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.addAll("types", types.stream().map(String::valueOf).toList());
@@ -118,19 +100,16 @@ public class CatalogueControllerTest {
                 CatalogueResultDto.class
         );
 
-        assertEquals(artistsDetailsDto.size(), actualResponse.getArtists().size());
-        assertTrue(actualResponse.getArtists().containsAll(artistsDetailsDto));
-        assertEquals(albumsDetailsDto.size(), actualResponse.getAlbums().size());
-        assertTrue(actualResponse.getAlbums().containsAll(albumsDetailsDto));
-        assertEquals(songsDetailsDto.size(), actualResponse.getSongs().size());
-        assertTrue(actualResponse.getSongs().containsAll(songsDetailsDto));
-        assertEquals(playlistsDetailsDto.size(), actualResponse.getPlaylists().size());
-        assertTrue(actualResponse.getPlaylists().containsAll(playlistsDetailsDto));
+        assertEquals(catalogueResultDto.getArtists().size(), actualResponse.getArtists().size());
+        assertEquals(catalogueResultDto.getAlbums().size(), actualResponse.getAlbums().size());
+        assertEquals(catalogueResultDto.getSongs().size(), actualResponse.getSongs().size());
+        assertEquals(catalogueResultDto.getPlaylists().size(), actualResponse.getPlaylists().size());
+        assertTrue(actualResponse.getArtists().containsAll(catalogueResultDto.getArtists()));
+        assertTrue(actualResponse.getAlbums().containsAll(catalogueResultDto.getAlbums()));
+        assertTrue(actualResponse.getSongs().containsAll(catalogueResultDto.getSongs()));
+        assertTrue(actualResponse.getPlaylists().containsAll(catalogueResultDto.getPlaylists()));
         verify(catalogueService, times(1)).findAllByTypesAndText(anyList(), anyString());
-        verify(artistMapper, times(1)).toArtistDetailsDto(any());
-        verify(albumMapper, times(1)).toAlbumDetailsDto(any());
-        verify(songMapper, times(1)).toSongDetailsDto(any());
-        verify(playlistMapper, times(1)).toPlaylistDetailsDto(any());
+        verify(catalogueMapper, times(1)).toCatalogueResultDto(any());
     }
 
     @Test
@@ -148,18 +127,21 @@ public class CatalogueControllerTest {
                 SongDetailsDto.builder().id(1L).albumId(album.getId()).build(),
                 SongDetailsDto.builder().id(2L).albumId(album.getId()).build()
         );
+        final CatalogueResult catalogueResult = CatalogueResult
+                .builder()
+                .artists(List.of(artist))
+                .albums(List.of(album))
+                .songs(songs)
+                .build();
+        final CatalogueResultDto catalogueResultDto = CatalogueResultDto
+                .builder()
+                .artists(List.of(artistDetailsDto))
+                .albums(List.of(albumDetailsDto))
+                .songs(songsDetailsDto)
+                .build();
 
-        when(catalogueService.findAllByGenreName(genre)).thenReturn(
-                CatalogueResult.builder()
-                        .artists(List.of(artist))
-                        .albums(List.of(album))
-                        .songs(songs)
-                        .build()
-        );
-        when(artistMapper.toArtistDetailsDto(artist)).thenReturn(artistDetailsDto);
-        when(albumMapper.toAlbumDetailsDto(album)).thenReturn(albumDetailsDto);
-        when(songMapper.toSongDetailsDto(songs.get(0))).thenReturn(songsDetailsDto.get(0));
-        when(songMapper.toSongDetailsDto(songs.get(1))).thenReturn(songsDetailsDto.get(1));
+        when(catalogueService.findAllByGenreName(genre)).thenReturn(catalogueResult);
+        when(catalogueMapper.toCatalogueResultDto(catalogueResult)).thenReturn(catalogueResultDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(catalogueController).build();
         final MvcResult mvcResult = mockMvc.perform(get("/catalogue/genres/" + genre))
@@ -181,8 +163,6 @@ public class CatalogueControllerTest {
         assertEquals(songsDetailsDto.size(), actualResponse.getSongs().size());
         assertTrue(actualResponse.getSongs().containsAll(songsDetailsDto));
         verify(catalogueService, times(1)).findAllByGenreName(anyString());
-        verify(artistMapper, times(1)).toArtistDetailsDto(any());
-        verify(albumMapper, times(1)).toAlbumDetailsDto(any());
-        verify(songMapper, times(2)).toSongDetailsDto(any());
+        verify(catalogueMapper, times(1)).toCatalogueResultDto(any());
     }
 }
