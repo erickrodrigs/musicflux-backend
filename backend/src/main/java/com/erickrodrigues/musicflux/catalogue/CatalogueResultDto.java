@@ -2,7 +2,7 @@ package com.erickrodrigues.musicflux.catalogue;
 
 import com.erickrodrigues.musicflux.album.AlbumDetailsDto;
 import com.erickrodrigues.musicflux.artist.ArtistDetailsDto;
-import com.erickrodrigues.musicflux.playlist.PlaylistDetailsDto;
+import com.erickrodrigues.musicflux.playlist.PlaylistDto;
 import com.erickrodrigues.musicflux.song.SongDetailsDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,5 +23,5 @@ public class CatalogueResultDto {
 
     private List<SongDetailsDto> songs;
 
-    private List<PlaylistDetailsDto> playlists;
+    private List<PlaylistDto> playlists;
 }
