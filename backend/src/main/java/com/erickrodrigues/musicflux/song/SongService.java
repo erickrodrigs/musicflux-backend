@@ -8,6 +8,8 @@ public interface SongService {
 
     List<Song> findAllByTitleContainingIgnoreCase(String text);
 
+    List<Song> findAllByGenreName(String genreName);
+
     List<Song> findAllByAlbumId(Long albumId);
 
     List<Song> findMostPlayedSongsByArtistId(Long artistId);

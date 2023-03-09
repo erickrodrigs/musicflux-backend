@@ -83,6 +83,20 @@ public class SongServiceImplTest {
     }
 
     @Test
+    public void findAllByGenreName() {
+        final String genre = "synth-pop";
+        final List<Song> songs = List.of(
+                Song.builder().id(1L).title("Black Celebration").build(),
+                Song.builder().id(2L).title("Never Let Me Down Again").build()
+        );
+
+        when(songRepository.findAllByGenresNameIgnoreCase(genre)).thenReturn(songs);
+
+        assertEquals(2, songService.findAllByGenreName(genre).size());
+        verify(songRepository, times(1)).findAllByGenresNameIgnoreCase(anyString());
+    }
+
+    @Test
     public void findAllByAlbumId() {
         final Long albumId = 1L;
         final List<Song> songs = List.of(

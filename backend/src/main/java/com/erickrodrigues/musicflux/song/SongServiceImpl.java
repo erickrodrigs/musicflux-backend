@@ -48,6 +48,11 @@ public class SongServiceImpl extends BaseService implements SongService {
     }
 
     @Override
+    public List<Song> findAllByGenreName(String genreName) {
+        return songRepository.findAllByGenresNameIgnoreCase(genreName);
+    }
+
+    @Override
     public List<Song> findAllByAlbumId(Long albumId) {
         return super.getEntityOrThrowException(albumId, albumRepository, Album.class).getSongs();
     }
