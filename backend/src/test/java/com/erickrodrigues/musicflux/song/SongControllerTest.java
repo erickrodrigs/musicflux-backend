@@ -13,7 +13,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -69,8 +68,7 @@ public class SongControllerTest {
         );
 
         when(songService.findAllByAlbumId(albumId)).thenReturn(songs);
-        when(songMapper.toSongDetailsDto(songs.get(0))).thenReturn(songsDetailsDto.get(0));
-        when(songMapper.toSongDetailsDto(songs.get(1))).thenReturn(songsDetailsDto.get(1));
+        when(songMapper.toListOfSongDetailsDto(songs)).thenReturn(songsDetailsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(songController).build();
         final MvcResult mvcResult = mockMvc.perform(get("/albums/" + albumId + "/songs"))
@@ -85,7 +83,7 @@ public class SongControllerTest {
         assertEquals(songsDetailsDto.size(), actualResult.size());
         assertTrue(actualResult.containsAll(songsDetailsDto));
         verify(songService, times(1)).findAllByAlbumId(anyLong());
-        verify(songMapper, times(2)).toSongDetailsDto(any());
+        verify(songMapper, times(1)).toListOfSongDetailsDto(anyList());
     }
 
     @Test
@@ -111,8 +109,7 @@ public class SongControllerTest {
         );
 
         when(songService.findMostPlayedSongsByArtistId(artistId)).thenReturn(songs);
-        when(songMapper.toSongDetailsDto(songs.get(0))).thenReturn(songsDetailsDto.get(0));
-        when(songMapper.toSongDetailsDto(songs.get(1))).thenReturn(songsDetailsDto.get(1));
+        when(songMapper.toListOfSongDetailsDto(songs)).thenReturn(songsDetailsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(songController).build();
         final MvcResult mvcResult = mockMvc.perform(get("/artists/" + artistId + "/most_played_songs"))
@@ -127,6 +124,6 @@ public class SongControllerTest {
         assertEquals(songsDetailsDto.size(), actualResult.size());
         assertTrue(actualResult.containsAll(songsDetailsDto));
         verify(songService, times(1)).findMostPlayedSongsByArtistId(anyLong());
-        verify(songMapper, times(2)).toSongDetailsDto(any());
+        verify(songMapper, times(1)).toListOfSongDetailsDto(anyList());
     }
 }
