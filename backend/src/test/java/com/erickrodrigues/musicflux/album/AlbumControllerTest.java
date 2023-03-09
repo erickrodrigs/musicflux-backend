@@ -62,8 +62,7 @@ public class AlbumControllerTest {
         );
 
         when(albumService.findAllByArtistId(artistId)).thenReturn(albums);
-        when(albumMapper.toAlbumDetailsDto(albums.get(0))).thenReturn(albumsDetailsDto.get(0));
-        when(albumMapper.toAlbumDetailsDto(albums.get(1))).thenReturn(albumsDetailsDto.get(1));
+        when(albumMapper.toListOfAlbumDetailsDto(albums)).thenReturn(albumsDetailsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(albumController).build();
         final MvcResult mvcResult = mockMvc.perform(get("/artists/" + artistId + "/albums"))
@@ -80,6 +79,6 @@ public class AlbumControllerTest {
         assertEquals(albumsDetailsDto.size(), actualResult.size());
         assertTrue(actualResult.containsAll(albumsDetailsDto));
         verify(albumService, times(1)).findAllByArtistId(anyLong());
-        verify(albumMapper, times(2)).toAlbumDetailsDto(any());
+        verify(albumMapper, times(1)).toListOfAlbumDetailsDto(anyList());
     }
 }
