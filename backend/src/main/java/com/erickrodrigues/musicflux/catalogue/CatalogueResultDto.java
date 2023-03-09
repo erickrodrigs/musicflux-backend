@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SearchResultDto {
+public class CatalogueResultDto {
 
     private List<ArtistDetailsDto> artists;
 

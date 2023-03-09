@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SearchResult {
+public class CatalogueResult {
 
     @Builder.Default
     private List<Artist> artists = new ArrayList<>();

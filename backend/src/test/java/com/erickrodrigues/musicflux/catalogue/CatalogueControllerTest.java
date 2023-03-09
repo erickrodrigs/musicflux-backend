@@ -35,10 +35,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class SearchControllerTest {
+public class CatalogueControllerTest {
 
     @Mock
-    private SearchService searchService;
+    private CatalogueService catalogueService;
 
     @Mock
     private ArtistMapper artistMapper;
@@ -53,7 +53,7 @@ public class SearchControllerTest {
     private PlaylistMapper playlistMapper;
 
     @InjectMocks
-    private SearchController searchController;
+    private CatalogueController catalogueController;
 
     @Test
     public void search() throws Exception {
@@ -87,8 +87,8 @@ public class SearchControllerTest {
                 PlaylistDetailsDto.builder().id(1L).name("The Most Dark and Depressive Songs").userId(1L).build()
         );
 
-        when(searchService.execute(types, text)).thenReturn(
-                SearchResult.builder()
+        when(catalogueService.findAllByTypesAndText(types, text)).thenReturn(
+                CatalogueResult.builder()
                         .artists(artists)
                         .albums(albums)
                         .songs(songs)
@@ -104,7 +104,7 @@ public class SearchControllerTest {
         params.addAll("types", types.stream().map(String::valueOf).toList());
         params.add("value", text);
 
-        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(searchController).build();
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(catalogueController).build();
         final MvcResult mvcResult = mockMvc.perform(get("/catalogue")
                         .params(params))
                 .andExpect(status().isOk())
@@ -113,9 +113,9 @@ public class SearchControllerTest {
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        final SearchResultDto actualResponse = objectMapper.readValue(
+        final CatalogueResultDto actualResponse = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(),
-                SearchResultDto.class
+                CatalogueResultDto.class
         );
 
         assertEquals(artistsDetailsDto.size(), actualResponse.getArtists().size());
@@ -126,10 +126,63 @@ public class SearchControllerTest {
         assertTrue(actualResponse.getSongs().containsAll(songsDetailsDto));
         assertEquals(playlistsDetailsDto.size(), actualResponse.getPlaylists().size());
         assertTrue(actualResponse.getPlaylists().containsAll(playlistsDetailsDto));
-        verify(searchService, times(1)).execute(anyList(), anyString());
+        verify(catalogueService, times(1)).findAllByTypesAndText(anyList(), anyString());
         verify(artistMapper, times(1)).toArtistDetailsDto(any());
         verify(albumMapper, times(1)).toAlbumDetailsDto(any());
         verify(songMapper, times(1)).toSongDetailsDto(any());
         verify(playlistMapper, times(1)).toPlaylistDetailsDto(any());
+    }
+
+    @Test
+    public void findAllByGenre() throws Exception {
+        final String genre = "synth-pop";
+        final Artist artist = Artist.builder().id(1L).build();
+        final Album album = Album.builder().id(1L).artists(List.of(artist)).build();
+        final List<Song> songs = List.of(
+                Song.builder().id(1L).album(album).build(),
+                Song.builder().id(2L).album(album).build()
+        );
+        final ArtistDetailsDto artistDetailsDto = ArtistDetailsDto.builder().id(1L).build();
+        final AlbumDetailsDto albumDetailsDto = AlbumDetailsDto.builder().id(1L).artistsIds(List.of(artist.getId())).build();
+        final List<SongDetailsDto> songsDetailsDto = List.of(
+                SongDetailsDto.builder().id(1L).albumId(album.getId()).build(),
+                SongDetailsDto.builder().id(2L).albumId(album.getId()).build()
+        );
+
+        when(catalogueService.findAllByGenreName(genre)).thenReturn(
+                CatalogueResult.builder()
+                        .artists(List.of(artist))
+                        .albums(List.of(album))
+                        .songs(songs)
+                        .build()
+        );
+        when(artistMapper.toArtistDetailsDto(artist)).thenReturn(artistDetailsDto);
+        when(albumMapper.toAlbumDetailsDto(album)).thenReturn(albumDetailsDto);
+        when(songMapper.toSongDetailsDto(songs.get(0))).thenReturn(songsDetailsDto.get(0));
+        when(songMapper.toSongDetailsDto(songs.get(1))).thenReturn(songsDetailsDto.get(1));
+
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(catalogueController).build();
+        final MvcResult mvcResult = mockMvc.perform(get("/catalogue/genres/" + genre))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        final CatalogueResultDto actualResponse = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                CatalogueResultDto.class
+        );
+
+        assertEquals(1, actualResponse.getArtists().size());
+        assertTrue(actualResponse.getArtists().contains(artistDetailsDto));
+        assertEquals(1, actualResponse.getAlbums().size());
+        assertTrue(actualResponse.getAlbums().contains(albumDetailsDto));
+        assertEquals(songsDetailsDto.size(), actualResponse.getSongs().size());
+        assertTrue(actualResponse.getSongs().containsAll(songsDetailsDto));
+        verify(catalogueService, times(1)).findAllByGenreName(anyString());
+        verify(artistMapper, times(1)).toArtistDetailsDto(any());
+        verify(albumMapper, times(1)).toAlbumDetailsDto(any());
+        verify(songMapper, times(2)).toSongDetailsDto(any());
     }
 }
