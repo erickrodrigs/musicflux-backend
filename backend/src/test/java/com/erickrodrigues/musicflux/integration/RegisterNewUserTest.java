@@ -9,21 +9,23 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(classes = ITConfig.class)
 public class RegisterNewUserTest {
 
     @LocalServerPort
     private int port;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     @Autowired
     private UserRepository userRepository;
@@ -44,7 +46,7 @@ public class RegisterNewUserTest {
                 .build();
 
         final ResponseEntity<AuthTokenDto> response = restTemplate.postForEntity(
-                baseUrl() + "/auth/register",
+                getUrl(),
                 authRegistrationDto,
                 AuthTokenDto.class
         );
@@ -64,15 +66,11 @@ public class RegisterNewUserTest {
                 .password("")
                 .build();
 
-        final ResponseEntity<ApiError> response = restTemplate.postForEntity(
-                baseUrl() + "/auth/register",
+        assertThrows(HttpClientErrorException.BadRequest.class, () -> restTemplate.postForEntity(
+                getUrl(),
                 authRegistrationDto,
                 ApiError.class
-        );
-
-        assertEquals(400, response.getStatusCode().value());
-        assertNotNull(response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST.getReasonPhrase(), response.getBody().getError());
+        ));
     }
 
     @Test
@@ -88,18 +86,15 @@ public class RegisterNewUserTest {
                 .email("erick@erick.com")
                 .password("carlos123")
                 .build();
-        final ResponseEntity<ApiError> response = restTemplate.postForEntity(
-                baseUrl() + "/auth/register",
+
+        assertThrows(HttpClientErrorException.BadRequest.class, () -> restTemplate.postForEntity(
+                getUrl(),
                 authRegistrationDto,
                 ApiError.class
-        );
-
-        assertEquals(400, response.getStatusCode().value());
-        assertNotNull(response.getBody());
-        assertEquals(HttpStatus.BAD_REQUEST.getReasonPhrase(), response.getBody().getError());
+        ));
     }
 
-    private String baseUrl() {
-        return "http://localhost:" + port + "/";
+    private String getUrl() {
+        return "http://localhost:" + port + "/auth/register";
     }
 }
