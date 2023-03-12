@@ -73,5 +73,5 @@ INSERT INTO favorites (id, user_id, song_id)
 VALUES (1, 1, 2);
 
 INSERT INTO recently_played_songs (id, user_id, song_id, created_at)
-VALUES (1, 1, 1, CURRENT_TIMESTAMP()),
-       (2, 1, 2, CURRENT_TIMESTAMP());
+VALUES (default, 1, 1, CURRENT_TIMESTAMP()),
+       (default, 1, 2, CURRENT_TIMESTAMP());
