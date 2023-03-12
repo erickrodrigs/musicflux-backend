@@ -59,7 +59,7 @@ VALUES (1, 1),
 INSERT INTO users (id, name, username, email, password)
 VALUES (default, 'Erick', 'erickrodrigs', 'erick@erick.com', '$2a$10$Wmnt48WgTfT5r9.wKIxkn.gB.jV.4Qa..BqmJHvfyeKukfEYnraQC');
 
-INSERT INTO playlists (id, name, user_id) VALUES (1, 'my favorites dm songs of all time', 1);
+INSERT INTO playlists (id, name, user_id) VALUES (default, 'my favorites dm songs of all time', 1);
 
 INSERT INTO playlists_songs (playlist_id, song_id)
 VALUES (1, 3),
