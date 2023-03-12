@@ -1,7 +1,6 @@
 package com.erickrodrigues.musicflux.integration;
 
 import com.erickrodrigues.musicflux.auth.AuthCredentialsDto;
-import com.erickrodrigues.musicflux.auth.AuthRegistrationDto;
 import com.erickrodrigues.musicflux.auth.AuthTokenDto;
 import com.erickrodrigues.musicflux.handlers.ApiError;
 import org.junit.jupiter.api.*;
@@ -9,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = ITConfig.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Sql({"/data-test.sql"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AuthenticateUserTest {
 
     @LocalServerPort
@@ -26,29 +28,12 @@ public class AuthenticateUserTest {
     @Autowired
     private RestTemplate restTemplate;
 
-    @BeforeAll
-    public void setUp() {
-        final AuthRegistrationDto authRegistrationDto = AuthRegistrationDto
-                .builder()
-                .name("Erick")
-                .username("erick123")
-                .email("erick@erick.com")
-                .password("erick123")
-                .build();
-
-        restTemplate.postForEntity(
-                getUrl() + "/auth/register",
-                authRegistrationDto,
-                AuthTokenDto.class
-        );
-    }
-
     @Test
     public void authenticateUser() {
         final AuthCredentialsDto authCredentialsDto = AuthCredentialsDto
                 .builder()
-                .username("erick123")
-                .password("erick123")
+                .username("erickrodrigs")
+                .password("carlos123")
                 .build();
         final ResponseEntity<AuthTokenDto> response = restTemplate.postForEntity(
                 getUrl() + "/auth",
