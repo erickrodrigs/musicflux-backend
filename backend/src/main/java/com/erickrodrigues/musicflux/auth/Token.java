@@ -1,34 +1,32 @@
 package com.erickrodrigues.musicflux.auth;
 
+import com.erickrodrigues.musicflux.shared.BaseEntity;
 import com.erickrodrigues.musicflux.user.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 @Entity
-public class Token {
+@Table(name = "tokens")
+public class Token extends BaseEntity {
 
-    @Id
-    @GeneratedValue
-    public Integer id;
-
-    @Column(unique = true)
-    public String token;
+    @Column
+    private String token;
 
     @Enumerated(EnumType.STRING)
-    public TokenType tokenType = TokenType.BEARER;
+    @Builder.Default
+    private TokenType tokenType = TokenType.BEARER;
 
-    public boolean revoked;
+    private boolean revoked;
 
-    public boolean expired;
+    private boolean expired;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    public User user;
+    private User user;
 }
