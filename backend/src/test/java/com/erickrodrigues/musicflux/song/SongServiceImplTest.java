@@ -141,7 +141,7 @@ public class SongServiceImplTest {
                         .build()
         );
 
-        when(albumRepository.findAllByArtistsIn(List.of(1L))).thenReturn(albums);
+        when(albumRepository.findAllByArtistsId(1L)).thenReturn(albums);
 
         String topSongsIds = songService.findMostPlayedSongsByArtistId(1L)
                 .stream()
@@ -165,7 +165,7 @@ public class SongServiceImplTest {
                         .build()
         );
 
-        when(albumRepository.findAllByArtistsIn(List.of(1L))).thenReturn(albums);
+        when(albumRepository.findAllByArtistsId(1L)).thenReturn(albums);
 
         String topSongsIds = songService.findMostPlayedSongsByArtistId(1L)
                 .stream()

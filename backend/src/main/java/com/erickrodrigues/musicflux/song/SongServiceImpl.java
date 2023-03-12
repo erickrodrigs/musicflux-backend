@@ -59,7 +59,7 @@ public class SongServiceImpl extends BaseService implements SongService {
 
     @Override
     public List<Song> findMostPlayedSongsByArtistId(Long artistId) {
-        final List<Album> albums = albumRepository.findAllByArtistsIn(List.of(artistId));
+        final List<Album> albums = albumRepository.findAllByArtistsId(artistId);
         final List<Song> allSongs = new ArrayList<>();
 
         albums.forEach(album -> allSongs.addAll(album.getSongs()));

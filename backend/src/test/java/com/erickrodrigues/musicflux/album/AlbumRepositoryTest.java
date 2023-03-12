@@ -62,15 +62,15 @@ public class AlbumRepositoryTest {
     }
 
     @Test
-    void findAllByArtistsIn() {
+    void findAllByArtistsId() {
         List<Album> albums;
 
-        albums = albumRepository.findAllByArtistsIn(List.of(artist1.getId()));
+        albums = albumRepository.findAllByArtistsId(artist1.getId());
 
         assertEquals(2, albums.size());
         assertTrue(albums.containsAll(List.of(album1, album2)));
 
-        albums = albumRepository.findAllByArtistsIn(List.of(artist2.getId()));
+        albums = albumRepository.findAllByArtistsId(artist2.getId());
 
         assertEquals(2, albums.size());
         assertTrue(albums.containsAll(List.of(album1, album3)));
