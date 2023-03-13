@@ -66,8 +66,7 @@ VALUES (1, 3),
        (1, 4),
        (1, 5),
        (1, 9),
-       (1, 13),
-       (1, 18);
+       (1, 13);
 
 INSERT INTO favorites (id, user_id, song_id)
 VALUES (1, 1, 2);
