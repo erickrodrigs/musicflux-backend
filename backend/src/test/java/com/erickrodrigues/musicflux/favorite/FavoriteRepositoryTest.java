@@ -4,12 +4,14 @@ import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.user.UserRepository;
 import com.erickrodrigues.musicflux.song.SongRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,24 +28,26 @@ public class FavoriteRepositoryTest {
     @Autowired
     private SongRepository songRepository;
 
-    @Test
-    public void findAllByUserId() {
+    private Favorite favorite1, favorite2, favorite3;
+
+    @BeforeEach
+    public void setUp() {
         final Long userId = 1L;
         final User user = User.builder().id(userId).build();
         final Song song1 = Song.builder().id(1L).build();
         final Song song2 = Song.builder().id(2L).build();
         final Song song3 = Song.builder().id(3L).build();
-        final Favorite favorite1 = Favorite.builder()
+        favorite1 = Favorite.builder()
                 .id(1L)
                 .song(song1)
                 .user(user)
                 .build();
-        final Favorite favorite2 = Favorite.builder()
+        favorite2 = Favorite.builder()
                 .id(2L)
                 .song(song2)
                 .user(user)
                 .build();
-        final Favorite favorite3 = Favorite.builder()
+        favorite3 = Favorite.builder()
                 .id(3L)
                 .song(song3)
                 .user(user)
@@ -56,8 +60,11 @@ public class FavoriteRepositoryTest {
         favoriteRepository.save(favorite1);
         favoriteRepository.save(favorite2);
         favoriteRepository.save(favorite3);
+    }
 
-        final List<Favorite> favorites = favoriteRepository.findAllByUserId(userId);
+    @Test
+    public void findAllByUserId() {
+        final List<Favorite> favorites = favoriteRepository.findAllByUserId(1L);
 
         assertEquals(3, favorites.size());
         assertTrue(favorites.containsAll(List.of(favorite1, favorite2, favorite3)));
@@ -70,5 +77,22 @@ public class FavoriteRepositoryTest {
 
         assertNotNull(favorites);
         assertEquals(0, favorites.size());
+    }
+
+    @Test
+    public void findBySongId() {
+        final Long songId = 1L;
+        final Optional<Favorite> optionalFavorite = favoriteRepository.findBySongId(songId);
+
+        assertTrue(optionalFavorite.isPresent());
+        assertEquals(songId, optionalFavorite.get().getSong().getId());
+    }
+
+    @Test
+    public void findBySongIdWhenItWasNotLiked() {
+        final Long songId = 498L;
+        final Optional<Favorite> optionalFavorite = favoriteRepository.findBySongId(songId);
+
+        assertTrue(optionalFavorite.isEmpty());
     }
 }
