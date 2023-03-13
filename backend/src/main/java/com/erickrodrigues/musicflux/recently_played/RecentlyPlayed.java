@@ -13,9 +13,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @SuperBuilder
 @Entity
 @Table(name = "recently_played_songs")

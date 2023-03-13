@@ -8,9 +8,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @SuperBuilder
 @Entity
 @Table(name = "genres")

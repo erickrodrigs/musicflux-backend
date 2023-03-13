@@ -10,9 +10,7 @@ import lombok.experimental.SuperBuilder;
 import java.io.Serializable;
 
 @Getter
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 @SuperBuilder
 @MappedSuperclass
