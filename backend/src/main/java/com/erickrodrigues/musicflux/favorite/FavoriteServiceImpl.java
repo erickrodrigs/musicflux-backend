@@ -1,5 +1,6 @@
 package com.erickrodrigues.musicflux.favorite;
 
+import com.erickrodrigues.musicflux.shared.ResourceAlreadyExistsException;
 import com.erickrodrigues.musicflux.user.UserRepository;
 import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.SongRepository;
@@ -24,6 +25,13 @@ public class FavoriteServiceImpl extends BaseService implements FavoriteService 
     public Favorite likeSong(Long userId, Long songId) {
         final Song song = super.getEntityOrThrowException(songId, songRepository, Song.class);
         final User user = super.getEntityOrThrowException(userId, userRepository, User.class);
+
+        favoriteRepository
+                .findBySongId(songId)
+                .ifPresent((f) -> {
+                    throw new ResourceAlreadyExistsException("Song with that ID is already liked");
+                });
+
         final Favorite favorite = Favorite.builder()
                 .user(user)
                 .song(song)
