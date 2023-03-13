@@ -71,6 +71,7 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
     @Override
     public void deleteById(Long userId, Long playlistId) {
         super.getEntityOrThrowException(userId, userRepository, User.class);
+        super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
         playlistRepository.deleteById(playlistId);
     }
 }

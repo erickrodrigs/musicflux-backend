@@ -233,10 +233,14 @@ public class PlaylistServiceImplTest {
     @Test
     public void deleteById() {
         final Long userId = 1L, playlistId = 1L;
+
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(Playlist.builder().build()));
         when(userRepository.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).build()));
 
         playlistService.deleteById(userId, playlistId);
 
+        verify(userRepository, times(1)).findById(anyLong());
+        verify(playlistRepository, times(1)).findById(anyLong());
         verify(playlistRepository, times(1)).deleteById(anyLong());
     }
 

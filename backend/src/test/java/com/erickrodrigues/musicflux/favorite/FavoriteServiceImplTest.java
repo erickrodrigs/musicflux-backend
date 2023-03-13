@@ -1,5 +1,7 @@
 package com.erickrodrigues.musicflux.favorite;
 
+import com.erickrodrigues.musicflux.shared.ResourceAlreadyExistsException;
+import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
 import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.user.UserRepository;
@@ -41,6 +43,7 @@ public class FavoriteServiceImplTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(songRepository.findById(songId)).thenReturn(Optional.of(song));
+        when(favoriteRepository.findBySongId(songId)).thenReturn(Optional.empty());
         when(favoriteRepository.save(any())).thenReturn(favorite);
 
         final Favorite actualFavorite = favoriteService.likeSong(userId, songId);
@@ -59,7 +62,7 @@ public class FavoriteServiceImplTest {
     public void likeSongWhenSongDoesNotExist() {
         when(songRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> favoriteService.likeSong(1L, 1L));
+        assertThrows(ResourceNotFoundException.class, () -> favoriteService.likeSong(1L, 1L));
         verify(songRepository, times(1)).findById(anyLong());
         verify(favoriteRepository, times(0)).save(any());
     }
@@ -69,8 +72,19 @@ public class FavoriteServiceImplTest {
         when(songRepository.findById(anyLong())).thenReturn(Optional.of(Song.builder().build()));
         when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> favoriteService.likeSong(1L, 1L));
+        assertThrows(ResourceNotFoundException.class, () -> favoriteService.likeSong(1L, 1L));
         verify(userRepository, times(1)).findById(anyLong());
+        verify(favoriteRepository, times(0)).save(any());
+    }
+
+    @Test
+    public void likeSongWhenItWasAlreadyLiked() {
+        when(songRepository.findById(anyLong())).thenReturn(Optional.of(Song.builder().build()));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
+        when(favoriteRepository.findBySongId(anyLong())).thenReturn(Optional.of(Favorite.builder().build()));
+
+        assertThrows(ResourceAlreadyExistsException.class, () -> favoriteService.likeSong(1L, 1L));
+        verify(favoriteRepository, times(1)).findBySongId(anyLong());
         verify(favoriteRepository, times(0)).save(any());
     }
 
