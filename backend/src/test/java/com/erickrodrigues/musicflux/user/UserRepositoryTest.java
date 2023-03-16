@@ -1,9 +1,8 @@
 package com.erickrodrigues.musicflux.user;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.Optional;
 
@@ -11,83 +10,71 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
 
-    @Test
-    public void findByUsernameOrEmail() {
-        final User user1 = User.builder().id(1L).username("erick666").email("erick@erick.com").build();
-        final User user2 = User.builder().id(2L).username("tiago333").email("tiago@tiago.com").build();
+    private static User user1 = User
+            .builder()
+            .name("Erick")
+            .username("erick666")
+            .email("erick@erick.com")
+            .password("erick123")
+            .build();
+    private static User user2 = User
+            .builder()
+            .name("Tiago")
+            .username("tiago333")
+            .email("tiago@tiago.com")
+            .password("tiago123")
+            .build();
 
-        userRepository.save(user1);
-        userRepository.save(user2);
-
-        Optional<User> optionalUser;
-
-        optionalUser = userRepository.findByUsernameOrEmail("erick666", "abc@abc.com");
-
-        assertTrue(optionalUser.isPresent());
-        assertEquals(user1.getId(), optionalUser.get().getId());
-
-        optionalUser = userRepository.findByUsernameOrEmail("abc123", "tiago@tiago.com");
-
-        assertTrue(optionalUser.isPresent());
-        assertEquals(user2.getId(), optionalUser.get().getId());
+    @BeforeAll
+    public void setUp() {
+        user1 = userRepository.save(user1);
+        user2 = userRepository.save(user2);
     }
 
     @Test
-    public void findByUsernameOrEmailWhenTheyDoNotExist() {
-        final User user1 = User.builder().id(1L).username("erick666").email("erick@erick.com").build();
-        final User user2 = User.builder().id(2L).username("tiago333").email("tiago@tiago.com").build();
+    public void shouldFindUserByUsernameOrEmail() {
+        final Optional<User> optionalUserByUsername = userRepository.findByUsernameOrEmail(
+                "erick666", "abc@abc.com"
+        );
+        final Optional<User> optionalUserByEmail = userRepository.findByUsernameOrEmail(
+                "abc123", "erick@erick.com"
+        );
 
-        userRepository.save(user1);
-        userRepository.save(user2);
-
-        Optional<User> optionalUser = userRepository.findByUsernameOrEmail("abc123", "abc@abc.com");
-
-        assertTrue(optionalUser.isEmpty());
+        assertTrue(optionalUserByUsername.isPresent(), "User was not found by username");
+        assertTrue(optionalUserByEmail.isPresent(), "User was not found by email");
+        assertEquals(user1.getId(), optionalUserByUsername.get().getId(), "Wrong user id when finding by username");
+        assertEquals(user1.getId(), optionalUserByEmail.get().getId(), "Wrong user id when finding by email");
     }
 
     @Test
-    public void findByUsernameAndPassword() {
-        final User user1 = User.builder().id(1L).username("erick666").password("erick123").build();
-        final User user2 = User.builder().id(2L).username("tiago333").password("tiago123").build();
+    public void shouldNotFindUserByUsernameOrEmailWhenTheyDoNotExist() {
+        final Optional<User> optionalUser = userRepository.findByUsernameOrEmail("abc123", "abc@abc.com");
 
-        userRepository.save(user1);
-        userRepository.save(user2);
-
-        Optional<User> optionalUser;
-
-        optionalUser = userRepository.findByUsernameAndPassword("erick666", "erick123");
-
-        assertTrue(optionalUser.isPresent());
-        assertEquals(user1.getId(), optionalUser.get().getId());
-
-        optionalUser = userRepository.findByUsernameAndPassword("tiago333", "tiago123");
-
-        assertTrue(optionalUser.isPresent());
-        assertEquals(user2.getId(), optionalUser.get().getId());
+        assertTrue(optionalUser.isEmpty(), "User was found by username or email when they actually do not exist");
     }
 
     @Test
-    public void findByUsernameAndPasswordWhenTheyDoNotMatch() {
-        final User user1 = User.builder().id(1L).username("erick666").password("erick123").build();
-        final User user2 = User.builder().id(2L).username("tiago333").password("tiago123").build();
+    public void shouldFindUserByUsernameAndPassword() {
+        final Optional<User> optionalUser = userRepository.findByUsernameAndPassword(
+                "tiago333", "tiago123"
+        );
 
-        userRepository.save(user1);
-        userRepository.save(user2);
+        assertTrue(optionalUser.isPresent(), "User was not found by username and password");
+        assertEquals(user2.getId(), optionalUser.get().getId(), "Wrong user id when finding by username and password");
+    }
 
-        Optional<User> optionalUser;
+    @Test
+    public void shouldNotFindUserByUsernameAndPasswordWhenTheyDoNotMatch() {
+        final Optional<User> optionalUser = userRepository.findByUsernameAndPassword(
+                "erick666", "tiago123"
+        );
 
-        optionalUser = userRepository.findByUsernameAndPassword("erick666", "tiago123");
-
-        assertTrue(optionalUser.isEmpty());
-
-        optionalUser = userRepository.findByUsernameAndPassword("tiago333", "erick123");
-
-        assertTrue(optionalUser.isEmpty());
+        assertTrue(optionalUser.isEmpty(), "User was found by username and password when they actually do not match");
     }
 }

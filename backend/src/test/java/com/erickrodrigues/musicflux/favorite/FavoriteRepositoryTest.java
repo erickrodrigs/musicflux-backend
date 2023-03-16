@@ -4,11 +4,11 @@ import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.user.UserRepository;
 import com.erickrodrigues.musicflux.song.SongRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,8 +16,14 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class FavoriteRepositoryTest {
+
+    private static final String WRONG_NUMBER_OF_FAVORITES = "Wrong number of favorites";
+    private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_FAVORITES = "Actual list does not contain specified favorites";
+    private static final String FAVORITE_WAS_NOT_FOUND = "Favorite of given song was not found";
+    private static final String WRONG_FAVORITE_SONG_ID = "Wrong favorite song id";
+    private static final String FAVORITE_SONG_WAS_FOUND_WITH_GIVEN_ID = "Favorite song was found with given id";
 
     @Autowired
     private FavoriteRepository favoriteRepository;
@@ -28,71 +34,67 @@ public class FavoriteRepositoryTest {
     @Autowired
     private SongRepository songRepository;
 
-    private Favorite favorite1, favorite2, favorite3;
+    private static User user;
+    private static Song song1;
+    private static Song song2;
+    private static Song song3;
+    private static Favorite favorite1;
+    private static Favorite favorite2;
+    private static Favorite favorite3;
 
-    @BeforeEach
+    @BeforeAll
     public void setUp() {
-        final Long userId = 1L;
-        final User user = User.builder().id(userId).build();
-        final Song song1 = Song.builder().id(1L).build();
-        final Song song2 = Song.builder().id(2L).build();
-        final Song song3 = Song.builder().id(3L).build();
-        favorite1 = Favorite.builder()
-                .id(1L)
-                .song(song1)
-                .user(user)
-                .build();
-        favorite2 = Favorite.builder()
-                .id(2L)
-                .song(song2)
-                .user(user)
-                .build();
-        favorite3 = Favorite.builder()
-                .id(3L)
-                .song(song3)
-                .user(user)
-                .build();
+        song1 = Song.builder().id(1L).build();
+        song2 = Song.builder().id(2L).build();
+        song3 = Song.builder().id(3L).build();
+        song1 = songRepository.save(song1);
+        song2 = songRepository.save(song2);
+        song3 = songRepository.save(song3);
 
-        songRepository.save(song1);
-        songRepository.save(song2);
-        songRepository.save(song3);
-        userRepository.save(user);
-        favoriteRepository.save(favorite1);
-        favoriteRepository.save(favorite2);
-        favoriteRepository.save(favorite3);
+        user = User.builder().id(1L).build();
+        user = userRepository.save(user);
+
+        favorite1 = Favorite.builder().song(song1).user(user).build();
+        favorite2 = Favorite.builder().song(song2).user(user).build();
+        favorite3 = Favorite.builder().song(song3).user(user).build();
+        favorite1 = favoriteRepository.save(favorite1);
+        favorite2 = favoriteRepository.save(favorite2);
+        favorite3 = favoriteRepository.save(favorite3);
     }
 
     @Test
-    public void findAllByUserId() {
-        final List<Favorite> favorites = favoriteRepository.findAllByUserId(1L);
+    public void shouldFindAllLikedSongsByUser() {
+        final List<Favorite> favorites = favoriteRepository.findAllByUserId(user.getId());
 
-        assertEquals(3, favorites.size());
-        assertTrue(favorites.containsAll(List.of(favorite1, favorite2, favorite3)));
+        assertEquals(3, favorites.size(), WRONG_NUMBER_OF_FAVORITES);
+        assertTrue(favorites.containsAll(List.of(favorite1, favorite2, favorite3)), LIST_DOES_NOT_CONTAIN_SPECIFIED_FAVORITES);
     }
 
     @Test
-    public void findAllByUserIdWhenItDoesNotExist() {
-        final Long unknownUserId = 3L;
+    public void shouldNotFindAnyLikedSongByUserWhenTheyDoNotExist() {
+        final Long unknownUserId = user.getId() + 498L;
+
         final List<Favorite> favorites = favoriteRepository.findAllByUserId(unknownUserId);
 
-        assertNotNull(favorites);
-        assertEquals(0, favorites.size());
+        assertEquals(0, favorites.size(), WRONG_NUMBER_OF_FAVORITES);
     }
 
     @Test
-    public void findBySongId() {
-        final Long songId = 1L;
+    public void shouldFindLikedSongByItsId() {
+        final Long songId = song1.getId();
+
         final Optional<Favorite> optionalFavorite = favoriteRepository.findBySongId(songId);
 
-        assertTrue(optionalFavorite.isPresent());
-        assertEquals(songId, optionalFavorite.get().getSong().getId());
+        assertTrue(optionalFavorite.isPresent(), FAVORITE_WAS_NOT_FOUND);
+        assertEquals(songId, optionalFavorite.get().getSong().getId(), WRONG_FAVORITE_SONG_ID);
     }
 
     @Test
-    public void findBySongIdWhenItWasNotLiked() {
-        final Long songId = 498L;
-        final Optional<Favorite> optionalFavorite = favoriteRepository.findBySongId(songId);
+    public void shouldNotFindLikedSongWhenItWasNotLiked() {
+        final Long unknownSongId = song1.getId() + song2.getId() + song3.getId();
 
-        assertTrue(optionalFavorite.isEmpty());
+        final Optional<Favorite> optionalFavorite = favoriteRepository.findBySongId(unknownSongId);
+
+        assertTrue(optionalFavorite.isEmpty(), FAVORITE_SONG_WAS_FOUND_WITH_GIVEN_ID);
     }
 }

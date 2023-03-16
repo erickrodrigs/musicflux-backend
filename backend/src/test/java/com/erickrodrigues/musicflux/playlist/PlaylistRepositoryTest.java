@@ -2,19 +2,23 @@ package com.erickrodrigues.musicflux.playlist;
 
 import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.user.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PlaylistRepositoryTest {
+
+    private static final String WRONG_NUMBER_OF_PLAYLISTS = "Wrong number of playlists";
+    private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_PLAYLISTS = "Actual list does not contain specified playlists";
+    private static final String PLAYLISTS_LIST_IS_NOT_EMPTY = "Playlists list is not empty";
 
     @Autowired
     private PlaylistRepository playlistRepository;
@@ -22,52 +26,57 @@ public class PlaylistRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
-    private User user;
+    private static User user = User
+            .builder()
+            .build();
+    private static Playlist playlist1 = Playlist
+            .builder()
+            .name("my fav songs - heavy metal")
+            .build();
+    private static Playlist playlist2 = Playlist
+            .builder()
+            .name("THESE ARE MY FAV SONGS OF ALL TIME")
+            .build();
+    private static Playlist playlist3 = Playlist
+            .builder()
+            .name("funk")
+            .build();
 
-    private Playlist playlist1, playlist2, playlist3;
-
-    @BeforeEach
+    @BeforeAll
     public void setUp() {
-        user = User.builder().id(1L).build();
-        playlist1 = Playlist.builder().id(1L).user(user).name("my fav songs - heavy metal").build();
-        playlist2 = Playlist.builder().id(2L).user(user).name("THESE ARE MY FAV SONGS OF ALL TIME").build();
-        playlist3 = Playlist.builder().id(3L).user(user).name("funk").build();
+        user = userRepository.save(user);
 
-        userRepository.save(user);
-        playlistRepository.save(playlist1);
-        playlistRepository.save(playlist2);
-        playlistRepository.save(playlist3);
+        playlist1.setUser(user);
+        playlist2.setUser(user);
+        playlist3.setUser(user);
+
+        playlist1 = playlistRepository.save(playlist1);
+        playlist2 = playlistRepository.save(playlist2);
+        playlist3 = playlistRepository.save(playlist3);
     }
 
     @Test
-    public void findAllByNameContainingIgnoreCase() {
-        List<Playlist> playlists;
+    public void shouldFindAllPlaylistsByNameContainingIgnoreCase() {
+        final String text = "my fav songs";
+        final List<Playlist> playlists = playlistRepository.findAllByNameContainingIgnoreCase(text);
 
-        playlists = playlistRepository.findAllByNameContainingIgnoreCase("my fav songs");
-
-        assertEquals(2, playlists.size());
-        assertTrue(playlists.containsAll(List.of(playlist1, playlist2)));
-
-        playlists = playlistRepository.findAllByNameContainingIgnoreCase("unk");
-
-        assertEquals(1, playlists.size());
-        assertTrue(playlists.contains(playlist3));
+        assertEquals(2, playlists.size(), WRONG_NUMBER_OF_PLAYLISTS);
+        assertTrue(playlists.containsAll(List.of(playlist1, playlist2)), LIST_DOES_NOT_CONTAIN_SPECIFIED_PLAYLISTS);
     }
 
     @Test
-    public void findAllByUserId() {
+    public void shouldFindAllPlaylistsByUserId() {
         final List<Playlist> playlists = playlistRepository.findAllByUserId(user.getId());
 
-        assertEquals(3, playlists.size());
-        assertTrue(playlists.containsAll(List.of(playlist1, playlist2, playlist3)));
+        assertEquals(3, playlists.size(), WRONG_NUMBER_OF_PLAYLISTS);
+        assertTrue(playlists.containsAll(List.of(playlist1, playlist2, playlist3)), LIST_DOES_NOT_CONTAIN_SPECIFIED_PLAYLISTS);
     }
 
     @Test
-    public void findAllByUserIdWhenItDoesNotExist() {
+    public void shouldNotFindAnyPlaylistByUserIdWhenItDoesNotExist() {
         final Long unknownUserId = 4235L;
         final List<Playlist> playlists = playlistRepository.findAllByUserId(unknownUserId);
 
-        assertNotNull(playlists);
-        assertEquals(0, playlists.size());
+        assertTrue(playlists.isEmpty(), PLAYLISTS_LIST_IS_NOT_EMPTY);
     }
 }

@@ -1,10 +1,10 @@
 package com.erickrodrigues.musicflux.artist;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.util.List;
 
@@ -12,37 +12,45 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ArtistRepositoryTest {
+
+    private static final String WRONG_NUMBER_OF_ARTISTS = "Wrong number of artists";
+    private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_ARTISTS = "Actual list does not contain specified artists";
 
     @Autowired
     private ArtistRepository artistRepository;
 
-    private Artist artist1, artist2, artist3;
+    private static Artist ironMaiden = Artist
+            .builder()
+            .name("Iron Maiden")
+            .build();
+    private static Artist ironSavior = Artist
+            .builder()
+            .name("Iron Savior")
+            .build();
+    private static Artist metallica = Artist
+            .builder()
+            .name("Metallica")
+            .build();
 
-    @BeforeEach
+    @BeforeAll
     public void setUp() {
-        artist1 = Artist.builder().id(1L).name("Iron Maiden").build();
-        artist2 = Artist.builder().id(2L).name("Iron Savior").build();
-        artist3 = Artist.builder().id(3L).name("Metallica").build();
-
-        artistRepository.save(artist1);
-        artistRepository.save(artist2);
-        artistRepository.save(artist3);
+        ironMaiden = artistRepository.save(ironMaiden);
+        ironSavior = artistRepository.save(ironSavior);
+        metallica = artistRepository.save(metallica);
     }
 
     @Test
-    public void findAllByNameContainingIgnoreCase() {
-        List<Artist> artists;
+    public void shouldFindAllArtistsByNameContainingTextAndIgnoringCase() {
+        final String ironText = "iron", metaText = "meta";
 
-        artists = artistRepository.findAllByNameContainingIgnoreCase("iron");
+        final List<Artist> artistsWithIron = artistRepository.findAllByNameContainingIgnoreCase(ironText);
+        final List<Artist> artistsWithMeta = artistRepository.findAllByNameContainingIgnoreCase(metaText);
 
-        assertEquals(2, artists.size());
-        assertTrue(artists.containsAll(List.of(artist1, artist2)));
-
-        artists = artistRepository.findAllByNameContainingIgnoreCase("meta");
-
-        assertEquals(1, artists.size());
-        assertTrue(artists.contains(artist3));
+        assertEquals(2, artistsWithIron.size(), WRONG_NUMBER_OF_ARTISTS);
+        assertEquals(1, artistsWithMeta.size(), WRONG_NUMBER_OF_ARTISTS);
+        assertTrue(artistsWithIron.containsAll(List.of(ironMaiden, ironSavior)), LIST_DOES_NOT_CONTAIN_SPECIFIED_ARTISTS);
+        assertTrue(artistsWithMeta.contains(metallica), LIST_DOES_NOT_CONTAIN_SPECIFIED_ARTISTS);
     }
 }

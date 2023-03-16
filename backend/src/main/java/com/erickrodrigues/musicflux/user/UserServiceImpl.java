@@ -18,8 +18,8 @@ public class UserServiceImpl extends BaseService implements UserService, UserDet
     @Override
     public User findByUsername(String username) {
         return userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+                .findByUsernameOrEmail(username, "")
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
     @Transactional
