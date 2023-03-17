@@ -2,6 +2,7 @@ package com.erickrodrigues.musicflux.user;
 
 import com.erickrodrigues.musicflux.shared.ResourceAlreadyExistsException;
 import com.erickrodrigues.musicflux.shared.BaseService;
+import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl extends BaseService implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
+
+    @Override
+    public User findById(Long id) {
+        return userRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User with that ID does not exist"));
+    }
 
     @Override
     public User findByUsername(String username) {
