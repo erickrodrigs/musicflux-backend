@@ -21,6 +21,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class RecentlyPlayedServiceImplTest {
 
+    private static final String WRONG_NUMBER_OF_RECENTLY_PLAYED_SONGS = "Wrong number of recently played songs";
+    private static final String WRONG_SONG = "Wrong song";
+    private static final String WRONG_USER = "Wrong user";
+
     @Mock
     private RecentlyPlayedRepository recentlyPlayedRepository;
 
@@ -28,7 +32,7 @@ public class RecentlyPlayedServiceImplTest {
     private RecentlyPlayedServiceImpl recentlyPlayedService;
 
     @Test
-    public void findAllByUserId() {
+    public void shouldFindAllRecentlyPlayedSongsByUserId() {
         final Long userId = 1L;
         final User user = User.builder().id(userId).build();
         final RecentlyPlayed recentlyPlayed1 = RecentlyPlayed.builder()
@@ -49,7 +53,6 @@ public class RecentlyPlayedServiceImplTest {
                 .user(user)
                 .createdAt(LocalDateTime.now().plusDays(4))
                 .build();
-
         final Pageable pageable = PageRequest.of(0, 1);
         when(recentlyPlayedRepository.findAllByUserIdOrderByCreatedAtDesc(pageable, userId)).thenReturn(
                 new PageImpl<>(List.of(recentlyPlayed3, recentlyPlayed2, recentlyPlayed1))
@@ -57,9 +60,27 @@ public class RecentlyPlayedServiceImplTest {
 
         final Page<RecentlyPlayed> page = recentlyPlayedService.findAllByUserId(pageable, userId);
 
-        assertEquals(3, page.toList().size());
+        assertEquals(3, page.toList().size(), WRONG_NUMBER_OF_RECENTLY_PLAYED_SONGS);
         assertTrue(page.toList().contains(recentlyPlayed3));
+        verify(recentlyPlayedRepository, times(1)).findAllByUserIdOrderByCreatedAtDesc(eq(pageable), eq(userId));
+    }
 
-        verify(recentlyPlayedRepository, times(1)).findAllByUserIdOrderByCreatedAtDesc(any(), eq(userId));
+    @Test
+    public void shouldSaveARecentlyPlayedSong() {
+        final Song song = Song.builder().build();
+        final User user = User.builder().build();
+        final RecentlyPlayed recentlyPlayed = RecentlyPlayed
+                .builder()
+                .song(song)
+                .user(user)
+                .build();
+        when(recentlyPlayedRepository.save(recentlyPlayed)).thenReturn(recentlyPlayed);
+
+        final RecentlyPlayed actualRecentlyPlayed = recentlyPlayedService.save(song, user);
+
+        assertNotNull(actualRecentlyPlayed);
+        assertEquals(song, actualRecentlyPlayed.getSong(), WRONG_SONG);
+        assertEquals(user, actualRecentlyPlayed.getUser(), WRONG_USER);
+        verify(recentlyPlayedRepository, times(1)).save(recentlyPlayed);
     }
 }
