@@ -1,10 +1,9 @@
 package com.erickrodrigues.musicflux.song;
 
-import com.erickrodrigues.musicflux.album.Album;
+import com.erickrodrigues.musicflux.recently_played.RecentlyPlayedService;
+import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
 import com.erickrodrigues.musicflux.user.User;
-import com.erickrodrigues.musicflux.album.AlbumRepository;
-import com.erickrodrigues.musicflux.user.UserRepository;
-import com.erickrodrigues.musicflux.recently_played.RecentlyPlayedRepository;
+import com.erickrodrigues.musicflux.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,159 +19,152 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class SongServiceImplTest {
 
+    private static final String WRONG_NUMBER_OF_PLAYS = "Wrong number of plays";
+    private static final String WRONG_NUMBER_OF_SONGS = "Wrong number of songs";
+    private static final String WRONG_ORDER_FOR_MOST_PLAYED_SONGS = "Wrong order for most played songs";
+
     @Mock
     private SongRepository songRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Mock
-    private AlbumRepository albumRepository;
-
-    @Mock
-    private RecentlyPlayedRepository recentlyPlayedRepository;
+    private RecentlyPlayedService recentlyPlayedService;
 
     @InjectMocks
     private SongServiceImpl songService;
 
     @Test
-    public void play() {
-        Long songId = 1L, userId = 1L;
-
-        User user = User.builder().id(userId).build();
-        Song song = Song.builder().id(songId).build();
-
+    public void shouldPlayASong() {
+        final Long songId = 1L, userId = 1L;
+        final User user = User.builder().id(userId).build();
+        final Song song = Song.builder().id(songId).build();
         when(songRepository.findById(songId)).thenReturn(Optional.of(song));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userService.findById(userId)).thenReturn(user);
 
         songService.play(userId, songId);
 
-        assertEquals(1, song.getNumberOfPlays());
-
-        verify(songRepository, times(1)).findById(anyLong());
-        verify(userRepository, times(1)).findById(anyLong());
-        verify(songRepository, times(1)).save(any());
-        verify(userRepository, times(1)).save(any());
-        verify(recentlyPlayedRepository, times(1)).save(any());
+        assertEquals(1, song.getNumberOfPlays(), WRONG_NUMBER_OF_PLAYS);
+        verify(songRepository, times(1)).findById(songId);
+        verify(userService, times(1)).findById(userId);
+        verify(songRepository, times(1)).save(song);
+        verify(recentlyPlayedService, times(1)).save(song, user);
     }
 
     @Test
-    public void playWithInvalidArguments() {
-        when(songRepository.findById(anyLong())).thenReturn(Optional.empty());
+    public void shouldThrowAnExceptionWhenPlayingASongWithInvalidId() {
+        final Long invalidSongId = 394L, userId = 1L;
+        when(songRepository.findById(invalidSongId)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> songService.play(1L, 1L));
-
-        when(songRepository.findById(anyLong())).thenReturn(Optional.of(Song.builder().build()));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> songService.play(1L, 1L));
+        assertThrows(ResourceNotFoundException.class, () -> songService.play(userId, invalidSongId));
+        verify(songRepository, times(1)).findById(invalidSongId);
     }
 
     @Test
-    public void findAllByTitle() {
-        String title = "I wanna love you";
-        List<Song> songs = List.of(
+    public void shouldThrowAnExceptionWhenUserWithInvalidIdPlaysASong() {
+        final Long songId = 1L, invalidUserId = 394L;
+        final Song song = Song.builder().id(songId).build();
+        when(songRepository.findById(songId)).thenReturn(Optional.of(song));
+        when(userService.findById(invalidUserId)).thenThrow(ResourceNotFoundException.class);
+
+        assertThrows(ResourceNotFoundException.class, () -> songService.play(invalidUserId, songId));
+        verify(songRepository, times(1)).findById(songId);
+        verify(userService, times(1)).findById(invalidUserId);
+    }
+
+    @Test
+    public void shouldFindAllSongsByTitleContainingTextAndIgnoringCase() {
+        final String text = "I wanna love you";
+        final List<Song> songs = List.of(
                 Song.builder().id(1L).title("i wanna love you").build(),
                 Song.builder().id(2L).title("all i know is i wanna love you").build()
         );
+        when(songRepository.findAllByTitleContainingIgnoreCase(text)).thenReturn(songs);
 
-        when(songRepository.findAllByTitleContainingIgnoreCase(title)).thenReturn(songs);
-
-        assertEquals(2, songService.findAllByTitleContainingIgnoreCase(title).size());
-        verify(songRepository, times(1)).findAllByTitleContainingIgnoreCase(anyString());
+        assertEquals(songs.size(), songService.findAllByTitleContainingIgnoreCase(text).size(), WRONG_NUMBER_OF_SONGS);
+        verify(songRepository, times(1)).findAllByTitleContainingIgnoreCase(text);
     }
 
     @Test
-    public void findAllByGenreName() {
+    public void shouldFindAllSongsByGenreName() {
         final String genre = "synth-pop";
         final List<Song> songs = List.of(
                 Song.builder().id(1L).title("Black Celebration").build(),
                 Song.builder().id(2L).title("Never Let Me Down Again").build()
         );
-
         when(songRepository.findAllByGenresNameIgnoreCase(genre)).thenReturn(songs);
 
-        assertEquals(2, songService.findAllByGenreName(genre).size());
-        verify(songRepository, times(1)).findAllByGenresNameIgnoreCase(anyString());
+        final List<Song> actualSongs = songService.findAllByGenreName(genre);
+
+        assertEquals(songs.size(), actualSongs.size(), WRONG_NUMBER_OF_SONGS);
+        verify(songRepository, times(1)).findAllByGenresNameIgnoreCase(genre);
     }
 
     @Test
-    public void findAllByAlbumId() {
+    public void shouldFindAllSongsByAlbumId() {
         final Long albumId = 1L;
         final List<Song> songs = List.of(
                 Song.builder().id(1L).title("i wanna love you").build(),
                 Song.builder().id(2L).title("all i know is i wanna love you").build()
         );
-        final Album album = Album.builder().id(albumId).songs(songs).build();
+        when(songRepository.findAllByAlbumId(albumId)).thenReturn(songs);
 
-        when(albumRepository.findById(albumId)).thenReturn(Optional.of(album));
+        final List<Song> actualSongs = songService.findAllByAlbumId(albumId);
 
-        assertEquals(2, songService.findAllByAlbumId(albumId).size());
-        verify(albumRepository, times(1)).findById(anyLong());
+        assertEquals(songs.size(), actualSongs.size(), WRONG_NUMBER_OF_SONGS);
+        verify(songRepository, times(1)).findAllByAlbumId(albumId);
     }
 
     @Test
-    public void findAllByAlbumIdThatDoesNotExist() {
+    public void shouldThrowAnExceptionWhenFindingAllSongsByAlbumIdThatDoesNotExist() {
         final Long albumId = 1L;
-        when(albumRepository.findById(albumId)).thenReturn(Optional.empty());
+        when(songRepository.findAllByAlbumId(albumId)).thenReturn(List.of());
 
-        assertThrows(RuntimeException.class, () -> songService.findAllByAlbumId(albumId));
-        verify(albumRepository, times(1)).findById(anyLong());
+        assertThrows(ResourceNotFoundException.class, () -> songService.findAllByAlbumId(albumId));
+        verify(songRepository, times(1)).findAllByAlbumId(albumId);
     }
 
     @Test
-    public void findAllByArtistId() {
-        List<Album> albums = List.of(
-                Album.builder()
-                        .id(1L)
-                        .songs(
-                                List.of(Song.builder().id(1L).numberOfPlays(5400L).build(),
-                                        Song.builder().id(2L).numberOfPlays(400L).build(),
-                                        Song.builder().id(3L).numberOfPlays(7600L).build())
-                        )
-                        .build(),
-                Album.builder()
-                        .id(2L)
-                        .songs(
-                                List.of(Song.builder().id(4L).numberOfPlays(1000L).build(),
-                                        Song.builder().id(5L).numberOfPlays(9000L).build(),
-                                        Song.builder().id(6L).numberOfPlays(7200L).build())
-                        )
-                        .build()
+    public void shouldReturnFiveMostPlayedSongsByArtistId() {
+        final Long artistId = 1L;
+        final List<Song> songs = List.of(
+                Song.builder().id(1L).numberOfPlays(5400L).build(),
+                Song.builder().id(2L).numberOfPlays(400L).build(),
+                Song.builder().id(3L).numberOfPlays(7600L).build(),
+                Song.builder().id(4L).numberOfPlays(1000L).build(),
+                Song.builder().id(5L).numberOfPlays(9000L).build(),
+                Song.builder().id(6L).numberOfPlays(7200L).build()
         );
+        when(songRepository.findAllByAlbumArtistsId(artistId)).thenReturn(songs);
 
-        when(albumRepository.findAllByArtistsId(1L)).thenReturn(albums);
-
-        String topSongsIds = songService.findMostPlayedSongsByArtistId(1L)
+        final String topSongsIds = songService.findMostPlayedSongsByArtistId(artistId)
                 .stream()
                 .map(Song::getId)
                 .toList()
                 .toString();
 
-        assertEquals("[5, 3, 6, 1, 4]", topSongsIds);
+        assertEquals("[5, 3, 6, 1, 4]", topSongsIds, WRONG_ORDER_FOR_MOST_PLAYED_SONGS);
+        verify(songRepository, times(1)).findAllByAlbumArtistsId(artistId);
     }
 
     @Test
-    public void findAllByArtistIdWhenArtistHasLessThanFiveSongs() {
-        List<Album> albums = List.of(
-                Album.builder()
-                        .id(1L)
-                        .songs(
-                                List.of(Song.builder().id(1L).numberOfPlays(5400L).build(),
-                                        Song.builder().id(2L).numberOfPlays(400L).build(),
-                                        Song.builder().id(3L).numberOfPlays(7600L).build())
-                        )
-                        .build()
+    public void WhenArtistHasLessThanFiveSongs_ShouldReturnLessThanFiveMostPlayedSongs() {
+        final Long artistId = 1L;
+        final List<Song> songs = List.of(
+                Song.builder().id(1L).numberOfPlays(5400L).build(),
+                Song.builder().id(2L).numberOfPlays(400L).build(),
+                Song.builder().id(3L).numberOfPlays(7600L).build()
         );
+        when(songRepository.findAllByAlbumArtistsId(artistId)).thenReturn(songs);
 
-        when(albumRepository.findAllByArtistsId(1L)).thenReturn(albums);
-
-        String topSongsIds = songService.findMostPlayedSongsByArtistId(1L)
+        final String topSongsIds = songService.findMostPlayedSongsByArtistId(artistId)
                 .stream()
                 .map(Song::getId)
                 .toList()
                 .toString();
 
-        assertEquals("[3, 1, 2]", topSongsIds);
+        assertEquals("[3, 1, 2]", topSongsIds, WRONG_ORDER_FOR_MOST_PLAYED_SONGS);
+        verify(songRepository, times(1)).findAllByAlbumArtistsId(artistId);
     }
 }

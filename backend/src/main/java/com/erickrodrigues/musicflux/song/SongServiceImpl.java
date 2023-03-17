@@ -1,17 +1,14 @@
 package com.erickrodrigues.musicflux.song;
 
+import com.erickrodrigues.musicflux.recently_played.RecentlyPlayedService;
+import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
 import com.erickrodrigues.musicflux.user.User;
-import com.erickrodrigues.musicflux.recently_played.RecentlyPlayed;
-import com.erickrodrigues.musicflux.album.AlbumRepository;
-import com.erickrodrigues.musicflux.user.UserRepository;
-import com.erickrodrigues.musicflux.album.Album;
-import com.erickrodrigues.musicflux.recently_played.RecentlyPlayedRepository;
 import com.erickrodrigues.musicflux.shared.BaseService;
+import com.erickrodrigues.musicflux.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,26 +17,19 @@ import java.util.stream.Collectors;
 public class SongServiceImpl extends BaseService implements SongService {
 
     private final SongRepository songRepository;
-    private final UserRepository userRepository;
-    private final AlbumRepository albumRepository;
-    private final RecentlyPlayedRepository recentlyPlayedRepository;
+    private final UserService userService;
+    private final RecentlyPlayedService recentlyPlayedService;
 
     @Transactional
     @Override
     public void play(Long userId, Long songId) {
         final Song song = super.getEntityOrThrowException(songId, songRepository, Song.class);
-        final User user = super.getEntityOrThrowException(userId, userRepository, User.class);
+        final User user = userService.findById(userId);
 
         song.play();
 
-        final RecentlyPlayed recentlyPlayed = RecentlyPlayed.builder()
-                .user(user)
-                .song(song)
-                .build();
-
         songRepository.save(song);
-        userRepository.save(user);
-        recentlyPlayedRepository.save(recentlyPlayed);
+        recentlyPlayedService.save(song, user);
     }
 
     @Override
@@ -54,17 +44,17 @@ public class SongServiceImpl extends BaseService implements SongService {
 
     @Override
     public List<Song> findAllByAlbumId(Long albumId) {
-        return super.getEntityOrThrowException(albumId, albumRepository, Album.class).getSongs();
+        final List<Song> songs = songRepository.findAllByAlbumId(albumId);
+
+        if (songs.isEmpty()) throw new ResourceNotFoundException("Album with that ID does not exist");
+
+        return songs;
     }
 
     @Override
     public List<Song> findMostPlayedSongsByArtistId(Long artistId) {
-        final List<Album> albums = albumRepository.findAllByArtistsId(artistId);
-        final List<Song> allSongs = new ArrayList<>();
-
-        albums.forEach(album -> allSongs.addAll(album.getSongs()));
-
-        return allSongs
+        return songRepository
+                .findAllByAlbumArtistsId(artistId)
                 .stream()
                 .sorted()
                 .limit(5)

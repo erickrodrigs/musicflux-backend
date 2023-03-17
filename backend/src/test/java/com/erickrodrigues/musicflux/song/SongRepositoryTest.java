@@ -1,5 +1,9 @@
 package com.erickrodrigues.musicflux.song;
 
+import com.erickrodrigues.musicflux.album.Album;
+import com.erickrodrigues.musicflux.album.AlbumRepository;
+import com.erickrodrigues.musicflux.artist.Artist;
+import com.erickrodrigues.musicflux.artist.ArtistRepository;
 import com.erickrodrigues.musicflux.genre.Genre;
 import com.erickrodrigues.musicflux.genre.GenreRepository;
 import org.junit.jupiter.api.BeforeAll;
@@ -26,6 +30,20 @@ public class SongRepositoryTest {
     @Autowired
     private GenreRepository genreRepository;
 
+    @Autowired
+    private AlbumRepository albumRepository;
+
+    @Autowired
+    private ArtistRepository artistRepository;
+
+    private static Artist artist = Artist
+            .builder()
+            .name("My favorite artist")
+            .build();
+    private static Album album = Album
+            .builder()
+            .title("My favorite album")
+            .build();
     private static Genre genre1 = Genre
             .builder()
             .name("New Wave")
@@ -53,6 +71,17 @@ public class SongRepositoryTest {
 
     @BeforeAll
     public void setUp() {
+        artist = artistRepository.save(artist);
+        album.setArtists(List.of(artist));
+        album = albumRepository.save(album);
+        artist.setAlbums(List.of(album));
+        artist = artistRepository.save(artist);
+
+        song1.setAlbum(album);
+        song2.setAlbum(album);
+        song3.setAlbum(album);
+        song4.setAlbum(album);
+
         genre1 = genreRepository.save(genre1);
         genre2 = genreRepository.save(genre2);
 
@@ -83,5 +112,21 @@ public class SongRepositoryTest {
 
         assertEquals(2, songs.size(), DIFFERENT_NUMBER_OF_SONGS);
         assertTrue(songs.containsAll(List.of(song1, song4)), LIST_DOES_NOT_CONTAIN_SPECIFIED_SONGS);
+    }
+
+    @Test
+    public void shouldFindAllSongsInAnAlbumByItsId() {
+        final List<Song> songs = songRepository.findAllByAlbumId(album.getId());
+
+        assertEquals(4, songs.size(), DIFFERENT_NUMBER_OF_SONGS);
+        assertTrue(songs.containsAll(List.of(song1, song2, song3, song4)), LIST_DOES_NOT_CONTAIN_SPECIFIED_SONGS);
+    }
+
+    @Test
+    public void shouldFindAllSongsOfAnArtistByTheirId() {
+        final List<Song> songs = songRepository.findAllByAlbumArtistsId(artist.getId());
+
+        assertEquals(4, songs.size(), DIFFERENT_NUMBER_OF_SONGS);
+        assertTrue(songs.containsAll(List.of(song1, song2, song3, song4)), LIST_DOES_NOT_CONTAIN_SPECIFIED_SONGS);
     }
 }
