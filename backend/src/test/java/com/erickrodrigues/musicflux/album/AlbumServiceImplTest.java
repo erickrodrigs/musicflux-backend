@@ -1,7 +1,5 @@
 package com.erickrodrigues.musicflux.album;
 
-import com.erickrodrigues.musicflux.artist.Artist;
-import com.erickrodrigues.musicflux.artist.ArtistRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -9,58 +7,65 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AlbumServiceImplTest {
 
-    @Mock
-    private AlbumRepository albumRepository;
+    private static final String WRONG_NUMBER_OF_ALBUMS = "Wrong number of albums";
 
     @Mock
-    private ArtistRepository artistRepository;
+    private AlbumRepository albumRepository;
 
     @InjectMocks
     private AlbumServiceImpl albumService;
 
     @Test
-    public void findAllByTitle() {
-        String title = "untitled";
-        List<Album> albums = List.of(
+    public void shouldFindAllAlbumsByTheirTitleContainingTextAndIgnoringCase() {
+        // given
+        final String text = "untitled";
+        final List<Album> albums = List.of(
                 Album.builder().id(1L).title("my untitled album").build(),
                 Album.builder().id(2L).title("THESE ALBUM IS UNTITLED").build()
         );
+        when(albumRepository.findAllByTitleContainingIgnoreCase(text)).thenReturn(albums);
 
-        when(albumRepository.findAllByTitleContainingIgnoreCase(title)).thenReturn(albums);
+        // when
+        final List<Album> actualAlbums = albumService.findAllByTitleContainingIgnoreCase(text);
 
-        assertEquals(2, albumService.findAllByTitleContainingIgnoreCase(title).size());
-        verify(albumRepository, times(1)).findAllByTitleContainingIgnoreCase(anyString());
+        // then
+        assertEquals(albums.size(), actualAlbums.size(), WRONG_NUMBER_OF_ALBUMS);
+        verify(albumRepository, times(1)).findAllByTitleContainingIgnoreCase(text);
     }
 
     @Test
-    public void findAllByArtistId() {
-        Long artistId = 1L;
-        Artist artist = Artist.builder().id(artistId).name("Metallica").build();
-        Album album1 = Album.builder().id(1L).title("Master of Puppets").build();
-        Album album2 = Album.builder().id(2L).title("Ride the Lightning").build();
+    public void shouldFindAllAlbumsByArtistId() {
+        // given
+        final Long artistId = 1L;
+        final List<Album> albums = List.of(
+            Album.builder().id(1L).title("Master of Puppets").build(),
+            Album.builder().id(2L).title("Ride the Lightning").build()
+        );
+        when(albumRepository.findAllByArtistsId(artistId)).thenReturn(albums);
 
-        artist.setAlbums(List.of(album1, album2));
-        album1.setArtists(List.of(artist));
-        album2.setArtists(List.of(artist));
+        // when
+        final List<Album> actualAlbums = albumService.findAllByArtistId(artistId);
 
-        when(artistRepository.findById(artistId)).thenReturn(Optional.of(artist));
-
-        assertEquals(2, albumService.findAllByArtistId(artistId).size());
+        // then
+        assertEquals(albums.size(), actualAlbums.size(), WRONG_NUMBER_OF_ALBUMS);
+        verify(albumRepository, times(1)).findAllByArtistsId(artistId);
     }
 
     @Test
-    public void findAllByArtistIdWhenArtistDoesNotExist() {
-        when(artistRepository.findById(anyLong())).thenReturn(Optional.empty());
+    public void shouldThrowAnExceptionWhenFindingAlbumsByArtistIdThatDoesNotExist() {
+        // given
+        final Long artistId = 1L;
+        when(albumRepository.findAllByArtistsId(artistId)).thenReturn(List.of());
 
-        assertThrows(RuntimeException.class, () -> albumService.findAllByArtistId(1L));
+        // then
+        assertThrows(RuntimeException.class, () -> albumService.findAllByArtistId(artistId));
+        verify(albumRepository, times(1)).findAllByArtistsId(artistId);
     }
 }
