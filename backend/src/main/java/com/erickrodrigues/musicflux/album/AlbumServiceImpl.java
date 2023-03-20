@@ -1,19 +1,18 @@
 package com.erickrodrigues.musicflux.album;
 
-import com.erickrodrigues.musicflux.artist.Artist;
-import com.erickrodrigues.musicflux.artist.ArtistRepository;
 import com.erickrodrigues.musicflux.shared.BaseService;
+import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 public class AlbumServiceImpl extends BaseService implements AlbumService {
 
     private final AlbumRepository albumRepository;
-    private final ArtistRepository artistRepository;
 
     @Override
     public List<Album> findAllByTitleContainingIgnoreCase(String text) {
@@ -22,8 +21,13 @@ public class AlbumServiceImpl extends BaseService implements AlbumService {
 
     @Override
     public List<Album> findAllByArtistId(Long artistId) {
-        return super.getEntityOrThrowException(artistId, artistRepository, Artist.class)
-                .getAlbums()
+        final List<Album> albums = albumRepository.findAllByArtistsId(artistId);
+
+        if (Objects.isNull(albums) || albums.isEmpty()) {
+            throw new ResourceNotFoundException("Artist with that ID does not exist");
+        }
+
+        return albums
                 .stream()
                 .sorted()
                 .toList();
