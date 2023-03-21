@@ -6,6 +6,8 @@ public interface SongService {
 
     void play(Long userId, Long songId);
 
+    Song findById(Long songId);
+
     List<Song> findAllByTitleContainingIgnoreCase(String text);
 
     List<Song> findAllByGenreName(String genreName);
