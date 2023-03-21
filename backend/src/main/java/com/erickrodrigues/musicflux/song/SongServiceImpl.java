@@ -33,6 +33,13 @@ public class SongServiceImpl extends BaseService implements SongService {
     }
 
     @Override
+    public Song findById(Long songId) {
+        return songRepository
+                .findById(songId)
+                .orElseThrow(() -> new ResourceNotFoundException("Song with that ID does not exist"));
+    }
+
+    @Override
     public List<Song> findAllByTitleContainingIgnoreCase(String text) {
         return songRepository.findAllByTitleContainingIgnoreCase(text);
     }

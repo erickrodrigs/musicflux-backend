@@ -2,10 +2,10 @@ package com.erickrodrigues.musicflux.favorite;
 
 import com.erickrodrigues.musicflux.shared.ResourceAlreadyExistsException;
 import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
+import com.erickrodrigues.musicflux.song.SongService;
 import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.song.Song;
-import com.erickrodrigues.musicflux.user.UserRepository;
-import com.erickrodrigues.musicflux.song.SongRepository;
+import com.erickrodrigues.musicflux.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,123 +22,147 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class FavoriteServiceImplTest {
 
+    private static final String WRONG_NUMBER_OF_FAVORITES = "Wrong number of favorites";
+    private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_FAVORITES = "Actual list does not contain specified favorites";
+    private static final String WRONG_ID = "Wrong ID";
+    private static final String FAVORITE_IS_NULL = "Favorite is null";
+
     @Mock
     private FavoriteRepository favoriteRepository;
 
     @Mock
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Mock
-    private SongRepository songRepository;
+    private SongService songService;
 
     @InjectMocks
     private FavoriteServiceImpl favoriteService;
 
     @Test
-    public void likeSong() {
+    public void shouldFavoriteASong() {
+        // given
         final Long userId = 1L, songId = 1L;
         final User user = User.builder().id(userId).build();
         final Song song = Song.builder().id(songId).build();
-        final Favorite favorite = Favorite.builder().id(1L).user(user).song(song).build();
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(songRepository.findById(songId)).thenReturn(Optional.of(song));
+        final Favorite favorite = Favorite.builder().user(user).song(song).build();
+        when(userService.findById(userId)).thenReturn(user);
+        when(songService.findById(songId)).thenReturn(song);
         when(favoriteRepository.findBySongId(songId)).thenReturn(Optional.empty());
-        when(favoriteRepository.save(any())).thenReturn(favorite);
+        when(favoriteRepository.save(favorite)).thenReturn(favorite);
 
+        // when
         final Favorite actualFavorite = favoriteService.likeSong(userId, songId);
 
-        assertNotNull(actualFavorite);
-        assertNotNull(actualFavorite.getId());
-        assertEquals(favorite.getId(), actualFavorite.getId());
-        assertEquals(favorite.getUser().getId(), user.getId());
-        assertEquals(favorite.getSong().getId(), song.getId());
-        verify(userRepository, times(1)).findById(anyLong());
-        verify(songRepository, times(1)).findById(anyLong());
-        verify(favoriteRepository, times(1)).save(any());
+        // then
+        assertNotNull(actualFavorite, FAVORITE_IS_NULL);
+        assertEquals(favorite.getUser().getId(), user.getId(), WRONG_ID);
+        assertEquals(favorite.getSong().getId(), song.getId(), WRONG_ID);
+        verify(userService, times(1)).findById(userId);
+        verify(songService, times(1)).findById(songId);
+        verify(favoriteRepository, times(1)).save(favorite);
     }
 
     @Test
-    public void likeSongWhenSongDoesNotExist() {
-        when(songRepository.findById(anyLong())).thenReturn(Optional.empty());
+    public void shouldThrowAnExceptionWhenLikingSongThatDoesNotExist() {
+        // given
+        final Long userId = 1L, songId = 1L;
+        when(songService.findById(songId)).thenThrow(ResourceNotFoundException.class);
 
-        assertThrows(ResourceNotFoundException.class, () -> favoriteService.likeSong(1L, 1L));
-        verify(songRepository, times(1)).findById(anyLong());
-        verify(favoriteRepository, times(0)).save(any());
+        // then
+        assertThrows(ResourceNotFoundException.class, () -> favoriteService.likeSong(userId, songId));
+        verify(songService, times(1)).findById(songId);
+        verify(favoriteRepository, never()).save(any());
     }
 
     @Test
-    public void likeSongWhenUserDoesNotExist() {
-        when(songRepository.findById(anyLong())).thenReturn(Optional.of(Song.builder().build()));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+    public void shouldThrowAnExceptionWhenInvalidUserLikesSong() {
+        // given
+        final Long userId = 1L, songId = 1L;
+        when(songService.findById(songId)).thenReturn(Song.builder().build());
+        when(userService.findById(userId)).thenThrow(ResourceNotFoundException.class);
 
-        assertThrows(ResourceNotFoundException.class, () -> favoriteService.likeSong(1L, 1L));
-        verify(userRepository, times(1)).findById(anyLong());
-        verify(favoriteRepository, times(0)).save(any());
+        // then
+        assertThrows(ResourceNotFoundException.class, () -> favoriteService.likeSong(userId, songId));
+        verify(userService, times(1)).findById(userId);
+        verify(favoriteRepository, never()).save(any());
     }
 
     @Test
-    public void likeSongWhenItWasAlreadyLiked() {
-        when(songRepository.findById(anyLong())).thenReturn(Optional.of(Song.builder().build()));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().build()));
-        when(favoriteRepository.findBySongId(anyLong())).thenReturn(Optional.of(Favorite.builder().build()));
+    public void shouldThrowAnExceptionWhenLinkingSongThatWasAlreadyLiked() {
+        // given
+        final Long userId = 1L, songId = 1L;
+        when(songService.findById(songId)).thenReturn(Song.builder().build());
+        when(userService.findById(userId)).thenReturn(User.builder().build());
+        when(favoriteRepository.findBySongId(songId)).thenReturn(Optional.of(Favorite.builder().build()));
 
-        assertThrows(ResourceAlreadyExistsException.class, () -> favoriteService.likeSong(1L, 1L));
-        verify(favoriteRepository, times(1)).findBySongId(anyLong());
-        verify(favoriteRepository, times(0)).save(any());
+        // then
+        assertThrows(ResourceAlreadyExistsException.class, () -> favoriteService.likeSong(userId, songId));
+        verify(favoriteRepository, times(1)).findBySongId(songId);
+        verify(favoriteRepository, never()).save(any());
     }
 
     @Test
-    public void dislikeSong() {
+    public void shouldDislikeSong() {
+        // given
         final Long userId = 1L, songId = 1L, favoriteId = 1L;
         final User user = User.builder().id(userId).build();
         final Song song = Song.builder().id(songId).build();
         final Favorite favorite = Favorite.builder().id(favoriteId).user(user).song(song).build();
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userService.findById(userId)).thenReturn(user);
         when(favoriteRepository.findById(favoriteId)).thenReturn(Optional.of(favorite));
 
+        // when
         favoriteService.dislikeSong(userId, favoriteId);
 
-        verify(userRepository, times(1)).findById(anyLong());
-        verify(favoriteRepository, times(1)).findById(anyLong());
+        // then
+        verify(userService, times(1)).findById(userId);
+        verify(favoriteRepository, times(1)).findById(favoriteId);
         verify(favoriteRepository, times(1)).delete(favorite);
     }
 
     @Test
-    public void dislikeSongWhenSongDoesNotExist() {
-        when(favoriteRepository.findById(anyLong())).thenReturn(Optional.empty());
+    public void shouldThrowAnExceptionWhenDislikingSongThatWasNotLiked() {
+        // given
+        final Long userId = 1L, favoriteId = 1L;
+        when(favoriteRepository.findById(favoriteId)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> favoriteService.dislikeSong(1L, 1L));
-        verify(favoriteRepository, times(1)).findById(anyLong());
-        verify(favoriteRepository, times(0)).delete(any());
+        //then
+        assertThrows(ResourceNotFoundException.class, () -> favoriteService.dislikeSong(userId, favoriteId));
+        verify(favoriteRepository, times(1)).findById(favoriteId);
+        verify(favoriteRepository, never()).delete(any());
     }
 
     @Test
-    public void dislikeSongWhenUserDoesNotExist() {
-        when(favoriteRepository.findById(anyLong())).thenReturn(Optional.of(Favorite.builder().build()));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+    public void shouldThrowAnExceptionWhenInvalidUserDislikesSong() {
+        // given
+        final Long userId = 1L, favoriteId = 1L;
+        when(favoriteRepository.findById(favoriteId)).thenReturn(Optional.of(Favorite.builder().build()));
+        when(userService.findById(userId)).thenThrow(ResourceNotFoundException.class);
 
-        assertThrows(RuntimeException.class, () -> favoriteService.dislikeSong(1L, 1L));
-        verify(userRepository, times(1)).findById(anyLong());
-        verify(favoriteRepository, times(0)).delete(any());
+        // then
+        assertThrows(ResourceNotFoundException.class, () -> favoriteService.dislikeSong(userId, favoriteId));
+        verify(userService, times(1)).findById(userId);
+        verify(favoriteRepository, never()).delete(any());
     }
 
     @Test
-    public void findAllByUserId() {
+    public void shouldFindAllLikedSongsByUserId() {
+        // given
         final Long userId = 1L;
         final List<Favorite> favorites = List.of(
                 Favorite.builder().id(1L).build(),
                 Favorite.builder().id(2L).build(),
                 Favorite.builder().id(3L).build()
         );
-
         when(favoriteRepository.findAllByUserId(userId)).thenReturn(favorites);
 
+        // when
         final List<Favorite> actualFavorites = favoriteService.findAllByUserId(userId);
 
-        assertEquals(favorites.size(), actualFavorites.size());
-        assertTrue(actualFavorites.containsAll(favorites));
-        verify(favoriteRepository, times(1)).findAllByUserId(anyLong());
+        // then
+        assertEquals(favorites.size(), actualFavorites.size(), WRONG_NUMBER_OF_FAVORITES);
+        assertTrue(actualFavorites.containsAll(favorites), LIST_DOES_NOT_CONTAIN_SPECIFIED_FAVORITES);
+        verify(favoriteRepository, times(1)).findAllByUserId(userId);
     }
 }

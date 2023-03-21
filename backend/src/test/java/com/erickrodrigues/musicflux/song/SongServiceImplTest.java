@@ -19,6 +19,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class SongServiceImplTest {
 
+    private static final String SONG_IS_NULL = "Song is null";
+    private static final String SONG_HAS_DIFFERENT_ID = "Song has different ID";
     private static final String WRONG_NUMBER_OF_PLAYS = "Wrong number of plays";
     private static final String WRONG_NUMBER_OF_SONGS = "Wrong number of songs";
     private static final String WRONG_ORDER_FOR_MOST_PLAYED_SONGS = "Wrong order for most played songs";
@@ -71,6 +73,27 @@ public class SongServiceImplTest {
         assertThrows(ResourceNotFoundException.class, () -> songService.play(invalidUserId, songId));
         verify(songRepository, times(1)).findById(songId);
         verify(userService, times(1)).findById(invalidUserId);
+    }
+
+    @Test
+    public void shouldFindASongByItsId() {
+        final Long songId = 1L;
+        when(songRepository.findById(songId)).thenReturn(Optional.of(Song.builder().id(songId).build()));
+
+        final Song actualSong = songService.findById(songId);
+
+        assertNotNull(actualSong, SONG_IS_NULL);
+        assertEquals(songId, actualSong.getId(), SONG_HAS_DIFFERENT_ID);
+        verify(songRepository, times(1)).findById(songId);
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenFindingSongWithIdThatDoesNotExist() {
+        final Long songId = 1L;
+        when(songRepository.findById(songId)).thenReturn(Optional.empty());
+
+        assertThrows(ResourceNotFoundException.class, () -> songService.findById(songId));
+        verify(songRepository, times(1)).findById(songId);
     }
 
     @Test
