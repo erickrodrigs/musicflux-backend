@@ -1,10 +1,10 @@
 package com.erickrodrigues.musicflux.playlist;
 
-import com.erickrodrigues.musicflux.user.UserRepository;
+import com.erickrodrigues.musicflux.song.SongService;
 import com.erickrodrigues.musicflux.user.User;
-import com.erickrodrigues.musicflux.song.SongRepository;
 import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.shared.BaseService;
+import com.erickrodrigues.musicflux.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,13 +16,13 @@ import java.util.List;
 public class PlaylistServiceImpl extends BaseService implements PlaylistService {
 
     private final PlaylistRepository playlistRepository;
-    private final UserRepository userRepository;
-    private final SongRepository songRepository;
+    private final UserService userService;
+    private final SongService songService;
 
     @Transactional
     @Override
     public Playlist create(Long userId, String name) {
-        final User user = super.getEntityOrThrowException(userId, userRepository, User.class);
+        final User user = userService.findById(userId);
         Playlist playlist = Playlist.builder()
                 .name(name)
                 .user(user)
@@ -50,8 +50,8 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
     @Override
     public Playlist addSong(Long userId, Long playlistId, Long songId) {
         final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
-        final Song song = super.getEntityOrThrowException(songId, songRepository, Song.class);
-        super.getEntityOrThrowException(userId, userRepository, User.class);
+        final Song song = songService.findById(songId);
+        userService.findById(userId);
 
         playlist.addSong(song);
         return playlistRepository.save(playlist);
@@ -61,8 +61,8 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
     @Override
     public Playlist removeSong(Long userId, Long playlistId, Long songId) {
         final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
-        final Song song = super.getEntityOrThrowException(songId, songRepository, Song.class);
-        super.getEntityOrThrowException(userId, userRepository, User.class);
+        final Song song = songService.findById(songId);
+        userService.findById(userId);
 
         playlist.removeSong(song);
         return playlistRepository.save(playlist);
@@ -70,7 +70,7 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
 
     @Override
     public void deleteById(Long userId, Long playlistId) {
-        super.getEntityOrThrowException(userId, userRepository, User.class);
+        userService.findById(userId);
         super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
         playlistRepository.deleteById(playlistId);
     }
