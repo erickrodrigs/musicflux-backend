@@ -29,6 +29,10 @@ public class Song extends BaseEntity implements Comparable<Song> {
     @Builder.Default
     private Long numberOfPlays = 0L;
 
+    @Lob
+    @Column(name = "data")
+    private byte[] data;
+
     @ManyToOne
     @JoinColumn(name = "album_id")
     private Album album;

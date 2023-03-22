@@ -1,37 +1,24 @@
-INSERT INTO artists (id, name, biography) VALUES (1, 'Depeche Mode', 'The best band in the world');
+INSERT INTO artists (id, name, biography) VALUES (1, 'Andrew Howes', '');
 
 INSERT INTO albums (id, title, cover_url, release_date)
-    VALUES (1, 'Black Celebration', 'https://i.scdn.co/image/ab67616d0000b273878ae6fc96ee5954168838fc', '1986-03-17'),
-           (2, 'Music For The Masses', 'https://i.scdn.co/image/ab67616d00001e025c2d57aa294b71136bcc510d', '1987-09-28');
+    VALUES (1, 'Gubernator', 'https://freemusicarchive.org/image/?file=images%2Falbums%2FAndrew_Howes_-_Gubernator_-_2015031293329764.jpg&width=290&height=290&type=album', '2015-03-18');
 
 INSERT INTO artists_albums (artist_id, album_id)
-    VALUES (1, 1),
-           (1, 2);
+    VALUES (1, 1);
 
-INSERT INTO songs (album_id, id, title, length, number_of_plays)
-    VALUES (1, 1, 'Black Celebration', 295, 6975821),
-           (1, 2, 'Fly On The Windscreen (Final)', 318, 6975822),
-           (1, 3, 'A Question Of Lust', 260, 6975823),
-           (1, 4, 'Sometimes', 113, 6975824),
-           (1, 5, 'It Doesn''t Matter Two', 170, 6975825),
-           (1, 6, 'A Question Of Time', 250, 6975826),
-           (1, 7, 'Stripped', 256, 6975827),
-           (1, 8, 'Here Is The House', 255, 6975828),
-           (1, 9, 'World Full Of Nothing', 170, 6975829),
-           (1, 10, 'Dressed In Black', 152, 6975830),
-           (1, 11, 'New Dress', 222, 6975831),
-           (2, 12, 'Never Let Me Down Again', 287, 6975832),
-           (2, 13, 'The Things You Said', 242, 6975833),
-           (2, 14, 'Strangelove', 296, 6975834),
-           (2, 15, 'Sacred', 287, 6975835),
-           (2, 16, 'Little 15', 258, 6975836),
-           (2, 17, 'Behind The Wheel', 318, 6975837),
-           (2, 18, 'I Want You Now', 224, 6975838),
-           (2, 19, 'To Have And To Hold', 171, 6975839),
-           (2, 20, 'Nothing', 258, 6975840),
-           (2, 21, 'Pimpf', 300, 6975841);
+INSERT INTO songs (album_id, id, title, data, length, number_of_plays)
+    VALUES (1, 1, 'Trebuchet', FILE_READ('classpath:/files/Andrew_Howes_Gubernator/01-Trebuchet.mp3'), 312, 6975821),
+           (1, 2, 'Por-Loosh-Ka-Por-Lay', FILE_READ('classpath:/files/Andrew_Howes_Gubernator/02-Por-Loosh-Ka-Por-Lay.mp3'), 250, 6975821),
+           (1, 3, 'Snow Pony', FILE_READ('classpath:/files/Andrew_Howes_Gubernator/03-Snow-Pony.mp3'), 287, 6975821),
+           (1, 4, 'A Change Of Food', FILE_READ('classpath:/files/Andrew_Howes_Gubernator/04-A-Change-Of-Food.mp3'), 200, 6975821),
+           (1, 5, 'A Change Of The Guard', FILE_READ('classpath:/files/Andrew_Howes_Gubernator/05-A-Change-Of-The-Guard.mp3'), 195, 6975821),
+           (1, 6, 'Gubernator', FILE_READ('classpath:/files/Andrew_Howes_Gubernator/06-Gubernator.mp3'), 238, 6975821),
+           (1, 7, 'Dumb Luck', FILE_READ('classpath:/files/Andrew_Howes_Gubernator/07-Dumb-Luck.mp3'), 280, 6975821),
+           (1, 8, 'Helmsman', FILE_READ('classpath:/files/Andrew_Howes_Gubernator/08-Helmsman.mp3'), 76, 6975821),
+           (1, 9, 'Crimea', FILE_READ('classpath:/files/Andrew_Howes_Gubernator/09-Crimea.mp3'), 180, 6975821),
+           (1, 10, 'Traitors Gate', FILE_READ('classpath:/files/Andrew_Howes_Gubernator/10-Traitors-Gate.mp3'), 232, 6975821);
 
-INSERT INTO genres (id, name) VALUES (1, 'Synth-pop');
+INSERT INTO genres (id, name) VALUES (1, 'Post-Rock');
 
 INSERT INTO songs_genres (song_id, genre_id)
     VALUES (1, 1),
@@ -43,15 +30,4 @@ INSERT INTO songs_genres (song_id, genre_id)
            (7, 1),
            (8, 1),
            (9, 1),
-           (10, 1),
-           (11, 1),
-           (12, 1),
-           (13, 1),
-           (14, 1),
-           (15, 1),
-           (16, 1),
-           (17, 1),
-           (18, 1),
-           (19, 1),
-           (20, 1),
-           (21, 1);
+           (10, 1);
