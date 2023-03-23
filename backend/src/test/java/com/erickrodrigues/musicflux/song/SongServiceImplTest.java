@@ -43,6 +43,7 @@ public class SongServiceImplTest {
         final User user = User.builder().id(userId).build();
         final Song song = Song.builder().id(songId).build();
         when(songRepository.findById(songId)).thenReturn(Optional.of(song));
+        when(songRepository.save(song)).thenReturn(song);
         when(userService.findById(userId)).thenReturn(user);
 
         songService.play(userId, songId);
@@ -66,12 +67,9 @@ public class SongServiceImplTest {
     @Test
     public void shouldThrowAnExceptionWhenUserWithInvalidIdPlaysASong() {
         final Long songId = 1L, invalidUserId = 394L;
-        final Song song = Song.builder().id(songId).build();
-        when(songRepository.findById(songId)).thenReturn(Optional.of(song));
         when(userService.findById(invalidUserId)).thenThrow(ResourceNotFoundException.class);
 
         assertThrows(ResourceNotFoundException.class, () -> songService.play(invalidUserId, songId));
-        verify(songRepository, times(1)).findById(songId);
         verify(userService, times(1)).findById(invalidUserId);
     }
 
