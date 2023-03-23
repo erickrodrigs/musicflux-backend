@@ -31,7 +31,8 @@ public class Song extends BaseEntity implements Comparable<Song> {
 
     @Lob
     @Column(name = "data")
-    private byte[] data;
+    @Builder.Default
+    private byte[] data = new byte[10];
 
     @ManyToOne
     @JoinColumn(name = "album_id")
