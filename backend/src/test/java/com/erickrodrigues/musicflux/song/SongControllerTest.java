@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -32,11 +31,15 @@ public class SongControllerTest {
     private SongController songController;
 
     @Test
-    public void playSong() throws Exception {
+    public void shouldPlayASong() throws Exception {
         final long userId = 1L, songId = 1L;
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(songController).build();
+        when(songService.play(userId, songId)).thenReturn(Song.builder()
+                .title("My song")
+                .build()
+        );
 
-        mockMvc.perform(put("/users/me/songs/" + songId + "/play")
+        mockMvc.perform(get("/users/me/songs/" + songId)
                         .requestAttr("userId", userId))
                 .andExpect(status().isOk());
 

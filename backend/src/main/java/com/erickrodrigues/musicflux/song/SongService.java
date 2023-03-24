@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface SongService {
 
-    void play(Long userId, Long songId);
+    Song play(Long userId, Long songId);
 
     Song findById(Long songId);
 

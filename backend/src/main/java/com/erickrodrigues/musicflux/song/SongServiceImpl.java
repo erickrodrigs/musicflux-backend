@@ -22,14 +22,15 @@ public class SongServiceImpl extends BaseService implements SongService {
 
     @Transactional
     @Override
-    public void play(Long userId, Long songId) {
-        final Song song = super.getEntityOrThrowException(songId, songRepository, Song.class);
+    public Song play(Long userId, Long songId) {
         final User user = userService.findById(userId);
+        Song song = findById(songId);
 
         song.play();
-
-        songRepository.save(song);
+        song = songRepository.save(song);
         recentlyPlayedService.save(song, user);
+
+        return song;
     }
 
     @Override

@@ -7,9 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,13 +26,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class PlaySongTest {
 
+    private static final String INVALID_STATUS_CODE = "Invalid status code";
+    private static final String CONTENT_TYPE_IS_NULL = "Content type is null";
+    private static final String WRONG_CONTENT_TYPE = "Wrong content type";
+    private static final String RESPONSE_BODY_IS_NULL = "Response body is null";
+
     @LocalServerPort
     private int port;
 
     @Autowired
     private RestTemplate restTemplate;
-
-    private String token;
 
     @BeforeEach
     public void setUp() {
@@ -48,42 +50,44 @@ public class PlaySongTest {
                 AuthTokenDto.class
         );
 
-        token = Objects.requireNonNull(response.getBody()).getToken();
+        String token = Objects.requireNonNull(response.getBody()).getToken();
+
+        restTemplate.getInterceptors().add((outReq, bytes, clientHttpReqExec) -> {
+            outReq.getHeaders().set(
+                    HttpHeaders.AUTHORIZATION, "Bearer " + token
+            );
+
+            return clientHttpReqExec.execute(outReq, bytes);
+        });
     }
 
     @Test
-    public void playSong() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-
-        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
-
+    public void shouldReturnASongForTheClientToPlay() {
+        // given
         final long songId = 9L;
-        final ResponseEntity<Object> response = restTemplate.exchange(
-                getBaseUrl() + "/users/me/songs/" + songId + "/play",
-                HttpMethod.PUT,
-                requestEntity,
-                Object.class
+
+        // when
+        final ResponseEntity<Resource> response = restTemplate.getForEntity(
+                getBaseUrl() + "/users/me/songs/" + songId,
+                Resource.class
         );
 
-        assertEquals(200, response.getStatusCode().value());
-        assertNull(response.getBody());
+        // then
+        assertNotNull(response.getHeaders().getContentType(), CONTENT_TYPE_IS_NULL);
+        assertNotNull(response.getBody(), RESPONSE_BODY_IS_NULL);
+        assertEquals(200, response.getStatusCode().value(), INVALID_STATUS_CODE);
+        assertEquals("audio/mpeg3", response.getHeaders().getContentType().toString(), WRONG_CONTENT_TYPE);
     }
 
     @Test
-    public void playSongWhenItDoesNotExist() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
+    public void shouldRespondWithANotFoundErrorWhenRequestToPlayASongThatDoesNotExist() {
+        // given
+        final long invalidSongId = 498L;
 
-        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
-
-        final long songId = 498L;
-
-        assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/songs/" + songId + "/play",
-                HttpMethod.PUT,
-                requestEntity,
-                Object.class
+        // then
+        assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.getForEntity(
+                getBaseUrl() + "/users/me/songs/" + invalidSongId,
+                Resource.class
         ));
     }
 
