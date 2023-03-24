@@ -33,3 +33,4 @@ build/
 .vscode/
 
 src/main/resources/files/**
+!src/main/resources/files/.keep
