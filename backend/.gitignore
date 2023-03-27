@@ -34,3 +34,4 @@ build/
 
 src/main/resources/static/files/**
 !src/main/resources/static/files/.keep
+.env
