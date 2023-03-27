@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
+import java.util.Objects;
 
 @Tag(name = "songs")
 @RestController
@@ -24,18 +26,21 @@ public class SongController {
 
     private final SongService songService;
     private final SongMapper songMapper;
+    private final RestTemplate restTemplate;
 
     @Operation(summary = "Play a song by its id")
     @GetMapping("/users/me/songs/{song_id}")
     public ResponseEntity<Resource> playSong(HttpServletRequest request,
                                    @PathVariable("song_id") Long songId) {
+        final String url = request.getRequestURL().toString().replace(request.getRequestURI(), "");
         final Long userId = (Long) request.getAttribute("userId");
         final Song song = songService.play(userId, songId);
+        final byte[] array = restTemplate.getForObject(url + "/files/" + song.getId() + ".mp3", byte[].class);
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.parseMediaType("audio/mpeg3"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + song.getTitle() + ".mp3\"")
-                .body(new ByteArrayResource(song.getData()));
+                .body(new ByteArrayResource(Objects.requireNonNull(array)));
     }
 
     @Operation(summary = "Get all songs in an album by its id")
