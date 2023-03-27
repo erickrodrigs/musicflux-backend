@@ -8,28 +8,28 @@ INSERT INTO artists_albums (artist_id, album_id)
 VALUES (1, 1),
        (1, 2);
 
-INSERT INTO songs (album_id, id, title, data, length, number_of_plays)
-    VALUES (1, 1, 'Black Celebration', '0', 295, 6975821),
-           (1, 2, 'Fly On The Windscreen (Final)', '0', 318, 6975822),
-           (1, 3, 'A Question Of Lust', '0', 260, 6975823),
-           (1, 4, 'Sometimes', '0', 113, 6975824),
-           (1, 5, 'It Doesn''t Matter Two', '0', 170, 6975825),
-           (1, 6, 'A Question Of Time', '0', 250, 6975826),
-           (1, 7, 'Stripped', '0', 256, 6975827),
-           (1, 8, 'Here Is The House', '0', 255, 6975828),
-           (1, 9, 'World Full Of Nothing', '0', 170, 6975829),
-           (1, 10, 'Dressed In Black', '0', 152, 6975830),
-           (1, 11, 'New Dress', '0', 222, 6975831),
-           (2, 12, 'Never Let Me Down Again', '0', 287, 6975832),
-           (2, 13, 'The Things You Said', '0', 242, 6975833),
-           (2, 14, 'Strangelove', '0', 296, 6975834),
-           (2, 15, 'Sacred', '0', 287, 6975835),
-           (2, 16, 'Little 15', '0', 258, 6975836),
-           (2, 17, 'Behind The Wheel', '0', 318, 6975837),
-           (2, 18, 'I Want You Now', '0', 224, 6975838),
-           (2, 19, 'To Have And To Hold', '0', 171, 6975839),
-           (2, 20, 'Nothing', '0', 258, 6975840),
-           (2, 21, 'Pimpf', 300, '0', 6975841);
+INSERT INTO songs (album_id, id, title, length, number_of_plays)
+    VALUES (1, 1, 'Black Celebration', 295, 6975821),
+           (1, 2, 'Fly On The Windscreen (Final)', 318, 6975822),
+           (1, 3, 'A Question Of Lust', 260, 6975823),
+           (1, 4, 'Sometimes', 113, 6975824),
+           (1, 5, 'It Doesn''t Matter Two', 170, 6975825),
+           (1, 6, 'A Question Of Time', 250, 6975826),
+           (1, 7, 'Stripped', 256, 6975827),
+           (1, 8, 'Here Is The House', 255, 6975828),
+           (1, 9, 'World Full Of Nothing', 170, 6975829),
+           (1, 10, 'Dressed In Black', 152, 6975830),
+           (1, 11, 'New Dress', 222, 6975831),
+           (2, 12, 'Never Let Me Down Again', 287, 6975832),
+           (2, 13, 'The Things You Said', 242, 6975833),
+           (2, 14, 'Strangelove', 296, 6975834),
+           (2, 15, 'Sacred', 287, 6975835),
+           (2, 16, 'Little 15', 258, 6975836),
+           (2, 17, 'Behind The Wheel', 318, 6975837),
+           (2, 18, 'I Want You Now', 224, 6975838),
+           (2, 19, 'To Have And To Hold', 171, 6975839),
+           (2, 20, 'Nothing', 258, 6975840),
+           (2, 21, 'Pimpf', 300, 6975841);
 
 INSERT INTO genres (id, name) VALUES (1, 'Synth-pop');
 

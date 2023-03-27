@@ -32,5 +32,5 @@ build/
 ### VS Code ###
 .vscode/
 
-src/main/resources/files/**
-!src/main/resources/files/.keep
+src/main/resources/static/files/**
+!src/main/resources/static/files/.keep
