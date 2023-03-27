@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ public class SongControllerTest {
     @Mock
     private SongMapper songMapper;
 
+    @Mock
+    private RestTemplate restTemplate;
+
     @InjectMocks
     private SongController songController;
 
@@ -38,6 +42,7 @@ public class SongControllerTest {
                 .title("My song")
                 .build()
         );
+        when(restTemplate.getForObject(anyString(), any())).thenReturn(new byte[] { (byte)0xe0 });
 
         mockMvc.perform(get("/users/me/songs/" + songId)
                         .requestAttr("userId", userId))
