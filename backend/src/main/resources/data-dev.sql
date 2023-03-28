@@ -40,7 +40,7 @@ INSERT INTO artists_albums (artist_id, album_id)
            (7, 13),
            (8, 14);
 
-INSERT INTO songs (album_id, id, title, length, number_of_plays)
+INSERT INTO tracks (album_id, id, title, length, number_of_plays)
     VALUES (1, 1, 'Dumb Luck', 280, 6975821),
            (1, 2, 'Helmsman', 76, 6975821),
            (1, 3, 'Crimea', 180, 6975821),
@@ -84,7 +84,7 @@ INSERT INTO genres (id, name)
            (3, 'Country'),
            (4, 'Jazz');
 
-INSERT INTO songs_genres (song_id, genre_id)
+INSERT INTO tracks_genres (track_id, genre_id)
     VALUES (1, 1),
            (2, 1),
            (3, 1),

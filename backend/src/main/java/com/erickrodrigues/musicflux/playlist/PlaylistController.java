@@ -41,26 +41,26 @@ public class PlaylistController {
         return playlistMapper.toPlaylistDetailsDto(playlistService.findById(playlistId));
     }
 
-    @Operation(summary = "Add a new song to a playlist")
-    @PutMapping("/users/me/playlists/{playlist_id}/songs")
+    @Operation(summary = "Add a new track to a playlist")
+    @PutMapping("/users/me/playlists/{playlist_id}/tracks")
     @ResponseStatus(HttpStatus.CREATED)
-    public PlaylistDetailsDto addSong(HttpServletRequest request,
+    public PlaylistDetailsDto addTrack(HttpServletRequest request,
                                       @PathVariable("playlist_id") Long playlistId,
-                                      @RequestBody @Valid AddSongToPlaylistDto addSongToPlaylistDto) {
+                                      @RequestBody @Valid AddTrackToPlaylistDto addTrackToPlaylistDto) {
         final Long userId = (Long) request.getAttribute("userId");
         return playlistMapper.toPlaylistDetailsDto(
-                playlistService.addSong(userId, playlistId, addSongToPlaylistDto.getSongId())
+                playlistService.addTrack(userId, playlistId, addTrackToPlaylistDto.getTrackId())
         );
     }
 
-    @Operation(summary = "Remove a song from a playlist")
-    @DeleteMapping("/users/me/playlists/{playlist_id}/songs/{song_id}")
+    @Operation(summary = "Remove a track from a playlist")
+    @DeleteMapping("/users/me/playlists/{playlist_id}/tracks/{track_id}")
     @ResponseStatus(HttpStatus.OK)
-    public PlaylistDetailsDto removeSong(HttpServletRequest request,
+    public PlaylistDetailsDto removeTrack(HttpServletRequest request,
                                          @PathVariable("playlist_id") Long playlistId,
-                                         @PathVariable("song_id") Long songId) {
+                                         @PathVariable("track_id") Long trackId) {
         final Long userId = (Long) request.getAttribute("userId");
-        return playlistMapper.toPlaylistDetailsDto(playlistService.removeSong(userId, playlistId, songId));
+        return playlistMapper.toPlaylistDetailsDto(playlistService.removeTrack(userId, playlistId, trackId));
     }
 
     @Operation(summary = "Delete a playlist by its id")

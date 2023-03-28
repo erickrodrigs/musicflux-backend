@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.playlist;
 
-import com.erickrodrigues.musicflux.song.SongDetailsDto;
+import com.erickrodrigues.musicflux.track.TrackDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +20,5 @@ public class PlaylistDetailsDto {
 
     private Long userId;
 
-    private List<SongDetailsDto> songs;
+    private List<TrackDto> tracks;
 }

@@ -56,7 +56,7 @@ public class CreateNewPlaylistTest {
 
     @Test
     public void createNewPlaylist() {
-        final String playlistName = "my favorite songs of all time";
+        final String playlistName = "my favorite tracks of all time";
         final CreatePlaylistDto createPlaylistDto = CreatePlaylistDto
                 .builder()
                 .name(playlistName)
@@ -73,7 +73,7 @@ public class CreateNewPlaylistTest {
         assertEquals(2L, response.getBody().getId());
         assertEquals(1L, response.getBody().getUserId());
         assertEquals(playlistName, response.getBody().getName());
-        assertEquals(0, response.getBody().getSongs().size());
+        assertEquals(0, response.getBody().getTracks().size());
     }
 
     @Test

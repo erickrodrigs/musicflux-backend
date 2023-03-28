@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class LikeSongTest {
+public class LikeTrackTest {
 
     @LocalServerPort
     private int port;
@@ -56,11 +56,11 @@ public class LikeSongTest {
     }
 
     @Test
-    public void likeSong() {
-        final long songId = 20L;
+    public void likeTrack() {
+        final long trackId = 20L;
         final CreateFavoriteDto createFavoriteDto = CreateFavoriteDto
                 .builder()
-                .songId(songId)
+                .trackId(trackId)
                 .build();
         final ResponseEntity<FavoriteDetailsDto> response = restTemplate.postForEntity(
                 getBaseUrl() + "/users/me/favorites",
@@ -70,15 +70,15 @@ public class LikeSongTest {
 
         assertEquals(201, response.getStatusCode().value());
         assertNotNull(response.getBody());
-        assertEquals(songId, response.getBody().getSong().getId());
+        assertEquals(trackId, response.getBody().getTrack().getId());
     }
 
     @Test
-    public void likeSongWhenItDoesNotExist() {
-        final long songId = 498L;
+    public void likeTrackWhenItDoesNotExist() {
+        final long trackId = 498L;
         final CreateFavoriteDto createFavoriteDto = CreateFavoriteDto
                 .builder()
-                .songId(songId)
+                .trackId(trackId)
                 .build();
 
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.postForEntity(
@@ -89,11 +89,11 @@ public class LikeSongTest {
     }
 
     @Test
-    public void likeSongWhenItWasAlreadyLiked() {
-        final long songId = 2L;
+    public void likeTrackWhenItWasAlreadyLiked() {
+        final long trackId = 2L;
         final CreateFavoriteDto createFavoriteDto = CreateFavoriteDto
                 .builder()
-                .songId(songId)
+                .trackId(trackId)
                 .build();
 
         assertThrows(HttpClientErrorException.BadRequest.class, () -> restTemplate.postForEntity(

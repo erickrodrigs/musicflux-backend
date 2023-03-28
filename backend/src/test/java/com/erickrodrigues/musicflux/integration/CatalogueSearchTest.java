@@ -25,9 +25,9 @@ public class CatalogueSearchTest {
     private RestTemplate restTemplate;
 
     @Test
-    public void searchForArtistsAlbumsAndSongs() {
+    public void searchForArtistsAlbumsAndTracks() {
         final ResponseEntity<CatalogueResultDto> response = restTemplate.getForEntity(
-                getUrl() + "?types=artist,album,song,playlist&value=" + "of",
+                getUrl() + "?types=artist,album,track,playlist&value=" + "of",
                 CatalogueResultDto.class
         );
 
@@ -35,7 +35,7 @@ public class CatalogueSearchTest {
         assertNotNull(response.getBody());
         assertEquals(0, response.getBody().getArtists().size());
         assertEquals(0, response.getBody().getAlbums().size());
-        assertEquals(3, response.getBody().getSongs().size());
+        assertEquals(3, response.getBody().getTracks().size());
         assertEquals(1, response.getBody().getPlaylists().size());
     }
 

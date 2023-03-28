@@ -25,7 +25,7 @@ public class CatalogueByGenreTest {
     private RestTemplate restTemplate;
 
     @Test
-    public void findArtistsAlbumsAndSongsByGenre() {
+    public void findArtistsAlbumsAndTracksByGenre() {
         final ResponseEntity<CatalogueResultDto> response = restTemplate.getForEntity(
                 getUrl("Synth-pop"),
                 CatalogueResultDto.class
@@ -35,12 +35,12 @@ public class CatalogueByGenreTest {
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().getArtists().size());
         assertEquals(2, response.getBody().getAlbums().size());
-        assertEquals(21, response.getBody().getSongs().size());
+        assertEquals(21, response.getBody().getTracks().size());
         assertEquals(0, response.getBody().getPlaylists().size());
     }
 
     @Test
-    public void findArtistsAlbumsAndSongsByGenreWhenItDoesNotExist() {
+    public void findArtistsAlbumsAndTracksByGenreWhenItDoesNotExist() {
         final ResponseEntity<CatalogueResultDto> response = restTemplate.getForEntity(
                 getUrl("something unknown that only cult people know and like"),
                 CatalogueResultDto.class
@@ -50,7 +50,7 @@ public class CatalogueByGenreTest {
         assertNotNull(response.getBody());
         assertEquals(0, response.getBody().getArtists().size());
         assertEquals(0, response.getBody().getAlbums().size());
-        assertEquals(0, response.getBody().getSongs().size());
+        assertEquals(0, response.getBody().getTracks().size());
         assertEquals(0, response.getBody().getPlaylists().size());
     }
 

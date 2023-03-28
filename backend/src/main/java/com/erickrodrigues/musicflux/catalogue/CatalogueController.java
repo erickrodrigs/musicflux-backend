@@ -17,7 +17,7 @@ public class CatalogueController {
     private final CatalogueService catalogueService;
     private final CatalogueMapper catalogueMapper;
 
-    @Operation(summary = "Search for artists, albums, songs and/or playlists")
+    @Operation(summary = "Search for artists, albums, tracks and/or playlists")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public CatalogueResultDto search(@RequestParam("types") List<SearchableType> types,
@@ -25,7 +25,7 @@ public class CatalogueController {
         return catalogueMapper.toCatalogueResultDto(catalogueService.findAllByTypesAndText(types, text));
     }
 
-    @Operation(summary = "Get all artists, albums and songs by genre name")
+    @Operation(summary = "Get all artists, albums and tracks by genre name")
     @GetMapping("/genres/{genre}")
     @ResponseStatus(HttpStatus.OK)
     public CatalogueResultDto findAllByGenre(@PathVariable String genre) {

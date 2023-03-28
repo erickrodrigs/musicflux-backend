@@ -1,7 +1,7 @@
 package com.erickrodrigues.musicflux.recently_played;
 
-import com.erickrodrigues.musicflux.song.Song;
-import com.erickrodrigues.musicflux.song.SongDetailsDto;
+import com.erickrodrigues.musicflux.track.Track;
+import com.erickrodrigues.musicflux.track.TrackDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.minidev.json.JSONArray;
@@ -42,29 +42,29 @@ public class RecentlyPlayedControllerTest {
     @Test
     public void findAllByUserId() throws Exception {
         final Long userId = 1L;
-        final List<RecentlyPlayed> recentlyPlayedSongs = List.of(
-                RecentlyPlayed.builder().id(1L).song(Song.builder().id(1L).build()).build(),
-                RecentlyPlayed.builder().id(2L).song(Song.builder().id(2L).build()).build()
+        final List<RecentlyPlayed> recentlyPlayedTracks = List.of(
+                RecentlyPlayed.builder().id(1L).track(Track.builder().id(1L).build()).build(),
+                RecentlyPlayed.builder().id(2L).track(Track.builder().id(2L).build()).build()
         );
         final List<RecentlyPlayedDetailsDto> recentlyPlayedDetailsDtos = List.of(
                 RecentlyPlayedDetailsDto.builder()
                         .id(1L)
-                        .song(SongDetailsDto.builder().id(1L).build())
+                        .track(TrackDto.builder().id(1L).build())
                         .userId(userId)
                         .createdAt(LocalDateTime.now())
                         .build(),
                 RecentlyPlayedDetailsDto.builder()
                         .id(2L)
-                        .song(SongDetailsDto.builder().id(2L).build())
+                        .track(TrackDto.builder().id(2L).build())
                         .userId(userId)
                         .createdAt(LocalDateTime.now().plusDays(1L))
                         .build()
         );
-        final Page<RecentlyPlayed> recentlyPlayedSongsPage = new PageImpl<>(recentlyPlayedSongs);
+        final Page<RecentlyPlayed> recentlyPlayedTracksPage = new PageImpl<>(recentlyPlayedTracks);
 
-        when(recentlyPlayedService.findAllByUserId(any(), eq(userId))).thenReturn(recentlyPlayedSongsPage);
-        when(recentlyPlayedMapper.toRecentlyPlayedDetailsDto(recentlyPlayedSongs.get(0))).thenReturn(recentlyPlayedDetailsDtos.get(0));
-        when(recentlyPlayedMapper.toRecentlyPlayedDetailsDto(recentlyPlayedSongs.get(1))).thenReturn(recentlyPlayedDetailsDtos.get(1));
+        when(recentlyPlayedService.findAllByUserId(any(), eq(userId))).thenReturn(recentlyPlayedTracksPage);
+        when(recentlyPlayedMapper.toRecentlyPlayedDetailsDto(recentlyPlayedTracks.get(0))).thenReturn(recentlyPlayedDetailsDtos.get(0));
+        when(recentlyPlayedMapper.toRecentlyPlayedDetailsDto(recentlyPlayedTracks.get(1))).thenReturn(recentlyPlayedDetailsDtos.get(1));
 
         final JSONParser jsonParser = new JSONParser(JSONParser.DEFAULT_PERMISSIVE_MODE);
         final ObjectMapper objectMapper = new ObjectMapper();

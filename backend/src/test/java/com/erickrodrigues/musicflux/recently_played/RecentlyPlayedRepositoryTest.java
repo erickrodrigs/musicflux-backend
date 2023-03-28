@@ -1,9 +1,9 @@
 package com.erickrodrigues.musicflux.recently_played;
 
 import com.erickrodrigues.musicflux.user.User;
-import com.erickrodrigues.musicflux.song.Song;
+import com.erickrodrigues.musicflux.track.Track;
 import com.erickrodrigues.musicflux.user.UserRepository;
-import com.erickrodrigues.musicflux.song.SongRepository;
+import com.erickrodrigues.musicflux.track.TrackRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -25,7 +25,7 @@ public class RecentlyPlayedRepositoryTest {
 
     private static final String PAGE_IS_NOT_EMPTY = "Page is not empty";
     private static final String WRONG_PAGE_SIZE = "Wrong page size";
-    private static final String PAGE_DOES_NOT_CONTAIN_SPECIFIED_RECENTLY_PLAYED_SONGS = "Page does not contain specified recently played songs";
+    private static final String PAGE_DOES_NOT_CONTAIN_SPECIFIED_RECENTLY_PLAYED_TRACKS = "Page does not contain specified recently played tracks";
 
     @Autowired
     private RecentlyPlayedRepository recentlyPlayedRepository;
@@ -34,18 +34,18 @@ public class RecentlyPlayedRepositoryTest {
     private UserRepository userRepository;
 
     @Autowired
-    private SongRepository songRepository;
+    private TrackRepository trackRepository;
 
     private static User user = User
             .builder()
             .build();
-    private static Song song1 = Song
+    private static Track track1 = Track
             .builder()
             .build();
-    private static Song song2 = Song
+    private static Track track2 = Track
             .builder()
             .build();
-    private static Song song3 = Song
+    private static Track track3 = Track
             .builder()
             .build();
     private static RecentlyPlayed recentlyPlayed1 = RecentlyPlayed
@@ -63,18 +63,18 @@ public class RecentlyPlayedRepositoryTest {
 
     @BeforeAll
     public void setUp() {
-        song1 = songRepository.save(song1);
-        song2 = songRepository.save(song2);
-        song3 = songRepository.save(song3);
+        track1 = trackRepository.save(track1);
+        track2 = trackRepository.save(track2);
+        track3 = trackRepository.save(track3);
 
         user = userRepository.save(user);
 
         recentlyPlayed1.setUser(user);
         recentlyPlayed2.setUser(user);
         recentlyPlayed3.setUser(user);
-        recentlyPlayed1.setSong(song1);
-        recentlyPlayed2.setSong(song2);
-        recentlyPlayed3.setSong(song3);
+        recentlyPlayed1.setTrack(track1);
+        recentlyPlayed2.setTrack(track2);
+        recentlyPlayed3.setTrack(track3);
 
         recentlyPlayed1 = recentlyPlayedRepository.save(recentlyPlayed1);
         recentlyPlayed2 = recentlyPlayedRepository.save(recentlyPlayed2);
@@ -82,28 +82,28 @@ public class RecentlyPlayedRepositoryTest {
     }
 
     @Test
-    public void shouldFindAllRecentlyPlayedSongsByUserIdOrderedByCreatedAtDesc() {
+    public void shouldFindAllRecentlyPlayedTracksByUserIdOrderedByCreatedAtDesc() {
         final int pageSize = 3;
         final Pageable pageableForFirstPage = PageRequest.of(0, pageSize);
         final Pageable pageableForSecondPage = PageRequest.of(1, pageSize);
 
-        final Page<RecentlyPlayed> pageWithSongs = recentlyPlayedRepository.findAllByUserIdOrderByCreatedAtDesc(
+        final Page<RecentlyPlayed> pageWithTracks = recentlyPlayedRepository.findAllByUserIdOrderByCreatedAtDesc(
                 pageableForFirstPage, user.getId()
         );
         final Page<RecentlyPlayed> emptyPage = recentlyPlayedRepository.findAllByUserIdOrderByCreatedAtDesc(
                 pageableForSecondPage, user.getId()
         );
 
-        assertEquals(pageSize, pageWithSongs.toSet().size(), WRONG_PAGE_SIZE);
+        assertEquals(pageSize, pageWithTracks.toSet().size(), WRONG_PAGE_SIZE);
         assertTrue(
-                pageWithSongs.toSet().containsAll(List.of(recentlyPlayed1, recentlyPlayed2, recentlyPlayed3)),
-                PAGE_DOES_NOT_CONTAIN_SPECIFIED_RECENTLY_PLAYED_SONGS
+                pageWithTracks.toSet().containsAll(List.of(recentlyPlayed1, recentlyPlayed2, recentlyPlayed3)),
+                PAGE_DOES_NOT_CONTAIN_SPECIFIED_RECENTLY_PLAYED_TRACKS
         );
         assertTrue(emptyPage.isEmpty(), PAGE_IS_NOT_EMPTY);
     }
 
     @Test
-    public void shouldNotFindAnyRecentlyPlayedSongWhenUserDoesNotExist() {
+    public void shouldNotFindAnyRecentlyPlayedTrackWhenUserDoesNotExist() {
         final Long unknownUserId = 5L;
         final Pageable pageable = PageRequest.of(0, 3);
         final Page<RecentlyPlayed> page = recentlyPlayedRepository.findAllByUserIdOrderByCreatedAtDesc(
