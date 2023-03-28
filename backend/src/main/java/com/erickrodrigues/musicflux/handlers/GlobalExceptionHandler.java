@@ -1,5 +1,6 @@
 package com.erickrodrigues.musicflux.handlers;
 
+import com.erickrodrigues.musicflux.shared.InvalidActionException;
 import com.erickrodrigues.musicflux.shared.ResourceAlreadyExistsException;
 import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -68,6 +69,20 @@ public class GlobalExceptionHandler {
                         .path(request.getRequestURI())
                         .build(),
                 HttpStatus.UNAUTHORIZED
+        );
+    }
+
+    @ExceptionHandler({ InvalidActionException.class })
+    public ResponseEntity<ApiError> forbiddenHandler(Exception exception, HttpServletRequest request) {
+        return new ResponseEntity<>(
+                ApiError.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.FORBIDDEN.value())
+                        .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                        .message(exception.getMessage())
+                        .path(request.getRequestURI())
+                        .build(),
+                HttpStatus.FORBIDDEN
         );
     }
 
