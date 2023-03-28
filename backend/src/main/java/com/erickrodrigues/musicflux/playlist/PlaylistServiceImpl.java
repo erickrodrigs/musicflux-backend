@@ -1,5 +1,6 @@
 package com.erickrodrigues.musicflux.playlist;
 
+import com.erickrodrigues.musicflux.shared.InvalidActionException;
 import com.erickrodrigues.musicflux.track.TrackService;
 import com.erickrodrigues.musicflux.user.User;
 import com.erickrodrigues.musicflux.track.Track;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +53,11 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
     public Playlist addTrack(Long userId, Long playlistId, Long trackId) {
         final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
         final Track track = trackService.findById(trackId);
-        userService.findById(userId);
+        final User user = userService.findById(userId);
+
+        if (!Objects.equals(user.getId(), playlist.getUser().getId())) {
+            throw new InvalidActionException("Cannot add tracks to another user's playlist");
+        }
 
         playlist.addTrack(track);
         return playlistRepository.save(playlist);
@@ -62,7 +68,11 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
     public Playlist removeTrack(Long userId, Long playlistId, Long trackId) {
         final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
         final Track track = trackService.findById(trackId);
-        userService.findById(userId);
+        final User user = userService.findById(userId);
+
+        if (!Objects.equals(user.getId(), playlist.getUser().getId())) {
+            throw new InvalidActionException("Cannot remove tracks from another user's playlist");
+        }
 
         playlist.removeTrack(track);
         return playlistRepository.save(playlist);
@@ -70,8 +80,13 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
 
     @Override
     public void deleteById(Long userId, Long playlistId) {
-        userService.findById(userId);
-        super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
+        final User user = userService.findById(userId);
+        final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
+
+        if (!Objects.equals(user.getId(), playlist.getUser().getId())) {
+            throw new InvalidActionException("Cannot delete a playlist from another user");
+        }
+
         playlistRepository.deleteById(playlistId);
     }
 }

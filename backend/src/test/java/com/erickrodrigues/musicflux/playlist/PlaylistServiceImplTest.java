@@ -1,5 +1,6 @@
 package com.erickrodrigues.musicflux.playlist;
 
+import com.erickrodrigues.musicflux.shared.InvalidActionException;
 import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
 import com.erickrodrigues.musicflux.track.TrackService;
 import com.erickrodrigues.musicflux.track.Track;
@@ -148,7 +149,7 @@ public class PlaylistServiceImplTest {
         // given
         final Long userId = 1L, playlistId = 1L, trackId = 1L;
         final User user = User.builder().id(userId).build();
-        final Playlist playlist = Playlist.builder().id(playlistId).build();
+        final Playlist playlist = Playlist.builder().id(playlistId).user(user).build();
         final Track track = Track.builder().id(trackId).build();
         final Playlist expectedPlaylist = Playlist.builder().tracks(List.of(track)).build();
         when(userService.findById(userId)).thenReturn(user);
@@ -211,12 +212,31 @@ public class PlaylistServiceImplTest {
     }
 
     @Test
+    public void shouldThrowAnExceptionWhenUserThatIsNotPlaylistOwnerAddsATrackToPlaylist() {
+        // given
+        final Long userId = 1L, playlistId = 1L, trackId = 1L;
+        final User user = User.builder().id(userId).build();
+        final Playlist playlist = Playlist.builder().id(playlistId).user(User.builder().id(userId + 1L).build()).build();
+        final Track track = Track.builder().id(trackId).build();
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
+        when(trackService.findById(trackId)).thenReturn(track);
+        when(userService.findById(userId)).thenReturn(user);
+
+        // then
+        assertThrows(InvalidActionException.class, () -> playlistService.addTrack(userId, playlistId, trackId));
+        verify(trackService, times(1)).findById(trackId);
+        verify(playlistRepository, times(1)).findById(playlistId);
+        verify(userService, times(1)).findById(userId);
+        verify(playlistRepository, never()).save(any());
+    }
+
+    @Test
     public void shouldRemoveATrackFromAPlaylist() {
         // given
         final Long userId = 1L, playlistId = 1L, trackId = 1L;
         final User user = User.builder().id(userId).build();
         final Track track = Track.builder().id(trackId).build();
-        final Playlist playlist = Playlist.builder().tracks(new ArrayList<>(List.of(track))).build();
+        final Playlist playlist = Playlist.builder().tracks(new ArrayList<>(List.of(track))).user(user).build();
         final Playlist expectedPlaylist = Playlist.builder().tracks(List.of()).build();
         when(userService.findById(userId)).thenReturn(user);
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
@@ -277,11 +297,32 @@ public class PlaylistServiceImplTest {
     }
 
     @Test
+    public void shouldThrowAnExceptionWhenUserThatIsNotPlaylistOwnerRemovesATrackFromPlaylist() {
+        // given
+        final Long userId = 1L, playlistId = 1L, trackId = 1L;
+        final User user = User.builder().id(userId).build();
+        final Playlist playlist = Playlist.builder().id(playlistId).user(User.builder().id(userId + 1L).build()).build();
+        final Track track = Track.builder().id(trackId).build();
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
+        when(trackService.findById(trackId)).thenReturn(track);
+        when(userService.findById(userId)).thenReturn(user);
+
+        // then
+        assertThrows(InvalidActionException.class, () -> playlistService.removeTrack(userId, playlistId, trackId));
+        verify(trackService, times(1)).findById(trackId);
+        verify(playlistRepository, times(1)).findById(playlistId);
+        verify(userService, times(1)).findById(userId);
+        verify(playlistRepository, never()).deleteById(any());
+    }
+
+    @Test
     public void shouldDeleteAPlaylistByItsId() {
         // given
         final Long userId = 1L, playlistId = 1L;
-        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(Playlist.builder().id(playlistId).build()));
-        when(userService.findById(userId)).thenReturn(User.builder().id(userId).build());
+        final User user = User.builder().id(userId).build();
+        final Playlist playlist = Playlist.builder().id(playlistId).user(user).build();
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
+        when(userService.findById(userId)).thenReturn(user);
 
         // when
         playlistService.deleteById(userId, playlistId);
@@ -301,5 +342,21 @@ public class PlaylistServiceImplTest {
         // then
         assertThrows(ResourceNotFoundException.class, () -> playlistService.deleteById(userId, playlistId));
         verify(playlistRepository, never()).deleteById(playlistId);
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenUserThatIsNotPlaylistOwnerDeletesPlaylist() {
+        // given
+        final Long userId = 1L, playlistId = 1L;
+        final User user = User.builder().id(userId).build();
+        final Playlist playlist = Playlist.builder().id(playlistId).user(User.builder().id(userId + 1L).build()).build();
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
+        when(userService.findById(userId)).thenReturn(user);
+
+        // then
+        assertThrows(InvalidActionException.class, () -> playlistService.deleteById(userId, playlistId));
+        verify(playlistRepository, times(1)).findById(playlistId);
+        verify(userService, times(1)).findById(userId);
+        verify(playlistRepository, never()).deleteById(any());
     }
 }
