@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class GetMostPlayedTracksByArtistTest {
+public class GetTopTracksByArtistTest {
 
     @LocalServerPort
     private int port;
@@ -36,6 +36,6 @@ public class GetMostPlayedTracksByArtistTest {
     }
 
     private String getUrl() {
-        return "http://localhost:" + port + "/artists/1/most_played_tracks";
+        return "http://localhost:" + port + "/artists/1/top-tracks";
     }
 }

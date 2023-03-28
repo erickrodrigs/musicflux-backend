@@ -11,8 +11,4 @@ public interface TrackService {
     List<Track> findAllByTitleContainingIgnoreCase(String text);
 
     List<Track> findAllByGenreName(String genreName);
-
-    List<Track> findAllByAlbumId(Long albumId);
-
-    List<Track> findMostPlayedTracksByArtistId(Long artistId);
 }
