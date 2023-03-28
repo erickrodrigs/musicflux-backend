@@ -1,7 +1,7 @@
 package com.erickrodrigues.musicflux.playlist;
 
+import com.erickrodrigues.musicflux.track.Track;
 import com.erickrodrigues.musicflux.user.User;
-import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.shared.ResourceAlreadyExistsException;
 import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
 import com.erickrodrigues.musicflux.shared.BaseEntity;
@@ -31,26 +31,26 @@ public class Playlist extends BaseEntity {
     private User user;
 
     @ManyToMany
-    @JoinTable(name = "playlists_songs",
+    @JoinTable(name = "playlists_tracks",
             joinColumns = @JoinColumn(name = "playlist_id"),
-            inverseJoinColumns = @JoinColumn(name = "song_id")
+            inverseJoinColumns = @JoinColumn(name = "track_id")
     )
     @Builder.Default
-    private List<Song> songs = new ArrayList<>();
+    private List<Track> tracks = new ArrayList<>();
 
-    public void addSong(Song song) {
-        if (songs.contains(song)) {
-            throw new ResourceAlreadyExistsException("Song already included in the playlist");
+    public void addTrack(Track track) {
+        if (tracks.contains(track)) {
+            throw new ResourceAlreadyExistsException("Track already included in the playlist");
         }
 
-        songs.add(song);
+        tracks.add(track);
     }
 
-    public void removeSong(Song song) {
-        if (!songs.contains(song)) {
-            throw new ResourceNotFoundException("Song is not included in the playlist");
+    public void removeTrack(Track track) {
+        if (!tracks.contains(track)) {
+            throw new ResourceNotFoundException("Track is not included in the playlist");
         }
 
-        songs.remove(song);
+        tracks.remove(track);
     }
 }

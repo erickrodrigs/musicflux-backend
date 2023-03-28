@@ -9,5 +9,5 @@ public interface FavoriteRepository extends CrudRepository<Favorite, Long> {
 
     List<Favorite> findAllByUserId(Long userId);
 
-    Optional<Favorite> findBySongId(Long songId);
+    Optional<Favorite> findByTrackId(Long trackId);
 }

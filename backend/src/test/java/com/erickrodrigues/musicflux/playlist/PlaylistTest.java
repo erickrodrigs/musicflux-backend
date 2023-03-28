@@ -1,7 +1,7 @@
 package com.erickrodrigues.musicflux.playlist;
 
+import com.erickrodrigues.musicflux.track.Track;
 import com.erickrodrigues.musicflux.user.User;
-import com.erickrodrigues.musicflux.song.Song;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,31 +20,31 @@ public class PlaylistTest {
     }
 
     @Test
-    public void addSong() {
-        playlist.addSong(Song.builder().id(1L).build());
+    public void addTrack() {
+        playlist.addTrack(Track.builder().id(1L).build());
 
-        assertEquals(1, playlist.getSongs().size());
+        assertEquals(1, playlist.getTracks().size());
     }
 
     @Test
-    public void addSongThatAlreadyExists() {
-        playlist.addSong(Song.builder().id(1L).build());
+    public void addTrackThatAlreadyExists() {
+        playlist.addTrack(Track.builder().id(1L).build());
 
-        assertThrows(RuntimeException.class, () -> playlist.addSong(Song.builder().id(1L).build()));
+        assertThrows(RuntimeException.class, () -> playlist.addTrack(Track.builder().id(1L).build()));
     }
 
     @Test
-    public void removeSong() {
-        Song song = Song.builder().id(1L).build();
+    public void removeTrack() {
+        Track track = Track.builder().id(1L).build();
 
-        playlist.addSong(song);
-        playlist.removeSong(song);
+        playlist.addTrack(track);
+        playlist.removeTrack(track);
 
-        assertTrue(playlist.getSongs().isEmpty());
+        assertTrue(playlist.getTracks().isEmpty());
     }
 
     @Test
-    public void removeSongThatIsNotIncludedInThePlaylist() {
-        assertThrows(RuntimeException.class, () -> playlist.removeSong(Song.builder().id(1L).build()));
+    public void removeTrackThatIsNotIncludedInThePlaylist() {
+        assertThrows(RuntimeException.class, () -> playlist.removeTrack(Track.builder().id(1L).build()));
     }
 }

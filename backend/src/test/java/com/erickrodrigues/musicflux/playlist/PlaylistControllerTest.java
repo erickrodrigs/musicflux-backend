@@ -123,9 +123,9 @@ public class PlaylistControllerTest {
     }
 
     @Test
-    public void addSong() throws Exception {
-        final Long userId = 1L, songId = 1L;
-        final AddSongToPlaylistDto addSongToPlaylistDto = AddSongToPlaylistDto.builder().songId(songId).build();
+    public void addTrack() throws Exception {
+        final Long userId = 1L, trackId = 1L;
+        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto.builder().trackId(trackId).build();
         final Playlist playlist = Playlist.builder().id(1L).name("playlist").build();
         final PlaylistDetailsDto playlistDetailsDto = PlaylistDetailsDto.builder()
                 .id(playlist.getId())
@@ -133,13 +133,13 @@ public class PlaylistControllerTest {
                 .userId(userId)
                 .build();
         final ObjectMapper objectMapper = new ObjectMapper();
-        final String json = objectMapper.writeValueAsString(addSongToPlaylistDto);
+        final String json = objectMapper.writeValueAsString(addTrackToPlaylistDto);
 
-        when(playlistService.addSong(userId, playlist.getId(), songId)).thenReturn(playlist);
+        when(playlistService.addTrack(userId, playlist.getId(), trackId)).thenReturn(playlist);
         when(playlistMapper.toPlaylistDetailsDto(playlist)).thenReturn(playlistDetailsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
-        final MvcResult mvcResult = mockMvc.perform(put("/users/me/playlists/" + playlist.getId() + "/songs")
+        final MvcResult mvcResult = mockMvc.perform(put("/users/me/playlists/" + playlist.getId() + "/tracks")
                         .requestAttr("userId", userId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json))
@@ -153,13 +153,13 @@ public class PlaylistControllerTest {
         assertEquals(playlistDetailsDto.getId(), actualResult.getId());
         assertEquals(playlistDetailsDto.getName(), actualResult.getName());
         assertEquals(playlistDetailsDto.getUserId(), actualResult.getUserId());
-        verify(playlistService, times(1)).addSong(anyLong(), anyLong(), anyLong());
+        verify(playlistService, times(1)).addTrack(anyLong(), anyLong(), anyLong());
         verify(playlistMapper, times(1)).toPlaylistDetailsDto(any());
     }
 
     @Test
-    public void removeSong() throws Exception {
-        final Long userId = 1L, playlistId = 1L, songId = 1L;
+    public void removeTrack() throws Exception {
+        final Long userId = 1L, playlistId = 1L, trackId = 1L;
         final Playlist playlist = Playlist.builder().id(1L).name("playlist").build();
         final PlaylistDetailsDto playlistDetailsDto = PlaylistDetailsDto.builder()
                 .id(playlist.getId())
@@ -167,11 +167,11 @@ public class PlaylistControllerTest {
                 .userId(userId)
                 .build();
 
-        when(playlistService.removeSong(userId, playlistId, songId)).thenReturn(playlist);
+        when(playlistService.removeTrack(userId, playlistId, trackId)).thenReturn(playlist);
         when(playlistMapper.toPlaylistDetailsDto(playlist)).thenReturn(playlistDetailsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
-        final MvcResult mvcResult = mockMvc.perform(delete("/users/me/playlists/" + playlistId + "/songs/" + songId)
+        final MvcResult mvcResult = mockMvc.perform(delete("/users/me/playlists/" + playlistId + "/tracks/" + trackId)
                         .requestAttr("userId", userId))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -183,7 +183,7 @@ public class PlaylistControllerTest {
         assertEquals(playlistDetailsDto.getId(), actualResult.getId());
         assertEquals(playlistDetailsDto.getName(), actualResult.getName());
         assertEquals(playlistDetailsDto.getUserId(), actualResult.getUserId());
-        verify(playlistService, times(1)).removeSong(anyLong(), anyLong(), anyLong());
+        verify(playlistService, times(1)).removeTrack(anyLong(), anyLong(), anyLong());
         verify(playlistMapper, times(1)).toPlaylistDetailsDto(any());
     }
 

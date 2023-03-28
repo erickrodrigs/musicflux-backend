@@ -2,7 +2,7 @@ package com.erickrodrigues.musicflux.album;
 
 import com.erickrodrigues.musicflux.artist.Artist;
 import com.erickrodrigues.musicflux.shared.BaseEntity;
-import com.erickrodrigues.musicflux.song.Song;
+import com.erickrodrigues.musicflux.track.Track;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -31,7 +31,7 @@ public class Album extends BaseEntity implements Comparable<Album> {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "album")
     @Builder.Default
-    private List<Song> songs = new ArrayList<>();
+    private List<Track> tracks = new ArrayList<>();
 
     @ManyToMany(mappedBy = "albums")
     @Builder.Default

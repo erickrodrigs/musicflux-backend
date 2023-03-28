@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class PlaySongTest {
+public class PlayTrackTest {
 
     private static final String INVALID_STATUS_CODE = "Invalid status code";
     private static final String CONTENT_TYPE_IS_NULL = "Content type is null";
@@ -60,13 +60,13 @@ public class PlaySongTest {
     }
 
     @Test
-    public void shouldReturnASongForTheClientToPlay() {
+    public void shouldReturnATrackForTheClientToPlay() {
         // given
-        final long songId = 9L;
+        final long trackId = 9L;
 
         // when
         final ResponseEntity<Resource> response = restTemplate.getForEntity(
-                getBaseUrl() + "/users/me/songs/" + songId,
+                getBaseUrl() + "/users/me/tracks/" + trackId,
                 Resource.class
         );
 
@@ -78,13 +78,13 @@ public class PlaySongTest {
     }
 
     @Test
-    public void shouldRespondWithANotFoundErrorWhenRequestToPlayASongThatDoesNotExist() {
+    public void shouldRespondWithANotFoundErrorWhenRequestToPlayATrackThatDoesNotExist() {
         // given
-        final long invalidSongId = 498L;
+        final long invalidTrackId = 498L;
 
         // then
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.getForEntity(
-                getBaseUrl() + "/users/me/songs/" + invalidSongId,
+                getBaseUrl() + "/users/me/tracks/" + invalidTrackId,
                 Resource.class
         ));
     }

@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.song;
+package com.erickrodrigues.musicflux.track;
 
 import com.erickrodrigues.musicflux.album.Album;
 import com.erickrodrigues.musicflux.genre.Genre;
@@ -16,8 +16,8 @@ import java.util.List;
 @NoArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "songs")
-public class Song extends BaseEntity implements Comparable<Song> {
+@Table(name = "tracks")
+public class Track extends BaseEntity implements Comparable<Track> {
 
     @Column(name = "title")
     private String title;
@@ -34,8 +34,8 @@ public class Song extends BaseEntity implements Comparable<Song> {
     private Album album;
 
     @ManyToMany
-    @JoinTable(name = "songs_genres",
-            joinColumns = @JoinColumn(name = "song_id"),
+    @JoinTable(name = "tracks_genres",
+            joinColumns = @JoinColumn(name = "track_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     @Builder.Default
@@ -46,7 +46,7 @@ public class Song extends BaseEntity implements Comparable<Song> {
     }
 
     @Override
-    public int compareTo(Song o) {
+    public int compareTo(Track o) {
         final int comparison = o.getNumberOfPlays().compareTo(this.getNumberOfPlays());
 
         if (comparison == 0) {

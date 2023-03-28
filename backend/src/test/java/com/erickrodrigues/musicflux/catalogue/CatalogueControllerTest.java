@@ -6,9 +6,9 @@ import com.erickrodrigues.musicflux.artist.Artist;
 import com.erickrodrigues.musicflux.artist.ArtistDetailsDto;
 import com.erickrodrigues.musicflux.genre.Genre;
 import com.erickrodrigues.musicflux.playlist.PlaylistDto;
-import com.erickrodrigues.musicflux.song.SongDetailsDto;
+import com.erickrodrigues.musicflux.track.TrackDto;
 import com.erickrodrigues.musicflux.playlist.Playlist;
-import com.erickrodrigues.musicflux.song.Song;
+import com.erickrodrigues.musicflux.track.Track;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ public class CatalogueControllerTest {
     @Test
     public void search() throws Exception {
         final List<SearchableType> types = List.of(
-                SearchableType.ARTIST, SearchableType.ALBUM, SearchableType.SONG, SearchableType.PLAYLIST
+                SearchableType.ARTIST, SearchableType.ALBUM, SearchableType.TRACK, SearchableType.PLAYLIST
         );
         final String text = "dark";
         final CatalogueResult catalogueResult = CatalogueResult
@@ -56,11 +56,11 @@ public class CatalogueControllerTest {
                 .albums(List.of(
                         Album.builder().id(2L).title("The Dark Side Of The Moon").releaseDate(LocalDate.of(1973, 3, 1)).build()
                 ))
-                .songs(List.of(
-                        Song.builder().id(1L).title("Dark Fantasy").genres(List.of(Genre.builder().name("Hip-hop").build())).build()
+                .tracks(List.of(
+                        Track.builder().id(1L).title("Dark Fantasy").genres(List.of(Genre.builder().name("Hip-hop").build())).build()
                 ))
                 .playlists(List.of(
-                        Playlist.builder().id(1L).name("The Most Dark and Depressive Songs").build()
+                        Playlist.builder().id(1L).name("The Most Dark and Depressive Tracks").build()
                 ))
                 .build();
         final CatalogueResultDto catalogueResultDto = CatalogueResultDto
@@ -71,11 +71,11 @@ public class CatalogueControllerTest {
                 .albums(List.of(
                         AlbumDetailsDto.builder().id(2L).title("The Dark Side Of The Moon").releaseDate(LocalDate.of(1973, 3, 1)).artistsIds(List.of(1L)).build()
                 ))
-                .songs(List.of(
-                        SongDetailsDto.builder().id(1L).title("Dark Fantasy").genres(List.of("Hip-hop")).albumId(1L).build()
+                .tracks(List.of(
+                        TrackDto.builder().id(1L).title("Dark Fantasy").genres(List.of("Hip-hop")).albumId(1L).build()
                 ))
                 .playlists(List.of(
-                        PlaylistDto.builder().id(1L).name("The Most Dark and Depressive Songs").userId(1L).build()
+                        PlaylistDto.builder().id(1L).name("The Most Dark and Depressive Tracks").userId(1L).build()
                 ))
                 .build();
 
@@ -102,11 +102,11 @@ public class CatalogueControllerTest {
 
         assertEquals(catalogueResultDto.getArtists().size(), actualResponse.getArtists().size());
         assertEquals(catalogueResultDto.getAlbums().size(), actualResponse.getAlbums().size());
-        assertEquals(catalogueResultDto.getSongs().size(), actualResponse.getSongs().size());
+        assertEquals(catalogueResultDto.getTracks().size(), actualResponse.getTracks().size());
         assertEquals(catalogueResultDto.getPlaylists().size(), actualResponse.getPlaylists().size());
         assertTrue(actualResponse.getArtists().containsAll(catalogueResultDto.getArtists()));
         assertTrue(actualResponse.getAlbums().containsAll(catalogueResultDto.getAlbums()));
-        assertTrue(actualResponse.getSongs().containsAll(catalogueResultDto.getSongs()));
+        assertTrue(actualResponse.getTracks().containsAll(catalogueResultDto.getTracks()));
         assertTrue(actualResponse.getPlaylists().containsAll(catalogueResultDto.getPlaylists()));
         verify(catalogueService, times(1)).findAllByTypesAndText(anyList(), anyString());
         verify(catalogueMapper, times(1)).toCatalogueResultDto(any());
@@ -117,27 +117,27 @@ public class CatalogueControllerTest {
         final String genre = "synth-pop";
         final Artist artist = Artist.builder().id(1L).build();
         final Album album = Album.builder().id(1L).artists(List.of(artist)).build();
-        final List<Song> songs = List.of(
-                Song.builder().id(1L).album(album).build(),
-                Song.builder().id(2L).album(album).build()
+        final List<Track> tracks = List.of(
+                Track.builder().id(1L).album(album).build(),
+                Track.builder().id(2L).album(album).build()
         );
         final ArtistDetailsDto artistDetailsDto = ArtistDetailsDto.builder().id(1L).build();
         final AlbumDetailsDto albumDetailsDto = AlbumDetailsDto.builder().id(1L).artistsIds(List.of(artist.getId())).build();
-        final List<SongDetailsDto> songsDetailsDto = List.of(
-                SongDetailsDto.builder().id(1L).albumId(album.getId()).build(),
-                SongDetailsDto.builder().id(2L).albumId(album.getId()).build()
+        final List<TrackDto> tracksDetailsDto = List.of(
+                TrackDto.builder().id(1L).albumId(album.getId()).build(),
+                TrackDto.builder().id(2L).albumId(album.getId()).build()
         );
         final CatalogueResult catalogueResult = CatalogueResult
                 .builder()
                 .artists(List.of(artist))
                 .albums(List.of(album))
-                .songs(songs)
+                .tracks(tracks)
                 .build();
         final CatalogueResultDto catalogueResultDto = CatalogueResultDto
                 .builder()
                 .artists(List.of(artistDetailsDto))
                 .albums(List.of(albumDetailsDto))
-                .songs(songsDetailsDto)
+                .tracks(tracksDetailsDto)
                 .build();
 
         when(catalogueService.findAllByGenreName(genre)).thenReturn(catalogueResult);
@@ -160,8 +160,8 @@ public class CatalogueControllerTest {
         assertTrue(actualResponse.getArtists().contains(artistDetailsDto));
         assertEquals(1, actualResponse.getAlbums().size());
         assertTrue(actualResponse.getAlbums().contains(albumDetailsDto));
-        assertEquals(songsDetailsDto.size(), actualResponse.getSongs().size());
-        assertTrue(actualResponse.getSongs().containsAll(songsDetailsDto));
+        assertEquals(tracksDetailsDto.size(), actualResponse.getTracks().size());
+        assertTrue(actualResponse.getTracks().containsAll(tracksDetailsDto));
         verify(catalogueService, times(1)).findAllByGenreName(anyString());
         verify(catalogueMapper, times(1)).toCatalogueResultDto(any());
     }

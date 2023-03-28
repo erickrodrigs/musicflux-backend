@@ -2,7 +2,7 @@ package com.erickrodrigues.musicflux.integration;
 
 import com.erickrodrigues.musicflux.auth.AuthCredentialsDto;
 import com.erickrodrigues.musicflux.auth.AuthTokenDto;
-import com.erickrodrigues.musicflux.playlist.AddSongToPlaylistDto;
+import com.erickrodrigues.musicflux.playlist.AddTrackToPlaylistDto;
 import com.erickrodrigues.musicflux.playlist.PlaylistDetailsDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class AddNewSongToPlaylistTest {
+public class AddNewTrackToPlaylistTest {
 
     @LocalServerPort
     private int port;
@@ -52,18 +52,18 @@ public class AddNewSongToPlaylistTest {
     }
 
     @Test
-    public void addNewSongToPlaylist() {
+    public void addNewTrackToPlaylist() {
         final HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
 
-        final Long playlistId = 1L, songId = 18L;
-        final AddSongToPlaylistDto addSongToPlaylistDto = AddSongToPlaylistDto
+        final Long playlistId = 1L, trackId = 18L;
+        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto
                 .builder()
-                .songId(songId)
+                .trackId(trackId)
                 .build();
-        final HttpEntity<AddSongToPlaylistDto> requestEntity = new HttpEntity<>(addSongToPlaylistDto, headers);
+        final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
         final ResponseEntity<PlaylistDetailsDto> response = restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/songs",
+                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks",
                 HttpMethod.PUT,
                 requestEntity,
                 PlaylistDetailsDto.class
@@ -75,19 +75,19 @@ public class AddNewSongToPlaylistTest {
     }
 
     @Test
-    public void addSongToPlaylistWhenPlaylistIdIsInvalid() {
+    public void addTrackToPlaylistWhenPlaylistIdIsInvalid() {
         final HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
 
-        final long playlistId = 498L, songId = 18L;
-        final AddSongToPlaylistDto addSongToPlaylistDto = AddSongToPlaylistDto
+        final long playlistId = 498L, trackId = 18L;
+        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto
                 .builder()
-                .songId(songId)
+                .trackId(trackId)
                 .build();
-        final HttpEntity<AddSongToPlaylistDto> requestEntity = new HttpEntity<>(addSongToPlaylistDto, headers);
+        final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
 
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/songs",
+                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks",
                 HttpMethod.PUT,
                 requestEntity,
                 PlaylistDetailsDto.class
@@ -95,19 +95,19 @@ public class AddNewSongToPlaylistTest {
     }
 
     @Test
-    public void addSongToPlaylistWhenSongIdIsInvalid() {
+    public void addTrackToPlaylistWhenTrackIdIsInvalid() {
         final HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
 
-        final long playlistId = 1L, songId = 498L;
-        final AddSongToPlaylistDto addSongToPlaylistDto = AddSongToPlaylistDto
+        final long playlistId = 1L, trackId = 498L;
+        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto
                 .builder()
-                .songId(songId)
+                .trackId(trackId)
                 .build();
-        final HttpEntity<AddSongToPlaylistDto> requestEntity = new HttpEntity<>(addSongToPlaylistDto, headers);
+        final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
 
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/songs",
+                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks",
                 HttpMethod.PUT,
                 requestEntity,
                 PlaylistDetailsDto.class
@@ -115,19 +115,19 @@ public class AddNewSongToPlaylistTest {
     }
 
     @Test
-    public void addSongToPlaylistWhenSongIsAlreadyIncluded() {
+    public void addTrackToPlaylistWhenTrackIsAlreadyIncluded() {
         final HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + token);
 
-        final long playlistId = 1L, songId = 3L;
-        final AddSongToPlaylistDto addSongToPlaylistDto = AddSongToPlaylistDto
+        final long playlistId = 1L, trackId = 3L;
+        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto
                 .builder()
-                .songId(songId)
+                .trackId(trackId)
                 .build();
-        final HttpEntity<AddSongToPlaylistDto> requestEntity = new HttpEntity<>(addSongToPlaylistDto, headers);
+        final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
 
         assertThrows(HttpClientErrorException.BadRequest.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/songs",
+                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks",
                 HttpMethod.PUT,
                 requestEntity,
                 PlaylistDetailsDto.class

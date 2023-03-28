@@ -5,9 +5,9 @@ import com.erickrodrigues.musicflux.album.AlbumService;
 import com.erickrodrigues.musicflux.artist.Artist;
 import com.erickrodrigues.musicflux.artist.ArtistService;
 import com.erickrodrigues.musicflux.playlist.Playlist;
-import com.erickrodrigues.musicflux.song.Song;
+import com.erickrodrigues.musicflux.track.Track;
 import com.erickrodrigues.musicflux.playlist.PlaylistService;
-import com.erickrodrigues.musicflux.song.SongService;
+import com.erickrodrigues.musicflux.track.TrackService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,7 +30,7 @@ public class CatalogueServiceImplTest {
     private AlbumService albumService;
 
     @Mock
-    private SongService songService;
+    private TrackService trackService;
 
     @Mock
     private PlaylistService playlistService;
@@ -44,7 +44,7 @@ public class CatalogueServiceImplTest {
         final List<SearchableType> types = List.of(
                 SearchableType.ARTIST,
                 SearchableType.ALBUM,
-                SearchableType.SONG,
+                SearchableType.TRACK,
                 SearchableType.PLAYLIST
         );
         final List<Artist> artists = List.of(
@@ -55,9 +55,9 @@ public class CatalogueServiceImplTest {
                 Album.builder().id(1L).build(),
                 Album.builder().id(2L).build()
         );
-        final List<Song> songs = List.of(
-                Song.builder().id(1L).build(),
-                Song.builder().id(2L).build()
+        final List<Track> tracks = List.of(
+                Track.builder().id(1L).build(),
+                Track.builder().id(2L).build()
         );
         final List<Playlist> playlists = List.of(
                 Playlist.builder().id(1L).build(),
@@ -66,18 +66,18 @@ public class CatalogueServiceImplTest {
 
         when(artistService.findAllByNameContainingIgnoreCase(anyString())).thenReturn(artists);
         when(albumService.findAllByTitleContainingIgnoreCase(anyString())).thenReturn(albums);
-        when(songService.findAllByTitleContainingIgnoreCase(anyString())).thenReturn(songs);
+        when(trackService.findAllByTitleContainingIgnoreCase(anyString())).thenReturn(tracks);
         when(playlistService.findAllByNameContainingIgnoreCase(anyString())).thenReturn(playlists);
 
         final CatalogueResult catalogueResult = catalogueService.findAllByTypesAndText(types, text);
 
         assertEquals(2, catalogueResult.getArtists().size());
         assertEquals(2, catalogueResult.getAlbums().size());
-        assertEquals(2, catalogueResult.getSongs().size());
+        assertEquals(2, catalogueResult.getTracks().size());
         assertEquals(2, catalogueResult.getPlaylists().size());
         verify(artistService, times(1)).findAllByNameContainingIgnoreCase(anyString());
         verify(albumService, times(1)).findAllByTitleContainingIgnoreCase(anyString());
-        verify(songService, times(1)).findAllByTitleContainingIgnoreCase(anyString());
+        verify(trackService, times(1)).findAllByTitleContainingIgnoreCase(anyString());
         verify(playlistService, times(1)).findAllByNameContainingIgnoreCase(anyString());
     }
 
@@ -86,19 +86,19 @@ public class CatalogueServiceImplTest {
         final String genre = "something not important";
         final Artist artist = Artist.builder().id(1L).build();
         final Album album = Album.builder().id(1L).artists(List.of(artist)).build();
-        final List<Song> songs = List.of(
-                Song.builder().id(1L).album(album).build(),
-                Song.builder().id(2L).album(album).build()
+        final List<Track> tracks = List.of(
+                Track.builder().id(1L).album(album).build(),
+                Track.builder().id(2L).album(album).build()
         );
 
-        when(songService.findAllByGenreName(genre)).thenReturn(songs);
+        when(trackService.findAllByGenreName(genre)).thenReturn(tracks);
 
         final CatalogueResult catalogueResult = catalogueService.findAllByGenreName(genre);
 
         assertEquals(1, catalogueResult.getArtists().size());
         assertEquals(1, catalogueResult.getAlbums().size());
-        assertEquals(2, catalogueResult.getSongs().size());
+        assertEquals(2, catalogueResult.getTracks().size());
         assertEquals(0, catalogueResult.getPlaylists().size());
-        verify(songService, times(1)).findAllByGenreName(anyString());
+        verify(trackService, times(1)).findAllByGenreName(anyString());
     }
 }

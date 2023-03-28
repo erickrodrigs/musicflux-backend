@@ -1,7 +1,7 @@
 package com.erickrodrigues.musicflux.favorite;
 
+import com.erickrodrigues.musicflux.track.Track;
 import com.erickrodrigues.musicflux.user.User;
-import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.shared.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -25,6 +25,6 @@ public class Favorite extends BaseEntity {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "song_id")
-    private Song song;
+    @JoinColumn(name = "track_id")
+    private Track track;
 }

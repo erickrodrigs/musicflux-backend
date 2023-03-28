@@ -8,7 +8,7 @@ INSERT INTO artists_albums (artist_id, album_id)
 VALUES (1, 1),
        (1, 2);
 
-INSERT INTO songs (album_id, id, title, length, number_of_plays)
+INSERT INTO tracks (album_id, id, title, length, number_of_plays)
     VALUES (1, 1, 'Black Celebration', 295, 6975821),
            (1, 2, 'Fly On The Windscreen (Final)', 318, 6975822),
            (1, 3, 'A Question Of Lust', 260, 6975823),
@@ -33,7 +33,7 @@ INSERT INTO songs (album_id, id, title, length, number_of_plays)
 
 INSERT INTO genres (id, name) VALUES (1, 'Synth-pop');
 
-INSERT INTO songs_genres (song_id, genre_id)
+INSERT INTO tracks_genres (track_id, genre_id)
     VALUES (1, 1),
        (2, 1),
        (3, 1),
@@ -59,18 +59,18 @@ INSERT INTO songs_genres (song_id, genre_id)
 INSERT INTO users (id, name, username, email, password)
 VALUES (default, 'Erick', 'erickrodrigs', 'erick@erick.com', '$2a$10$Wmnt48WgTfT5r9.wKIxkn.gB.jV.4Qa..BqmJHvfyeKukfEYnraQC');
 
-INSERT INTO playlists (id, name, user_id) VALUES (default, 'my favorites dm songs of all time', 1);
+INSERT INTO playlists (id, name, user_id) VALUES (default, 'my favorites dm tracks of all time', 1);
 
-INSERT INTO playlists_songs (playlist_id, song_id)
+INSERT INTO playlists_tracks (playlist_id, track_id)
 VALUES (1, 3),
        (1, 4),
        (1, 5),
        (1, 9),
        (1, 13);
 
-INSERT INTO favorites (id, user_id, song_id)
+INSERT INTO favorites (id, user_id, track_id)
 VALUES (default, 1, 2);
 
-INSERT INTO recently_played_songs (id, user_id, song_id, created_at)
+INSERT INTO recently_played_tracks (id, user_id, track_id, created_at)
 VALUES (default, 1, 1, CURRENT_TIMESTAMP()),
        (default, 1, 2, CURRENT_TIMESTAMP());

@@ -33,7 +33,7 @@ public class GetPlaylistByIdTest {
 
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
-        assertTrue(response.getBody().getSongs().size() > 0);
+        assertTrue(response.getBody().getTracks().size() > 0);
     }
 
     @Test

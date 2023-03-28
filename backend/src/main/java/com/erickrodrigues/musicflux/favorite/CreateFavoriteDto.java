@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 public class CreateFavoriteDto {
 
     @NotNull
-    @Positive(message = "Song ID must be a positive value")
-    private Long songId;
+    @Positive(message = "Track ID must be a positive value")
+    private Long trackId;
 }

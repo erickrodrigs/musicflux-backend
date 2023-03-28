@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AddSongToPlaylistDto {
+public class AddTrackToPlaylistDto {
 
-    @NotNull(message = "Song ID is mandatory")
-    @Positive(message = "Song ID must be greater than zero")
-    private Long songId;
+    @NotNull(message = "Track ID is mandatory")
+    @Positive(message = "Track ID must be greater than zero")
+    private Long trackId;
 }

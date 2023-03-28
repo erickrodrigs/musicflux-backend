@@ -31,11 +31,11 @@ public class PlaylistRepositoryTest {
             .build();
     private static Playlist playlist1 = Playlist
             .builder()
-            .name("my fav songs - heavy metal")
+            .name("my fav tracks - heavy metal")
             .build();
     private static Playlist playlist2 = Playlist
             .builder()
-            .name("THESE ARE MY FAV SONGS OF ALL TIME")
+            .name("THESE ARE MY FAV TRACKS OF ALL TIME")
             .build();
     private static Playlist playlist3 = Playlist
             .builder()
@@ -57,7 +57,7 @@ public class PlaylistRepositoryTest {
 
     @Test
     public void shouldFindAllPlaylistsByNameContainingIgnoreCase() {
-        final String text = "my fav songs";
+        final String text = "my fav tracks";
         final List<Playlist> playlists = playlistRepository.findAllByNameContainingIgnoreCase(text);
 
         assertEquals(2, playlists.size(), WRONG_NUMBER_OF_PLAYLISTS);

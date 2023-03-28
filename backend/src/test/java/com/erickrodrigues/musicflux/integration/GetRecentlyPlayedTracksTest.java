@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class GetRecentlyPlayedSongsTest {
+public class GetRecentlyPlayedTracksTest {
 
     @LocalServerPort
     private int port;
@@ -64,7 +64,7 @@ public class GetRecentlyPlayedSongsTest {
     }
 
     @Test
-    public void getRecentlyPlayedSongs() {
+    public void getRecentlyPlayedTracks() {
         final ResponseEntity<PaginatedResponse<RecentlyPlayedDetailsDto>> response = restTemplate.exchange(
                 getBaseUrl() + "/users/me/recently_played",
                 HttpMethod.GET,

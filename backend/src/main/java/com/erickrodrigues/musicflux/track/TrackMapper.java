@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.song;
+package com.erickrodrigues.musicflux.track;
 
 import com.erickrodrigues.musicflux.genre.Genre;
 import org.mapstruct.Mapper;
@@ -8,12 +8,12 @@ import java.time.Duration;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
-public interface SongMapper {
+public interface TrackMapper {
 
-    @Mapping(target = "albumId", source = "song.album.id")
-    SongDetailsDto toSongDetailsDto(Song song);
+    @Mapping(target = "albumId", source = "track.album.id")
+    TrackDto toTrackDetailsDto(Track track);
 
-    List<SongDetailsDto> toListOfSongDetailsDto(List<Song> songs);
+    List<TrackDto> toListOfTrackDetailsDto(List<Track> tracks);
 
     default String genreToName(Genre genre) {
         return genre.getName();
