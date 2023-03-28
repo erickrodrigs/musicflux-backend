@@ -1,5 +1,7 @@
 package com.erickrodrigues.musicflux.album;
 
+import com.erickrodrigues.musicflux.track.TrackDto;
+import com.erickrodrigues.musicflux.track.TrackMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +19,12 @@ import java.util.List;
 public class AlbumController {
 
     private final AlbumService albumService;
-    private final AlbumMapper albumMapper;
+    private final TrackMapper trackMapper;
 
-    @Operation(summary = "Get all albums by an artist by their id")
-    @GetMapping("/artists/{artist_id}/albums")
+    @Operation(summary = "Get all tracks in an album by its id")
+    @GetMapping("/albums/{album_id}/tracks")
     @ResponseStatus(HttpStatus.OK)
-    public List<AlbumDetailsDto> findAllByArtistId(@PathVariable("artist_id") Long artistId) {
-        return albumMapper.toListOfAlbumDetailsDto(albumService.findAllByArtistId(artistId));
+    public List<TrackDto> findAllByAlbumId(@PathVariable("album_id") Long albumId) {
+        return trackMapper.toListOfTrackDetailsDto(albumService.getAlbumTracks(albumId));
     }
 }

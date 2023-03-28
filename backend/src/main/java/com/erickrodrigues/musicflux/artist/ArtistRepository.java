@@ -1,6 +1,5 @@
 package com.erickrodrigues.musicflux.artist;
 
-import com.erickrodrigues.musicflux.artist.Artist;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

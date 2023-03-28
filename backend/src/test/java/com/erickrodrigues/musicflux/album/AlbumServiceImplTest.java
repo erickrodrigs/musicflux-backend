@@ -1,5 +1,7 @@
 package com.erickrodrigues.musicflux.album;
 
+import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
+import com.erickrodrigues.musicflux.track.Track;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -7,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -15,6 +18,7 @@ import static org.mockito.Mockito.*;
 public class AlbumServiceImplTest {
 
     private static final String WRONG_NUMBER_OF_ALBUMS = "Wrong number of albums";
+    private static final String WRONG_NUMBER_OF_TRACKS = "Wrong number of tracks";
 
     @Mock
     private AlbumRepository albumRepository;
@@ -41,31 +45,32 @@ public class AlbumServiceImplTest {
     }
 
     @Test
-    public void shouldFindAllAlbumsByArtistId() {
+    public void shouldFindAllTracksFromAnAlbum() {
         // given
-        final Long artistId = 1L;
-        final List<Album> albums = List.of(
-            Album.builder().id(1L).title("Master of Puppets").build(),
-            Album.builder().id(2L).title("Ride the Lightning").build()
+        final Long albumId = 1L;
+        final List<Track> tracks = List.of(
+                Track.builder().id(1L).title("i wanna love you").build(),
+                Track.builder().id(2L).title("all i know is i wanna love you").build()
         );
-        when(albumRepository.findAllByArtistsId(artistId)).thenReturn(albums);
+        final Album album = Album.builder().id(albumId).tracks(tracks).build();
+        when(albumRepository.findById(albumId)).thenReturn(Optional.of(album));
 
         // when
-        final List<Album> actualAlbums = albumService.findAllByArtistId(artistId);
+        final List<Track> actualTracks = albumService.getAlbumTracks(albumId);
 
         // then
-        assertEquals(albums.size(), actualAlbums.size(), WRONG_NUMBER_OF_ALBUMS);
-        verify(albumRepository, times(1)).findAllByArtistsId(artistId);
+        assertEquals(tracks.size(), actualTracks.size(), WRONG_NUMBER_OF_TRACKS);
+        verify(albumRepository, times(1)).findById(albumId);
     }
 
     @Test
-    public void shouldThrowAnExceptionWhenFindingAlbumsByArtistIdThatDoesNotExist() {
+    public void shouldThrowAnExceptionWhenFindingAllTracksFromAnAlbumThatDoesNotExist() {
         // given
-        final Long artistId = 1L;
-        when(albumRepository.findAllByArtistsId(artistId)).thenReturn(List.of());
+        final Long albumId = 1L;
+        when(albumRepository.findById(albumId)).thenReturn(Optional.empty());
 
         // then
-        assertThrows(RuntimeException.class, () -> albumService.findAllByArtistId(artistId));
-        verify(albumRepository, times(1)).findAllByArtistsId(artistId);
+        assertThrows(ResourceNotFoundException.class, () -> albumService.getAlbumTracks(albumId));
+        verify(albumRepository, times(1)).findById(albumId);
     }
 }
