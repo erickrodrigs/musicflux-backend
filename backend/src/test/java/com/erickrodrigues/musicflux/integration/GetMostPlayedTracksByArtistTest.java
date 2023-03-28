@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.integration;
 
-import com.erickrodrigues.musicflux.song.SongDetailsDto;
+import com.erickrodrigues.musicflux.track.TrackDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,7 +8,6 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class GetSongsInAnAlbumTest {
+public class GetMostPlayedTracksByArtistTest {
 
     @LocalServerPort
     private int port;
@@ -25,26 +24,18 @@ public class GetSongsInAnAlbumTest {
     private RestTemplate restTemplate;
 
     @Test
-    public void getAlbumById() {
-        final ResponseEntity<SongDetailsDto[]> response = restTemplate.getForEntity(
-                getUrl(1L),
-                SongDetailsDto[].class
+    public void getMostPlayedTracksByAnArtistByTheirId() {
+        final ResponseEntity<TrackDto[]> response = restTemplate.getForEntity(
+                getUrl(),
+                TrackDto[].class
         );
 
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
-        assertEquals(11, response.getBody().length);
+        assertEquals(5, response.getBody().length);
     }
 
-    @Test
-    public void getAlbumByIdWhenItDoesNotExist() {
-        assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.getForEntity(
-                getUrl(3L),
-                SongDetailsDto[].class
-        ));
-    }
-
-    private String getUrl(Long albumId) {
-        return "http://localhost:" + port + "/albums/" + albumId + "/songs";
+    private String getUrl() {
+        return "http://localhost:" + port + "/artists/1/most_played_tracks";
     }
 }

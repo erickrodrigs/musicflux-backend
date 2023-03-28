@@ -14,9 +14,9 @@ public interface PlaylistService {
 
     List<Playlist> findAllByUserId(Long userId);
 
-    Playlist addSong(Long userId, Long playlistId, Long songId);
+    Playlist addTrack(Long userId, Long playlistId, Long trackId);
 
-    Playlist removeSong(Long userId, Long playlistId, Long songId);
+    Playlist removeTrack(Long userId, Long playlistId, Long trackId);
 
     void deleteById(Long userId, Long playlistId);
 }

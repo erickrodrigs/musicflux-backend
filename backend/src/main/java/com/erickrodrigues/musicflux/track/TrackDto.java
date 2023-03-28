@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.song;
+package com.erickrodrigues.musicflux.track;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SongDetailsDto {
+public class TrackDto {
 
     private Long id;
 

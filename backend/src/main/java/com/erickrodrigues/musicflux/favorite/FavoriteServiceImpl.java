@@ -1,9 +1,9 @@
 package com.erickrodrigues.musicflux.favorite;
 
 import com.erickrodrigues.musicflux.shared.ResourceAlreadyExistsException;
-import com.erickrodrigues.musicflux.song.SongService;
+import com.erickrodrigues.musicflux.track.TrackService;
+import com.erickrodrigues.musicflux.track.Track;
 import com.erickrodrigues.musicflux.user.User;
-import com.erickrodrigues.musicflux.song.Song;
 import com.erickrodrigues.musicflux.shared.BaseService;
 import com.erickrodrigues.musicflux.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +18,23 @@ public class FavoriteServiceImpl extends BaseService implements FavoriteService 
 
     private final FavoriteRepository favoriteRepository;
     private final UserService userService;
-    private final SongService songService;
+    private final TrackService trackService;
 
     @Transactional
     @Override
-    public Favorite likeSong(Long userId, Long songId) {
-        final Song song = songService.findById(songId);
+    public Favorite likeTrack(Long userId, Long trackId) {
+        final Track track = trackService.findById(trackId);
         final User user = userService.findById(userId);
 
         favoriteRepository
-                .findBySongId(songId)
+                .findByTrackId(trackId)
                 .ifPresent((f) -> {
-                    throw new ResourceAlreadyExistsException("Song with that ID is already liked");
+                    throw new ResourceAlreadyExistsException("Track with that ID is already liked");
                 });
 
         final Favorite favorite = Favorite.builder()
                 .user(user)
-                .song(song)
+                .track(track)
                 .build();
 
         return favoriteRepository.save(favorite);
@@ -42,7 +42,7 @@ public class FavoriteServiceImpl extends BaseService implements FavoriteService 
 
     @Transactional
     @Override
-    public void dislikeSong(Long userId, Long favoriteId) {
+    public void dislikeTrack(Long userId, Long favoriteId) {
         final Favorite favorite = super.getEntityOrThrowException(favoriteId, favoriteRepository, Favorite.class);
         userService.findById(userId);
 

@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.song;
+package com.erickrodrigues.musicflux.track;
 
 import com.erickrodrigues.musicflux.album.Album;
 import com.erickrodrigues.musicflux.album.AlbumRepository;
@@ -19,13 +19,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class SongRepositoryTest {
+public class TrackRepositoryTest {
 
-    private static final String DIFFERENT_NUMBER_OF_SONGS = "Different number of songs found";
-    private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_SONGS = "Actual list does not contain specified songs";
+    private static final String DIFFERENT_NUMBER_OF_TRACKS = "Different number of tracks found";
+    private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_TRACKS = "Actual list does not contain specified tracks";
 
     @Autowired
-    private SongRepository songRepository;
+    private TrackRepository trackRepository;
 
     @Autowired
     private GenreRepository genreRepository;
@@ -52,19 +52,19 @@ public class SongRepositoryTest {
             .builder()
             .name("Hip-hop").
             build();
-    private static Song song1 = Song
+    private static Track track1 = Track
             .builder()
             .title("Burning Down The House")
             .build();
-    private static Song song2 = Song
+    private static Track track2 = Track
             .builder()
             .title("all i know is i wanna love you")
             .build();
-    private static Song song3 = Song
+    private static Track track3 = Track
             .builder()
             .title("I Wanna Love You")
             .build();
-    private static Song song4 = Song
+    private static Track track4 = Track
             .builder()
             .title("Let's Get Down")
             .build();
@@ -77,56 +77,56 @@ public class SongRepositoryTest {
         artist.setAlbums(List.of(album));
         artist = artistRepository.save(artist);
 
-        song1.setAlbum(album);
-        song2.setAlbum(album);
-        song3.setAlbum(album);
-        song4.setAlbum(album);
+        track1.setAlbum(album);
+        track2.setAlbum(album);
+        track3.setAlbum(album);
+        track4.setAlbum(album);
 
         genre1 = genreRepository.save(genre1);
         genre2 = genreRepository.save(genre2);
 
-        song1.setGenres(List.of(genre1));
-        song2.setGenres(List.of(genre2));
-        song3.setGenres(List.of(genre2));
-        song4.setGenres(List.of(genre1));
+        track1.setGenres(List.of(genre1));
+        track2.setGenres(List.of(genre2));
+        track3.setGenres(List.of(genre2));
+        track4.setGenres(List.of(genre1));
 
-        song1 = songRepository.save(song1);
-        song2 = songRepository.save(song2);
-        song3 = songRepository.save(song3);
-        song4 = songRepository.save(song4);
+        track1 = trackRepository.save(track1);
+        track2 = trackRepository.save(track2);
+        track3 = trackRepository.save(track3);
+        track4 = trackRepository.save(track4);
     }
 
     @Test
-    public void shouldFindAllSongsByTheirTitleContainingTextAndIgnoringCase() {
+    public void shouldFindAllTracksByTheirTitleContainingTextAndIgnoringCase() {
         final String text = "I WANNA LOVE YOU";
-        final List<Song> songs = songRepository.findAllByTitleContainingIgnoreCase(text);
+        final List<Track> tracks = trackRepository.findAllByTitleContainingIgnoreCase(text);
 
-        assertEquals(2, songs.size(), DIFFERENT_NUMBER_OF_SONGS);
-        assertTrue(songs.containsAll(List.of(song2, song3)), LIST_DOES_NOT_CONTAIN_SPECIFIED_SONGS);
+        assertEquals(2, tracks.size(), DIFFERENT_NUMBER_OF_TRACKS);
+        assertTrue(tracks.containsAll(List.of(track2, track3)), LIST_DOES_NOT_CONTAIN_SPECIFIED_TRACKS);
     }
 
     @Test
-    public void shouldFindAllSongsByAGenreIgnoringCase() {
+    public void shouldFindAllTracksByAGenreIgnoringCase() {
         final String genre = "new wave";
-        final List<Song> songs = songRepository.findAllByGenresNameIgnoreCase(genre);
+        final List<Track> tracks = trackRepository.findAllByGenresNameIgnoreCase(genre);
 
-        assertEquals(2, songs.size(), DIFFERENT_NUMBER_OF_SONGS);
-        assertTrue(songs.containsAll(List.of(song1, song4)), LIST_DOES_NOT_CONTAIN_SPECIFIED_SONGS);
+        assertEquals(2, tracks.size(), DIFFERENT_NUMBER_OF_TRACKS);
+        assertTrue(tracks.containsAll(List.of(track1, track4)), LIST_DOES_NOT_CONTAIN_SPECIFIED_TRACKS);
     }
 
     @Test
-    public void shouldFindAllSongsInAnAlbumByItsId() {
-        final List<Song> songs = songRepository.findAllByAlbumId(album.getId());
+    public void shouldFindAllTracksInAnAlbumByItsId() {
+        final List<Track> tracks = trackRepository.findAllByAlbumId(album.getId());
 
-        assertEquals(4, songs.size(), DIFFERENT_NUMBER_OF_SONGS);
-        assertTrue(songs.containsAll(List.of(song1, song2, song3, song4)), LIST_DOES_NOT_CONTAIN_SPECIFIED_SONGS);
+        assertEquals(4, tracks.size(), DIFFERENT_NUMBER_OF_TRACKS);
+        assertTrue(tracks.containsAll(List.of(track1, track2, track3, track4)), LIST_DOES_NOT_CONTAIN_SPECIFIED_TRACKS);
     }
 
     @Test
-    public void shouldFindAllSongsOfAnArtistByTheirId() {
-        final List<Song> songs = songRepository.findAllByAlbumArtistsId(artist.getId());
+    public void shouldFindAllTracksOfAnArtistByTheirId() {
+        final List<Track> tracks = trackRepository.findAllByAlbumArtistsId(artist.getId());
 
-        assertEquals(4, songs.size(), DIFFERENT_NUMBER_OF_SONGS);
-        assertTrue(songs.containsAll(List.of(song1, song2, song3, song4)), LIST_DOES_NOT_CONTAIN_SPECIFIED_SONGS);
+        assertEquals(4, tracks.size(), DIFFERENT_NUMBER_OF_TRACKS);
+        assertTrue(tracks.containsAll(List.of(track1, track2, track3, track4)), LIST_DOES_NOT_CONTAIN_SPECIFIED_TRACKS);
     }
 }

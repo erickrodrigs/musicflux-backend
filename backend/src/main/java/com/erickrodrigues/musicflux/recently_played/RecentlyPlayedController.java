@@ -18,7 +18,7 @@ public class RecentlyPlayedController {
     private final RecentlyPlayedService recentlyPlayedService;
     private final RecentlyPlayedMapper recentlyPlayedMapper;
 
-    @Operation(summary = "Get recently played songs by a user by their id")
+    @Operation(summary = "Get recently played tracks by a user by their id")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public Page<RecentlyPlayedDetailsDto> findAllByUserId(HttpServletRequest request,

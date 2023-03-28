@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.favorite;
 
-import com.erickrodrigues.musicflux.song.SongDetailsDto;
+import com.erickrodrigues.musicflux.track.TrackDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +14,7 @@ public class FavoriteDetailsDto {
 
     private Long id;
 
-    private SongDetailsDto song;
+    private TrackDto track;
 
     private Long userId;
 }

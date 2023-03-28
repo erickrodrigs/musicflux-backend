@@ -2,7 +2,6 @@ package com.erickrodrigues.musicflux.integration;
 
 import com.erickrodrigues.musicflux.auth.AuthCredentialsDto;
 import com.erickrodrigues.musicflux.auth.AuthTokenDto;
-import com.erickrodrigues.musicflux.playlist.PlaylistDetailsDto;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class RemoveSongFromPlaylistTest {
+public class DislikeTrackTest {
 
     @LocalServerPort
     private int port;
@@ -56,55 +55,24 @@ public class RemoveSongFromPlaylistTest {
     }
 
     @Test
-    public void removeSongFromPlaylist() {
-        final long playlistId = 1L, songId = 4L;
-        final ResponseEntity<PlaylistDetailsDto> response = restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/songs/" + songId,
+    public void dislikeTrack() {
+        final long favoriteId = 1L;
+        final ResponseEntity<Object> response = restTemplate.exchange(
+                getBaseUrl() + "/users/me/favorites/" + favoriteId,
                 HttpMethod.DELETE,
                 null,
-                PlaylistDetailsDto.class
+                Object.class
         );
 
         assertEquals(200, response.getStatusCode().value());
-        assertNotNull(response.getBody());
-        assertEquals(playlistId, response.getBody().getId());
-        assertTrue(response
-                .getBody()
-                .getSongs()
-                .stream()
-                .filter(song -> song.getId() == songId)
-                .toList()
-                .isEmpty()
-        );
+        assertNull(response.getBody());
     }
 
     @Test
-    public void removeSongFromPlaylistWhenSongDoesNotExist() {
-        final long playlistId = 1L, songId = 498L;
+    public void dislikeTrackWhenFavoriteIdIsInvalid() {
+        final long favoriteId = 498L;
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/songs/" + songId,
-                HttpMethod.DELETE,
-                null,
-                Object.class
-        ));
-    }
-
-    @Test
-    public void removeSongFromPlaylistWhenSongIsNotIncludedInPlaylist() {
-        final long playlistId = 1L, songId = 1L; // song with id 1 does exist
-        assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/songs/" + songId,
-                HttpMethod.DELETE,
-                null,
-                Object.class
-        ));
-    }
-
-    @Test
-    public void removeSongFromPlaylistWhenPlaylistDoesNotExist() {
-        final long playlistId = 498L, songId = 4L;
-        assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/songs/" + songId,
+                getBaseUrl() + "/users/me/favorites/" + favoriteId,
                 HttpMethod.DELETE,
                 null,
                 Object.class

@@ -5,8 +5,8 @@ import com.erickrodrigues.musicflux.album.AlbumService;
 import com.erickrodrigues.musicflux.artist.Artist;
 import com.erickrodrigues.musicflux.artist.ArtistService;
 import com.erickrodrigues.musicflux.playlist.PlaylistService;
-import com.erickrodrigues.musicflux.song.Song;
-import com.erickrodrigues.musicflux.song.SongService;
+import com.erickrodrigues.musicflux.track.Track;
+import com.erickrodrigues.musicflux.track.TrackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class CatalogueServiceImpl implements CatalogueService {
 
     private final ArtistService artistService;
     private final AlbumService albumService;
-    private final SongService songService;
+    private final TrackService trackService;
     private final PlaylistService playlistService;
 
     @Override
@@ -33,7 +33,7 @@ public class CatalogueServiceImpl implements CatalogueService {
             switch (type) {
                 case ARTIST -> catalogueResult.setArtists(artistService.findAllByNameContainingIgnoreCase(text));
                 case ALBUM -> catalogueResult.setAlbums(albumService.findAllByTitleContainingIgnoreCase(text));
-                case SONG -> catalogueResult.setSongs(songService.findAllByTitleContainingIgnoreCase(text));
+                case TRACK -> catalogueResult.setTracks(trackService.findAllByTitleContainingIgnoreCase(text));
                 case PLAYLIST -> catalogueResult.setPlaylists(playlistService.findAllByNameContainingIgnoreCase(text));
             }
         });
@@ -43,10 +43,10 @@ public class CatalogueServiceImpl implements CatalogueService {
 
     @Override
     public CatalogueResult findAllByGenreName(String genreName) {
-        final List<Song> songs = songService.findAllByGenreName(genreName);
-        final List<Album> albums = songs
+        final List<Track> tracks = trackService.findAllByGenreName(genreName);
+        final List<Album> albums = tracks
                 .stream()
-                .map(Song::getAlbum)
+                .map(Track::getAlbum)
                 .collect(Collectors.toSet())
                 .stream()
                 .toList();
@@ -64,7 +64,7 @@ public class CatalogueServiceImpl implements CatalogueService {
                 .builder()
                 .artists(artists)
                 .albums(albums)
-                .songs(songs)
+                .tracks(tracks)
                 .build();
     }
 }

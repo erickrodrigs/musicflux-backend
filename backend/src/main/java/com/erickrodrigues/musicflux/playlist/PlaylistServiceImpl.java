@@ -1,8 +1,8 @@
 package com.erickrodrigues.musicflux.playlist;
 
-import com.erickrodrigues.musicflux.song.SongService;
+import com.erickrodrigues.musicflux.track.TrackService;
 import com.erickrodrigues.musicflux.user.User;
-import com.erickrodrigues.musicflux.song.Song;
+import com.erickrodrigues.musicflux.track.Track;
 import com.erickrodrigues.musicflux.shared.BaseService;
 import com.erickrodrigues.musicflux.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
 
     private final PlaylistRepository playlistRepository;
     private final UserService userService;
-    private final SongService songService;
+    private final TrackService trackService;
 
     @Transactional
     @Override
@@ -48,23 +48,23 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
 
     @Transactional
     @Override
-    public Playlist addSong(Long userId, Long playlistId, Long songId) {
+    public Playlist addTrack(Long userId, Long playlistId, Long trackId) {
         final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
-        final Song song = songService.findById(songId);
+        final Track track = trackService.findById(trackId);
         userService.findById(userId);
 
-        playlist.addSong(song);
+        playlist.addTrack(track);
         return playlistRepository.save(playlist);
     }
 
     @Transactional
     @Override
-    public Playlist removeSong(Long userId, Long playlistId, Long songId) {
+    public Playlist removeTrack(Long userId, Long playlistId, Long trackId) {
         final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
-        final Song song = songService.findById(songId);
+        final Track track = trackService.findById(trackId);
         userService.findById(userId);
 
-        playlist.removeSong(song);
+        playlist.removeTrack(track);
         return playlistRepository.save(playlist);
     }
 

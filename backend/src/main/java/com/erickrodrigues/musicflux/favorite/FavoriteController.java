@@ -19,27 +19,27 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
     private final FavoriteMapper favoriteMapper;
 
-    @Operation(summary = "Like a song")
+    @Operation(summary = "Like a track")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public FavoriteDetailsDto likeSong(HttpServletRequest request,
+    public FavoriteDetailsDto likeTrack(HttpServletRequest request,
                                        @RequestBody @Valid CreateFavoriteDto createFavoriteDto) {
         final Long userId = (Long) request.getAttribute("userId");
         return favoriteMapper.toFavoriteDetailsDto(
-                favoriteService.likeSong(userId, createFavoriteDto.getSongId())
+                favoriteService.likeTrack(userId, createFavoriteDto.getTrackId())
         );
     }
 
-    @Operation(summary = "Dislike a song")
+    @Operation(summary = "Dislike a track")
     @DeleteMapping("/{favorite_id}")
     @ResponseStatus(HttpStatus.OK)
-    public void dislikeSong(HttpServletRequest request,
+    public void dislikeTrack(HttpServletRequest request,
                             @PathVariable("favorite_id") Long favoriteId) {
         final Long userId = (Long) request.getAttribute("userId");
-        favoriteService.dislikeSong(userId, favoriteId);
+        favoriteService.dislikeTrack(userId, favoriteId);
     }
 
-    @Operation(summary = "Get all liked songs by a user by their id")
+    @Operation(summary = "Get all liked tracks by a user by their id")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<FavoriteDetailsDto> findAllByUserId(HttpServletRequest request) {

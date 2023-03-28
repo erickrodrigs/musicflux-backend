@@ -1,12 +1,12 @@
 package com.erickrodrigues.musicflux.favorite;
 
-import com.erickrodrigues.musicflux.song.SongMapper;
+import com.erickrodrigues.musicflux.track.TrackMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {SongMapper.class})
+@Mapper(componentModel = "spring", uses = {TrackMapper.class})
 public interface FavoriteMapper {
 
     @Mapping(target = "userId", source = "favorite.user.id")

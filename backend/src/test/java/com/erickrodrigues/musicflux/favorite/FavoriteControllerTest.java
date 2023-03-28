@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.favorite;
 
-import com.erickrodrigues.musicflux.song.SongDetailsDto;
+import com.erickrodrigues.musicflux.track.TrackDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,17 +32,17 @@ public class FavoriteControllerTest {
     private FavoriteController favoriteController;
 
     @Test
-    public void likeSong() throws Exception {
-        final Long userId = 1L, songId = 1L;
+    public void likeTrack() throws Exception {
+        final Long userId = 1L, trackId = 1L;
         final Favorite favorite = Favorite.builder().id(1L).build();
         final FavoriteDetailsDto favoriteDetailsDto = FavoriteDetailsDto.builder()
                 .id(1L)
-                .song(SongDetailsDto.builder().id(1L).build())
+                .track(TrackDto.builder().id(1L).build())
                 .userId(userId)
                 .build();
-        final CreateFavoriteDto createFavoriteDto = CreateFavoriteDto.builder().songId(songId).build();
+        final CreateFavoriteDto createFavoriteDto = CreateFavoriteDto.builder().trackId(trackId).build();
 
-        when(favoriteService.likeSong(userId, songId)).thenReturn(favorite);
+        when(favoriteService.likeTrack(userId, trackId)).thenReturn(favorite);
         when(favoriteMapper.toFavoriteDetailsDto(favorite)).thenReturn(favoriteDetailsDto);
 
         final ObjectMapper objectMapper = new ObjectMapper();
@@ -62,14 +62,14 @@ public class FavoriteControllerTest {
         );
 
         assertEquals(favoriteDetailsDto.getId(), actualResult.getId());
-        assertEquals(favoriteDetailsDto.getSong().getId(), actualResult.getSong().getId());
+        assertEquals(favoriteDetailsDto.getTrack().getId(), actualResult.getTrack().getId());
         assertEquals(favoriteDetailsDto.getUserId(), actualResult.getUserId());
-        verify(favoriteService, times(1)).likeSong(anyLong(), anyLong());
+        verify(favoriteService, times(1)).likeTrack(anyLong(), anyLong());
         verify(favoriteMapper, times(1)).toFavoriteDetailsDto(any());
     }
 
     @Test
-    public void dislikeSong() throws Exception {
+    public void dislikeTrack() throws Exception {
         final long userId = 1L, favoriteId = 1L;
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(favoriteController).build();
 
@@ -77,7 +77,7 @@ public class FavoriteControllerTest {
                         .requestAttr("userId", userId))
                 .andExpect(status().isOk());
 
-        verify(favoriteService, times(1)).dislikeSong(anyLong(), anyLong());
+        verify(favoriteService, times(1)).dislikeTrack(anyLong(), anyLong());
     }
 
     @Test
@@ -90,12 +90,12 @@ public class FavoriteControllerTest {
         final List<FavoriteDetailsDto> favoritesDetailsDto = List.of(
                 FavoriteDetailsDto.builder()
                         .id(1L)
-                        .song(SongDetailsDto.builder().id(1L).build())
+                        .track(TrackDto.builder().id(1L).build())
                         .userId(userId)
                         .build(),
                 FavoriteDetailsDto.builder()
                         .id(2L)
-                        .song(SongDetailsDto.builder().id(2L).build())
+                        .track(TrackDto.builder().id(2L).build())
                         .userId(userId)
                         .build()
         );
