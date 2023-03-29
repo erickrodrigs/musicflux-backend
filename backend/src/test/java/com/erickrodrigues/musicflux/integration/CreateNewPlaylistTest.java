@@ -63,7 +63,7 @@ public class CreateNewPlaylistTest {
                 .build();
 
         final ResponseEntity<PlaylistDetailsDto> response = restTemplate.postForEntity(
-                getBaseUrl() + "/users/me/playlists",
+                getBaseUrl() + "/playlists",
                 createPlaylistDto,
                 PlaylistDetailsDto.class
         );
@@ -84,7 +84,7 @@ public class CreateNewPlaylistTest {
                 .build();
 
         assertThrows(HttpClientErrorException.BadRequest.class, () -> restTemplate.postForEntity(
-                getBaseUrl() + "/users/me/playlists",
+                getBaseUrl() + "/playlists",
                 createPlaylistDto,
                 PlaylistDetailsDto.class
         ));

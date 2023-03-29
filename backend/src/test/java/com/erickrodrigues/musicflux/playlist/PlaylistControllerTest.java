@@ -48,7 +48,7 @@ public class PlaylistControllerTest {
         when(playlistMapper.toPlaylistDetailsDto(playlist)).thenReturn(playlistDetailsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
-        final MvcResult mvcResult = mockMvc.perform(post("/users/me/playlists")
+        final MvcResult mvcResult = mockMvc.perform(post("/playlists")
                         .requestAttr("userId", userId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json))
@@ -139,7 +139,7 @@ public class PlaylistControllerTest {
         when(playlistMapper.toPlaylistDetailsDto(playlist)).thenReturn(playlistDetailsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
-        final MvcResult mvcResult = mockMvc.perform(put("/users/me/playlists/" + playlist.getId() + "/tracks")
+        final MvcResult mvcResult = mockMvc.perform(post("/playlists/" + playlist.getId() + "/tracks")
                         .requestAttr("userId", userId)
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(json))
@@ -161,18 +161,23 @@ public class PlaylistControllerTest {
     public void removeTrack() throws Exception {
         final Long userId = 1L, playlistId = 1L, trackId = 1L;
         final Playlist playlist = Playlist.builder().id(1L).name("playlist").build();
+        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto.builder().trackId(trackId).build();
         final PlaylistDetailsDto playlistDetailsDto = PlaylistDetailsDto.builder()
                 .id(playlist.getId())
                 .name(playlist.getName())
                 .userId(userId)
                 .build();
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final String json = objectMapper.writeValueAsString(addTrackToPlaylistDto);
 
         when(playlistService.removeTrack(userId, playlistId, trackId)).thenReturn(playlist);
         when(playlistMapper.toPlaylistDetailsDto(playlist)).thenReturn(playlistDetailsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
-        final MvcResult mvcResult = mockMvc.perform(delete("/users/me/playlists/" + playlistId + "/tracks/" + trackId)
-                        .requestAttr("userId", userId))
+        final MvcResult mvcResult = mockMvc.perform(delete("/playlists/" + playlistId + "/tracks")
+                        .requestAttr("userId", userId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(json))
                 .andExpect(status().isOk())
                 .andReturn();
         final PlaylistDetailsDto actualResult = new ObjectMapper().readValue(
@@ -192,7 +197,7 @@ public class PlaylistControllerTest {
         final long userId = 1L, playlistId = 1L;
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
 
-        mockMvc.perform(delete("/users/me/playlists/" + playlistId)
+        mockMvc.perform(delete("/playlists/" + playlistId)
                         .requestAttr("userId", userId))
                 .andExpect(status().isOk());
 

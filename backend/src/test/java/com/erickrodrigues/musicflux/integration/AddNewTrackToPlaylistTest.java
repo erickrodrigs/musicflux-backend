@@ -63,8 +63,8 @@ public class AddNewTrackToPlaylistTest {
                 .build();
         final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
         final ResponseEntity<PlaylistDetailsDto> response = restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks",
-                HttpMethod.PUT,
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks",
+                HttpMethod.POST,
                 requestEntity,
                 PlaylistDetailsDto.class
         );
@@ -87,8 +87,8 @@ public class AddNewTrackToPlaylistTest {
         final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
 
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks",
-                HttpMethod.PUT,
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks",
+                HttpMethod.POST,
                 requestEntity,
                 PlaylistDetailsDto.class
         ));
@@ -107,8 +107,8 @@ public class AddNewTrackToPlaylistTest {
         final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
 
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks",
-                HttpMethod.PUT,
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks",
+                HttpMethod.POST,
                 requestEntity,
                 PlaylistDetailsDto.class
         ));
@@ -127,8 +127,9 @@ public class AddNewTrackToPlaylistTest {
         final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
 
         assertThrows(HttpClientErrorException.BadRequest.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks",
-                HttpMethod.PUT,
+                getBaseUrl() + "" +
+                        "/playlists/" + playlistId + "/tracks",
+                HttpMethod.POST,
                 requestEntity,
                 PlaylistDetailsDto.class
         ));

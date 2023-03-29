@@ -58,7 +58,7 @@ public class DeletePlaylistTest {
     public void deletePlaylist() {
         final long playlistId = 1L;
         final ResponseEntity<Object> response = restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId,
+                getBaseUrl() + "/playlists/" + playlistId,
                 HttpMethod.DELETE,
                 null,
                 Object.class
@@ -72,7 +72,7 @@ public class DeletePlaylistTest {
     public void deletePlaylistWhenItDoesNotExist() {
         final long playlistId = 498L;
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId,
+                getBaseUrl() + "/playlists/" + playlistId,
                 HttpMethod.DELETE,
                 null,
                 Object.class
