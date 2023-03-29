@@ -55,6 +55,6 @@ public class CatalogueByGenreTest {
     }
 
     private String getUrl(String genre) {
-        return "http://localhost:" + port + "/catalogue/genres/" + genre;
+        return "http://localhost:" + port + "/search?type=genre&q=" + genre;
     }
 }
