@@ -6,29 +6,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Tag(name = "catalogue")
 @RestController
-@RequestMapping("/catalogue")
 @RequiredArgsConstructor
 public class CatalogueController {
 
     private final CatalogueService catalogueService;
     private final CatalogueMapper catalogueMapper;
 
-    @Operation(summary = "Search for artists, albums, tracks and/or playlists")
-    @GetMapping
+    @Operation(summary = "Search for artists, albums, tracks, playlists or genres")
+    @GetMapping("/search")
     @ResponseStatus(HttpStatus.OK)
-    public CatalogueResultDto search(@RequestParam("types") List<SearchableType> types,
-                                     @RequestParam("value") String text) {
-        return catalogueMapper.toCatalogueResultDto(catalogueService.findAllByTypesAndText(types, text));
-    }
-
-    @Operation(summary = "Get all artists, albums and tracks by genre name")
-    @GetMapping("/genres/{genre}")
-    @ResponseStatus(HttpStatus.OK)
-    public CatalogueResultDto findAllByGenre(@PathVariable String genre) {
-        return catalogueMapper.toCatalogueResultDto(catalogueService.findAllByGenreName(genre));
+    public CatalogueResultDto search(@RequestParam("type") SearchableType type,
+                                     @RequestParam("q") String text) {
+        return catalogueMapper.toCatalogueResultDto(catalogueService.findAllByTypeAndText(type, text));
     }
 }

@@ -17,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,66 +38,101 @@ public class CatalogueServiceImplTest {
     private CatalogueServiceImpl catalogueService;
 
     @Test
-    public void findAllByTypesAndText() {
+    public void shouldSearchForArtists() {
+        // given
         final String text = "something not important";
-        final List<SearchableType> types = List.of(
-                SearchableType.ARTIST,
-                SearchableType.ALBUM,
-                SearchableType.TRACK,
-                SearchableType.PLAYLIST
-        );
+        final SearchableType type = SearchableType.ARTIST;
         final List<Artist> artists = List.of(
                 Artist.builder().id(1L).build(),
                 Artist.builder().id(2L).build()
         );
+        when(artistService.findAllByNameContainingIgnoreCase(text)).thenReturn(artists);
+
+        // when
+        final CatalogueResult catalogueResult = catalogueService.findAllByTypeAndText(type, text);
+
+        // then
+        assertEquals(artists.size(), catalogueResult.getArtists().size());
+        verify(artistService, times(1)).findAllByNameContainingIgnoreCase(text);
+    }
+
+    @Test
+    public void shouldSearchForAlbums() {
+        // given
+        final String text = "something not important";
+        final SearchableType type = SearchableType.ALBUM;
         final List<Album> albums = List.of(
                 Album.builder().id(1L).build(),
                 Album.builder().id(2L).build()
         );
+        when(albumService.findAllByTitleContainingIgnoreCase(text)).thenReturn(albums);
+
+        // when
+        final CatalogueResult catalogueResult = catalogueService.findAllByTypeAndText(type, text);
+
+        // then
+        assertEquals(albums.size(), catalogueResult.getAlbums().size());
+        verify(albumService, times(1)).findAllByTitleContainingIgnoreCase(text);
+    }
+
+    @Test
+    public void shouldSearchForTracks() {
+        // given
+        final String text = "something not important";
+        final SearchableType type = SearchableType.TRACK;
         final List<Track> tracks = List.of(
                 Track.builder().id(1L).build(),
                 Track.builder().id(2L).build()
         );
+        when(trackService.findAllByTitleContainingIgnoreCase(text)).thenReturn(tracks);
+
+        // when
+        final CatalogueResult catalogueResult = catalogueService.findAllByTypeAndText(type, text);
+
+        // then
+        assertEquals(tracks.size(), catalogueResult.getTracks().size());
+        verify(trackService, times(1)).findAllByTitleContainingIgnoreCase(text);
+    }
+
+    @Test
+    public void shouldSearchForPlaylists() {
+        // given
+        final String text = "something not important";
+        final SearchableType type = SearchableType.PLAYLIST;
         final List<Playlist> playlists = List.of(
                 Playlist.builder().id(1L).build(),
                 Playlist.builder().id(2L).build()
         );
+        when(playlistService.findAllByNameContainingIgnoreCase(text)).thenReturn(playlists);
 
-        when(artistService.findAllByNameContainingIgnoreCase(anyString())).thenReturn(artists);
-        when(albumService.findAllByTitleContainingIgnoreCase(anyString())).thenReturn(albums);
-        when(trackService.findAllByTitleContainingIgnoreCase(anyString())).thenReturn(tracks);
-        when(playlistService.findAllByNameContainingIgnoreCase(anyString())).thenReturn(playlists);
+        // when
+        final CatalogueResult catalogueResult = catalogueService.findAllByTypeAndText(type, text);
 
-        final CatalogueResult catalogueResult = catalogueService.findAllByTypesAndText(types, text);
-
-        assertEquals(2, catalogueResult.getArtists().size());
-        assertEquals(2, catalogueResult.getAlbums().size());
-        assertEquals(2, catalogueResult.getTracks().size());
-        assertEquals(2, catalogueResult.getPlaylists().size());
-        verify(artistService, times(1)).findAllByNameContainingIgnoreCase(anyString());
-        verify(albumService, times(1)).findAllByTitleContainingIgnoreCase(anyString());
-        verify(trackService, times(1)).findAllByTitleContainingIgnoreCase(anyString());
-        verify(playlistService, times(1)).findAllByNameContainingIgnoreCase(anyString());
+        // then
+        assertEquals(playlists.size(), catalogueResult.getPlaylists().size());
+        verify(playlistService, times(1)).findAllByNameContainingIgnoreCase(text);
     }
 
     @Test
-    public void findAllByGenreName() {
-        final String genre = "something not important";
+    public void shouldSearchByGenre() {
+        // given
+        final String text = "something not important";
+        final SearchableType type = SearchableType.GENRE;
         final Artist artist = Artist.builder().id(1L).build();
         final Album album = Album.builder().id(1L).artists(List.of(artist)).build();
         final List<Track> tracks = List.of(
                 Track.builder().id(1L).album(album).build(),
                 Track.builder().id(2L).album(album).build()
         );
+        when(trackService.findAllByGenreName(text)).thenReturn(tracks);
 
-        when(trackService.findAllByGenreName(genre)).thenReturn(tracks);
-
-        final CatalogueResult catalogueResult = catalogueService.findAllByGenreName(genre);
+        // when
+        final CatalogueResult catalogueResult = catalogueService.findAllByTypeAndText(type, text);
 
         assertEquals(1, catalogueResult.getArtists().size());
         assertEquals(1, catalogueResult.getAlbums().size());
         assertEquals(2, catalogueResult.getTracks().size());
         assertEquals(0, catalogueResult.getPlaylists().size());
-        verify(trackService, times(1)).findAllByGenreName(anyString());
+        verify(trackService, times(1)).findAllByGenreName(text);
     }
 }
