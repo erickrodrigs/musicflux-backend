@@ -2,7 +2,7 @@ package com.erickrodrigues.musicflux.integration;
 
 import com.erickrodrigues.musicflux.auth.AuthCredentialsDto;
 import com.erickrodrigues.musicflux.auth.AuthTokenDto;
-import com.erickrodrigues.musicflux.playlist.AddTrackToPlaylistDto;
+import com.erickrodrigues.musicflux.playlist.AddOrRemoveTrackDto;
 import com.erickrodrigues.musicflux.playlist.PlaylistDetailsDto;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +60,7 @@ public class RemoveTrackFromPlaylistTest {
     @Test
     public void removeTrackFromPlaylist() {
         final long playlistId = 1L, trackId = 4L;
-        final HttpEntity<AddTrackToPlaylistDto> requestBody = new HttpEntity<>(AddTrackToPlaylistDto
+        final HttpEntity<AddOrRemoveTrackDto> requestBody = new HttpEntity<>(AddOrRemoveTrackDto
                 .builder()
                 .trackId(trackId)
                 .build()

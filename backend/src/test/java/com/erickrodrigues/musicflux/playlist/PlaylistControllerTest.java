@@ -125,7 +125,7 @@ public class PlaylistControllerTest {
     @Test
     public void addTrack() throws Exception {
         final Long userId = 1L, trackId = 1L;
-        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto.builder().trackId(trackId).build();
+        final AddOrRemoveTrackDto addOrRemoveTrackDto = AddOrRemoveTrackDto.builder().trackId(trackId).build();
         final Playlist playlist = Playlist.builder().id(1L).name("playlist").build();
         final PlaylistDetailsDto playlistDetailsDto = PlaylistDetailsDto.builder()
                 .id(playlist.getId())
@@ -133,7 +133,7 @@ public class PlaylistControllerTest {
                 .userId(userId)
                 .build();
         final ObjectMapper objectMapper = new ObjectMapper();
-        final String json = objectMapper.writeValueAsString(addTrackToPlaylistDto);
+        final String json = objectMapper.writeValueAsString(addOrRemoveTrackDto);
 
         when(playlistService.addTrack(userId, playlist.getId(), trackId)).thenReturn(playlist);
         when(playlistMapper.toPlaylistDetailsDto(playlist)).thenReturn(playlistDetailsDto);
@@ -161,14 +161,14 @@ public class PlaylistControllerTest {
     public void removeTrack() throws Exception {
         final Long userId = 1L, playlistId = 1L, trackId = 1L;
         final Playlist playlist = Playlist.builder().id(1L).name("playlist").build();
-        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto.builder().trackId(trackId).build();
+        final AddOrRemoveTrackDto addOrRemoveTrackDto = AddOrRemoveTrackDto.builder().trackId(trackId).build();
         final PlaylistDetailsDto playlistDetailsDto = PlaylistDetailsDto.builder()
                 .id(playlist.getId())
                 .name(playlist.getName())
                 .userId(userId)
                 .build();
         final ObjectMapper objectMapper = new ObjectMapper();
-        final String json = objectMapper.writeValueAsString(addTrackToPlaylistDto);
+        final String json = objectMapper.writeValueAsString(addOrRemoveTrackDto);
 
         when(playlistService.removeTrack(userId, playlistId, trackId)).thenReturn(playlist);
         when(playlistMapper.toPlaylistDetailsDto(playlist)).thenReturn(playlistDetailsDto);
