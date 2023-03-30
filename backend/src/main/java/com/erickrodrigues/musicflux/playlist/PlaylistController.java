@@ -46,10 +46,10 @@ public class PlaylistController {
     @ResponseStatus(HttpStatus.CREATED)
     public PlaylistDetailsDto addTrack(HttpServletRequest request,
                                       @PathVariable("playlist_id") Long playlistId,
-                                      @RequestBody @Valid AddTrackToPlaylistDto addTrackToPlaylistDto) {
+                                      @RequestBody @Valid AddOrRemoveTrackDto addOrRemoveTrackDto) {
         final Long userId = (Long) request.getAttribute("userId");
         return playlistMapper.toPlaylistDetailsDto(
-                playlistService.addTrack(userId, playlistId, addTrackToPlaylistDto.getTrackId())
+                playlistService.addTrack(userId, playlistId, addOrRemoveTrackDto.getTrackId())
         );
     }
 
@@ -58,10 +58,10 @@ public class PlaylistController {
     @ResponseStatus(HttpStatus.OK)
     public PlaylistDetailsDto removeTrack(HttpServletRequest request,
                                          @PathVariable("playlist_id") Long playlistId,
-                                         @RequestBody @Valid AddTrackToPlaylistDto addTrackToPlaylistDto) {
+                                         @RequestBody @Valid AddOrRemoveTrackDto addOrRemoveTrackDto) {
         final Long userId = (Long) request.getAttribute("userId");
         return playlistMapper.toPlaylistDetailsDto(
-                playlistService.removeTrack(userId, playlistId, addTrackToPlaylistDto.getTrackId())
+                playlistService.removeTrack(userId, playlistId, addOrRemoveTrackDto.getTrackId())
         );
     }
 

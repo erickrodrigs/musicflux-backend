@@ -2,7 +2,7 @@ package com.erickrodrigues.musicflux.integration;
 
 import com.erickrodrigues.musicflux.auth.AuthCredentialsDto;
 import com.erickrodrigues.musicflux.auth.AuthTokenDto;
-import com.erickrodrigues.musicflux.playlist.AddTrackToPlaylistDto;
+import com.erickrodrigues.musicflux.playlist.AddOrRemoveTrackDto;
 import com.erickrodrigues.musicflux.playlist.PlaylistDetailsDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,11 +57,11 @@ public class AddNewTrackToPlaylistTest {
         headers.set("Authorization", "Bearer " + token);
 
         final Long playlistId = 1L, trackId = 18L;
-        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto
+        final AddOrRemoveTrackDto addOrRemoveTrackDto = AddOrRemoveTrackDto
                 .builder()
                 .trackId(trackId)
                 .build();
-        final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
+        final HttpEntity<AddOrRemoveTrackDto> requestEntity = new HttpEntity<>(addOrRemoveTrackDto, headers);
         final ResponseEntity<PlaylistDetailsDto> response = restTemplate.exchange(
                 getBaseUrl() + "/playlists/" + playlistId + "/tracks",
                 HttpMethod.POST,
@@ -80,11 +80,11 @@ public class AddNewTrackToPlaylistTest {
         headers.set("Authorization", "Bearer " + token);
 
         final long playlistId = 498L, trackId = 18L;
-        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto
+        final AddOrRemoveTrackDto addOrRemoveTrackDto = AddOrRemoveTrackDto
                 .builder()
                 .trackId(trackId)
                 .build();
-        final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
+        final HttpEntity<AddOrRemoveTrackDto> requestEntity = new HttpEntity<>(addOrRemoveTrackDto, headers);
 
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
                 getBaseUrl() + "/playlists/" + playlistId + "/tracks",
@@ -100,11 +100,11 @@ public class AddNewTrackToPlaylistTest {
         headers.set("Authorization", "Bearer " + token);
 
         final long playlistId = 1L, trackId = 498L;
-        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto
+        final AddOrRemoveTrackDto addOrRemoveTrackDto = AddOrRemoveTrackDto
                 .builder()
                 .trackId(trackId)
                 .build();
-        final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
+        final HttpEntity<AddOrRemoveTrackDto> requestEntity = new HttpEntity<>(addOrRemoveTrackDto, headers);
 
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
                 getBaseUrl() + "/playlists/" + playlistId + "/tracks",
@@ -120,11 +120,11 @@ public class AddNewTrackToPlaylistTest {
         headers.set("Authorization", "Bearer " + token);
 
         final long playlistId = 1L, trackId = 3L;
-        final AddTrackToPlaylistDto addTrackToPlaylistDto = AddTrackToPlaylistDto
+        final AddOrRemoveTrackDto addOrRemoveTrackDto = AddOrRemoveTrackDto
                 .builder()
                 .trackId(trackId)
                 .build();
-        final HttpEntity<AddTrackToPlaylistDto> requestEntity = new HttpEntity<>(addTrackToPlaylistDto, headers);
+        final HttpEntity<AddOrRemoveTrackDto> requestEntity = new HttpEntity<>(addOrRemoveTrackDto, headers);
 
         assertThrows(HttpClientErrorException.BadRequest.class, () -> restTemplate.exchange(
                 getBaseUrl() + "" +
