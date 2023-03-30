@@ -11,8 +11,16 @@
     <groupId>com.erickrodrigues</groupId>
     <artifactId>musicflux</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>musicflux</name>
     <description>A simple version of a Spotify-like application built for study purposes</description>
+    <modules>
+        <module>catalogue</module>
+        <module>users</module>
+        <module>interactions</module>
+        <module>app</module>
+        <module>shared</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>19</maven.compiler.source>
