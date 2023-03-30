@@ -147,36 +147,41 @@ public class PlaylistServiceImplTest {
     @Test
     public void shouldAddANewTrackToAPlaylist() {
         // given
-        final Long userId = 1L, playlistId = 1L, trackId = 1L;
+        final Long userId = 1L, playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
         final User user = User.builder().id(userId).build();
         final Playlist playlist = Playlist.builder().id(playlistId).user(user).build();
-        final Track track = Track.builder().id(trackId).build();
+        final Track track = Track.builder().id(tracksIds.get(0)).build();
         final Playlist expectedPlaylist = Playlist.builder().tracks(List.of(track)).build();
         when(userService.findById(userId)).thenReturn(user);
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
-        when(trackService.findById(trackId)).thenReturn(track);
+        when(trackService.findById(track.getId())).thenReturn(track);
         when(playlistRepository.save(playlist)).thenReturn(expectedPlaylist);
 
         // when
-        final Playlist actualPlaylist = playlistService.addTrack(userId, playlistId, trackId);
+        final Playlist actualPlaylist = playlistService.addTracks(userId, playlistId, tracksIds);
 
         // then
         assertEquals(expectedPlaylist.getTracks().size(), actualPlaylist.getTracks().size(), WRONG_NUMBER_OF_TRACKS_IN_PLAYLIST);
         assertTrue(actualPlaylist.getTracks().containsAll(expectedPlaylist.getTracks()), ACTUAL_LIST_DOES_NOT_CONTAIN_ALL_SPECIFIED_TRACKS);
         verify(userService, times(1)).findById(userId);
         verify(playlistRepository, times(1)).findById(playlistId);
-        verify(trackService, times(1)).findById(trackId);
+        verify(trackService, times(1)).findById(track.getId());
         verify(playlistRepository, times(1)).save(playlist);
     }
 
     @Test
     public void shouldThrowAnExceptionWhenAddingATrackToAPlaylistThatDoesNotExist() {
         // given
-        final Long userId = 1L, playlistId = 1L, trackId = 1L;
+        final Long userId = 1L, playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
+        final User user = User.builder().id(userId).build();
+        when(userService.findById(userId)).thenReturn(user);
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.empty());
 
         // then
-        assertThrows(ResourceNotFoundException.class, () -> playlistService.addTrack(userId, playlistId, trackId));
+        assertThrows(ResourceNotFoundException.class, () -> playlistService.addTracks(userId, playlistId, tracksIds));
+        verify(userService, times(1)).findById(userId);
         verify(playlistRepository, times(1)).findById(playlistId);
         verify(playlistRepository, never()).save(any());
     }
@@ -184,13 +189,17 @@ public class PlaylistServiceImplTest {
     @Test
     public void shouldThrowAnExceptionWhenAddingATrackThatDoesNotExist() {
         // given
-        final Long userId = 1L, playlistId = 1L, trackId = 1L;
-        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(Playlist.builder().build()));
-        when(trackService.findById(trackId)).thenThrow(ResourceNotFoundException.class);
+        final Long userId = 1L, playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
+        final User user = User.builder().id(userId).build();
+        when(userService.findById(userId)).thenReturn(user);
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(Playlist.builder().id(playlistId).user(user).build()));
+        when(trackService.findById(tracksIds.get(0))).thenThrow(ResourceNotFoundException.class);
 
         // then
-        assertThrows(ResourceNotFoundException.class, () -> playlistService.addTrack(userId, playlistId, trackId));
-        verify(trackService, times(1)).findById(trackId);
+        assertThrows(ResourceNotFoundException.class, () -> playlistService.addTracks(userId, playlistId, tracksIds));
+        verify(userService, times(1)).findById(userId);
+        verify(trackService, times(1)).findById(tracksIds.get(0));
         verify(playlistRepository, times(1)).findById(playlistId);
         verify(playlistRepository, never()).save(any());
     }
@@ -198,15 +207,12 @@ public class PlaylistServiceImplTest {
     @Test
     public void shouldThrowAnExceptionWhenAddingATrackWhenUserDoesNotExist() {
         // given
-        final Long userId = 1L, playlistId = 1L, trackId = 1L;
-        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(Playlist.builder().build()));
-        when(trackService.findById(trackId)).thenReturn(Track.builder().build());
+        final Long userId = 1L, playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
         when(userService.findById(userId)).thenThrow(ResourceNotFoundException.class);
 
         // then
-        assertThrows(ResourceNotFoundException.class, () -> playlistService.addTrack(userId, playlistId, trackId));
-        verify(trackService, times(1)).findById(trackId);
-        verify(playlistRepository, times(1)).findById(playlistId);
+        assertThrows(ResourceNotFoundException.class, () -> playlistService.addTracks(userId, playlistId, tracksIds));
         verify(userService, times(1)).findById(userId);
         verify(playlistRepository, never()).save(any());
     }
@@ -214,17 +220,15 @@ public class PlaylistServiceImplTest {
     @Test
     public void shouldThrowAnExceptionWhenUserThatIsNotPlaylistOwnerAddsATrackToPlaylist() {
         // given
-        final Long userId = 1L, playlistId = 1L, trackId = 1L;
+        final Long userId = 1L, playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
         final User user = User.builder().id(userId).build();
         final Playlist playlist = Playlist.builder().id(playlistId).user(User.builder().id(userId + 1L).build()).build();
-        final Track track = Track.builder().id(trackId).build();
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
-        when(trackService.findById(trackId)).thenReturn(track);
         when(userService.findById(userId)).thenReturn(user);
 
         // then
-        assertThrows(InvalidActionException.class, () -> playlistService.addTrack(userId, playlistId, trackId));
-        verify(trackService, times(1)).findById(trackId);
+        assertThrows(InvalidActionException.class, () -> playlistService.addTracks(userId, playlistId, tracksIds));
         verify(playlistRepository, times(1)).findById(playlistId);
         verify(userService, times(1)).findById(userId);
         verify(playlistRepository, never()).save(any());
@@ -233,35 +237,40 @@ public class PlaylistServiceImplTest {
     @Test
     public void shouldRemoveATrackFromAPlaylist() {
         // given
-        final Long userId = 1L, playlistId = 1L, trackId = 1L;
+        final Long userId = 1L, playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
         final User user = User.builder().id(userId).build();
-        final Track track = Track.builder().id(trackId).build();
+        final Track track = Track.builder().id(tracksIds.get(0)).build();
         final Playlist playlist = Playlist.builder().tracks(new ArrayList<>(List.of(track))).user(user).build();
         final Playlist expectedPlaylist = Playlist.builder().tracks(List.of()).build();
         when(userService.findById(userId)).thenReturn(user);
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
-        when(trackService.findById(trackId)).thenReturn(track);
+        when(trackService.findById(track.getId())).thenReturn(track);
         when(playlistRepository.save(expectedPlaylist)).thenReturn(expectedPlaylist);
 
         // when
-        Playlist actualPlaylist = playlistService.removeTrack(userId, playlistId, trackId);
+        Playlist actualPlaylist = playlistService.removeTracks(userId, playlistId, tracksIds);
 
         // then
         assertEquals(expectedPlaylist.getTracks().size(), actualPlaylist.getTracks().size(), WRONG_NUMBER_OF_TRACKS_IN_PLAYLIST);
         verify(userService, times(1)).findById(userId);
         verify(playlistRepository, times(1)).findById(playlistId);
-        verify(trackService, times(1)).findById(trackId);
+        verify(trackService, times(1)).findById(track.getId());
         verify(playlistRepository, times(1)).save(expectedPlaylist);
     }
 
     @Test
     public void shouldThrowAnExceptionWhenRemovingATrackFromAPlaylistThatDoesNotExist() {
         // given
-        final Long userId = 1L, playlistId = 1L, trackId = 1L;
+        final Long userId = 1L, playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
+        final User user = User.builder().id(userId).build();
+        when(userService.findById(userId)).thenReturn(user);
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.empty());
 
         // then
-        assertThrows(ResourceNotFoundException.class, () -> playlistService.removeTrack(userId, playlistId, trackId));
+        assertThrows(ResourceNotFoundException.class, () -> playlistService.removeTracks(userId, playlistId, tracksIds));
+        verify(userService, times(1)).findById(userId);
         verify(playlistRepository, times(1)).findById(playlistId);
         verify(playlistRepository, never()).save(any());
     }
@@ -269,50 +278,47 @@ public class PlaylistServiceImplTest {
     @Test
     public void shouldThrowAnExceptionWhenRemovingATrackThatDoesNotExist() {
         // given
-        final Long userId = 1L, playlistId = 1L, trackId = 1L;
-        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(Playlist.builder().build()));
-        when(trackService.findById(trackId)).thenThrow(ResourceNotFoundException.class);
+        final Long userId = 1L, playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
+        final User user = User.builder().id(userId).build();
+        when(userService.findById(userId)).thenReturn(user);
+        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(Playlist.builder().id(playlistId).user(user).build()));
+        when(trackService.findById(tracksIds.get(0))).thenThrow(ResourceNotFoundException.class);
 
         // then
-        assertThrows(ResourceNotFoundException.class, () -> playlistService.removeTrack(userId, playlistId, trackId));
+        assertThrows(ResourceNotFoundException.class, () -> playlistService.removeTracks(userId, playlistId, tracksIds));
+        verify(userService, times(1)).findById(userId);
         verify(playlistRepository, times(1)).findById(playlistId);
-        verify(trackService, times(1)).findById(trackId);
+        verify(trackService, times(1)).findById(tracksIds.get(0));
         verify(playlistRepository, never()).save(any());
     }
 
     @Test
     public void shouldThrowAnExceptionWhenUserThatDoesNotExistRemovesATrack() {
         // given
-        final Long userId = 1L, playlistId = 1L, trackId = 1L;
-        when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(Playlist.builder().build()));
-        when(trackService.findById(trackId)).thenReturn(Track.builder().build());
+        final Long userId = 1L, playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
         when(userService.findById(userId)).thenThrow(ResourceNotFoundException.class);
 
         // then
-        assertThrows(ResourceNotFoundException.class, () -> playlistService.removeTrack(userId, playlistId, trackId));
-        verify(playlistRepository, times(1)).findById(playlistId);
-        verify(trackService, times(1)).findById(trackId);
+        assertThrows(ResourceNotFoundException.class, () -> playlistService.removeTracks(userId, playlistId, tracksIds));
         verify(userService, times(1)).findById(userId);
-        verify(playlistRepository, never()).save(any());
     }
 
     @Test
     public void shouldThrowAnExceptionWhenUserThatIsNotPlaylistOwnerRemovesATrackFromPlaylist() {
         // given
-        final Long userId = 1L, playlistId = 1L, trackId = 1L;
+        final Long userId = 1L, playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
         final User user = User.builder().id(userId).build();
         final Playlist playlist = Playlist.builder().id(playlistId).user(User.builder().id(userId + 1L).build()).build();
-        final Track track = Track.builder().id(trackId).build();
         when(playlistRepository.findById(playlistId)).thenReturn(Optional.of(playlist));
-        when(trackService.findById(trackId)).thenReturn(track);
         when(userService.findById(userId)).thenReturn(user);
 
         // then
-        assertThrows(InvalidActionException.class, () -> playlistService.removeTrack(userId, playlistId, trackId));
-        verify(trackService, times(1)).findById(trackId);
+        assertThrows(InvalidActionException.class, () -> playlistService.removeTracks(userId, playlistId, tracksIds));
         verify(playlistRepository, times(1)).findById(playlistId);
         verify(userService, times(1)).findById(userId);
-        verify(playlistRepository, never()).deleteById(any());
     }
 
     @Test

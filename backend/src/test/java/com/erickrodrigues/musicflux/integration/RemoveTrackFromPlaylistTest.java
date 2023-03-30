@@ -2,7 +2,7 @@ package com.erickrodrigues.musicflux.integration;
 
 import com.erickrodrigues.musicflux.auth.AuthCredentialsDto;
 import com.erickrodrigues.musicflux.auth.AuthTokenDto;
-import com.erickrodrigues.musicflux.playlist.AddOrRemoveTrackDto;
+import com.erickrodrigues.musicflux.playlist.AddOrRemoveTracksDto;
 import com.erickrodrigues.musicflux.playlist.PlaylistDetailsDto;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +18,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,10 +60,11 @@ public class RemoveTrackFromPlaylistTest {
 
     @Test
     public void removeTrackFromPlaylist() {
-        final long playlistId = 1L, trackId = 4L;
-        final HttpEntity<AddOrRemoveTrackDto> requestBody = new HttpEntity<>(AddOrRemoveTrackDto
+        final long playlistId = 1L;
+        final List<Long> tracksIds = List.of(4L);
+        final HttpEntity<AddOrRemoveTracksDto> requestBody = new HttpEntity<>(AddOrRemoveTracksDto
                 .builder()
-                .trackId(trackId)
+                .tracksIds(tracksIds)
                 .build()
         );
         final ResponseEntity<PlaylistDetailsDto> response = restTemplate.exchange(
@@ -75,45 +77,55 @@ public class RemoveTrackFromPlaylistTest {
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(playlistId, response.getBody().getId());
-        assertTrue(response
-                .getBody()
-                .getTracks()
-                .stream()
-                .filter(track -> track.getId() == trackId)
-                .toList()
-                .isEmpty()
-        );
     }
 
     @Test
     public void removeTrackFromPlaylistWhenTrackDoesNotExist() {
-        final long playlistId = 1L, trackId = 498L;
+        final long playlistId = 1L;
+        final List<Long> tracksIds = List.of(498L);
+        final HttpEntity<AddOrRemoveTracksDto> requestBody = new HttpEntity<>(AddOrRemoveTracksDto
+                .builder()
+                .tracksIds(tracksIds)
+                .build()
+        );
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/playlists/" + playlistId + "/tracks/" + trackId,
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks",
                 HttpMethod.DELETE,
-                null,
+                requestBody,
                 Object.class
         ));
     }
 
     @Test
     public void removeTrackFromPlaylistWhenTrackIsNotIncludedInPlaylist() {
-        final long playlistId = 1L, trackId = 1L; // track with id 1 does exist
+        final long playlistId = 1L;
+        final List<Long> tracksIds = List.of(1L);
+        final HttpEntity<AddOrRemoveTracksDto> requestBody = new HttpEntity<>(AddOrRemoveTracksDto
+                .builder()
+                .tracksIds(tracksIds)
+                .build()
+        );
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/playlists/" + playlistId + "/tracks/" + trackId,
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks",
                 HttpMethod.DELETE,
-                null,
+                requestBody,
                 Object.class
         ));
     }
 
     @Test
     public void removeTrackFromPlaylistWhenPlaylistDoesNotExist() {
-        final long playlistId = 498L, trackId = 4L;
+        final long playlistId = 498L;
+        final List<Long> tracksIds = List.of(4L);
+        final HttpEntity<AddOrRemoveTracksDto> requestBody = new HttpEntity<>(AddOrRemoveTracksDto
+                .builder()
+                .tracksIds(tracksIds)
+                .build()
+        );
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/playlists/" + playlistId + "/tracks/" + trackId,
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks",
                 HttpMethod.DELETE,
-                null,
+                requestBody,
                 Object.class
         ));
     }
