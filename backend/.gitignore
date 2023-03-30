@@ -32,6 +32,6 @@ build/
 ### VS Code ###
 .vscode/
 
-src/main/resources/static/files/**
-!src/main/resources/static/files/.keep
+app/src/main/resources/static/files/**
+!app/src/main/resources/static/files/.keep
 .env
