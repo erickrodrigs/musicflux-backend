@@ -66,7 +66,7 @@ public class GetRecentlyPlayedTracksTest {
     @Test
     public void getRecentlyPlayedTracks() {
         final ResponseEntity<PaginatedResponse<RecentlyPlayedDetailsDto>> response = restTemplate.exchange(
-                getBaseUrl() + "/users/me/recently_played",
+                getBaseUrl() + "/me/recently-played",
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>() {}

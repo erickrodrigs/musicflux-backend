@@ -58,7 +58,7 @@ public class DislikeTrackTest {
     public void dislikeTrack() {
         final long favoriteId = 1L;
         final ResponseEntity<Object> response = restTemplate.exchange(
-                getBaseUrl() + "/users/me/favorites/" + favoriteId,
+                getBaseUrl() + "/me/favorites/" + favoriteId,
                 HttpMethod.DELETE,
                 null,
                 Object.class
@@ -72,7 +72,7 @@ public class DislikeTrackTest {
     public void dislikeTrackWhenFavoriteIdIsInvalid() {
         final long favoriteId = 498L;
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/favorites/" + favoriteId,
+                getBaseUrl() + "/me/favorites/" + favoriteId,
                 HttpMethod.DELETE,
                 null,
                 Object.class

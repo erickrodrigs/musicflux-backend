@@ -12,7 +12,7 @@ import java.util.List;
 
 @Tag(name = "favorites")
 @RestController
-@RequestMapping("/users/me/favorites")
+@RequestMapping("/me/favorites")
 @RequiredArgsConstructor
 public class FavoriteController {
 
