@@ -25,21 +25,18 @@ public class CatalogueSearchTest {
     private RestTemplate restTemplate;
 
     @Test
-    public void searchForArtistsAlbumsAndTracks() {
+    public void searchForTracks() {
         final ResponseEntity<CatalogueResultDto> response = restTemplate.getForEntity(
-                getUrl() + "?types=artist,album,track,playlist&value=" + "of",
+                getUrl() + "?type=track&q=" + "of",
                 CatalogueResultDto.class
         );
 
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
-        assertEquals(0, response.getBody().getArtists().size());
-        assertEquals(0, response.getBody().getAlbums().size());
         assertEquals(3, response.getBody().getTracks().size());
-        assertEquals(1, response.getBody().getPlaylists().size());
     }
 
     private String getUrl() {
-        return "http://localhost:" + port + "/catalogue";
+        return "http://localhost:" + port + "/search";
     }
 }

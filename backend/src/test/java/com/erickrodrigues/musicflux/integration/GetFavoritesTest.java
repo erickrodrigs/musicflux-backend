@@ -56,7 +56,7 @@ public class GetFavoritesTest {
     @Test
     public void getFavorites() {
         final ResponseEntity<FavoriteDetailsDto[]> response = restTemplate.getForEntity(
-                getBaseUrl() + "/users/me/favorites",
+                getBaseUrl() + "/me/favorites",
                 FavoriteDetailsDto[].class
         );
 

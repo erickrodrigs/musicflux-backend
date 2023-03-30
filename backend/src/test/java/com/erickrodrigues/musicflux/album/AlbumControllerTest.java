@@ -1,7 +1,9 @@
 package com.erickrodrigues.musicflux.album;
 
+import com.erickrodrigues.musicflux.track.Track;
+import com.erickrodrigues.musicflux.track.TrackDto;
+import com.erickrodrigues.musicflux.track.TrackMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,65 +21,62 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class AlbumControllerTest {
+class AlbumControllerTest {
+
+    private static final String WRONG_NUMBER_OF_TRACKS = "Wrong number of tracks";
+    private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_TRACKS = "Actual list does not contain specified tracks";
 
     @Mock
     private AlbumService albumService;
 
     @Mock
-    private AlbumMapper albumMapper;
+    private TrackMapper trackMapper;
 
     @InjectMocks
     private AlbumController albumController;
 
     @Test
-    public void findAllByArtistId() throws Exception {
-        final Long artistId = 1L;
-        final List<Album> albums = List.of(
-                Album.builder()
+    public void shouldReturnAllTracksFromAnAlbum() throws Exception {
+        // given
+        final Long albumId = 1L;
+        final List<Track> tracks = List.of(
+                Track.builder().id(1L).title("Sing This Track").build(),
+                Track.builder().id(2L).title("Love").build()
+        );
+        final List<TrackDto> tracksDetailsDto = List.of(
+                TrackDto.builder()
                         .id(1L)
-                        .title("Black Celebration")
-                        .releaseDate(LocalDate.parse("1986-03-17"))
+                        .title("Sing This Track")
+                        .length(60L)
+                        .genres(List.of("Synth Pop"))
+                        .albumId(albumId)
                         .build(),
-                Album.builder()
+                TrackDto.builder()
                         .id(2L)
-                        .title("Music For The Masses")
-                        .releaseDate(LocalDate.parse("1987-09-28"))
+                        .title("Love")
+                        .length(60L)
+                        .genres(List.of("Synth Pop"))
+                        .albumId(albumId)
                         .build()
         );
-        final List<AlbumDetailsDto> albumsDetailsDto = List.of(
-                AlbumDetailsDto.builder()
-                        .id(1L)
-                        .title("Black Celebration")
-                        .releaseDate(LocalDate.parse("1986-03-17"))
-                        .artistsIds(List.of(artistId))
-                        .build(),
-                AlbumDetailsDto.builder()
-                        .id(2L)
-                        .title("Music For The Masses")
-                        .releaseDate(LocalDate.parse("1987-09-28"))
-                        .artistsIds(List.of(artistId))
-                        .build()
-        );
+        when(albumService.getAlbumTracks(albumId)).thenReturn(tracks);
+        when(trackMapper.toListOfTrackDetailsDto(tracks)).thenReturn(tracksDetailsDto);
 
-        when(albumService.findAllByArtistId(artistId)).thenReturn(albums);
-        when(albumMapper.toListOfAlbumDetailsDto(albums)).thenReturn(albumsDetailsDto);
-
+        // when
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(albumController).build();
-        final MvcResult mvcResult = mockMvc.perform(get("/artists/" + artistId + "/albums"))
+        final MvcResult mvcResult = mockMvc.perform(get("/albums/" + albumId + "/tracks"))
                 .andExpect(status().isOk())
                 .andReturn();
         final ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-
-        final List<AlbumDetailsDto> actualResult = objectMapper.readValue(
+        final List<TrackDto> actualResult = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, AlbumDetailsDto.class)
+                objectMapper.getTypeFactory().constructCollectionType(List.class, TrackDto.class)
         );
 
-        assertEquals(albumsDetailsDto.size(), actualResult.size());
-        assertTrue(actualResult.containsAll(albumsDetailsDto));
-        verify(albumService, times(1)).findAllByArtistId(anyLong());
-        verify(albumMapper, times(1)).toListOfAlbumDetailsDto(anyList());
+        // then
+        assertEquals(tracksDetailsDto.size(), actualResult.size(), WRONG_NUMBER_OF_TRACKS);
+        assertTrue(actualResult.containsAll(tracksDetailsDto), LIST_DOES_NOT_CONTAIN_SPECIFIED_TRACKS);
+        verify(albumService, times(1)).getAlbumTracks(albumId);
+        verify(trackMapper, times(1)).toListOfTrackDetailsDto(tracks);
     }
 }

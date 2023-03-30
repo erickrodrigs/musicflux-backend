@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,24 +47,5 @@ public class TrackServiceImpl extends BaseService implements TrackService {
     @Override
     public List<Track> findAllByGenreName(String genreName) {
         return trackRepository.findAllByGenresNameIgnoreCase(genreName);
-    }
-
-    @Override
-    public List<Track> findAllByAlbumId(Long albumId) {
-        final List<Track> tracks = trackRepository.findAllByAlbumId(albumId);
-
-        if (tracks.isEmpty()) throw new ResourceNotFoundException("Album with that ID does not exist");
-
-        return tracks;
-    }
-
-    @Override
-    public List<Track> findMostPlayedTracksByArtistId(Long artistId) {
-        return trackRepository
-                .findAllByAlbumArtistsId(artistId)
-                .stream()
-                .sorted()
-                .limit(5)
-                .collect(Collectors.toList());
     }
 }

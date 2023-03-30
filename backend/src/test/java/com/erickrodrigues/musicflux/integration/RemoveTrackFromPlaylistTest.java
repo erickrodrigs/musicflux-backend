@@ -2,6 +2,7 @@ package com.erickrodrigues.musicflux.integration;
 
 import com.erickrodrigues.musicflux.auth.AuthCredentialsDto;
 import com.erickrodrigues.musicflux.auth.AuthTokenDto;
+import com.erickrodrigues.musicflux.playlist.AddOrRemoveTrackDto;
 import com.erickrodrigues.musicflux.playlist.PlaylistDetailsDto;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -58,10 +60,15 @@ public class RemoveTrackFromPlaylistTest {
     @Test
     public void removeTrackFromPlaylist() {
         final long playlistId = 1L, trackId = 4L;
+        final HttpEntity<AddOrRemoveTrackDto> requestBody = new HttpEntity<>(AddOrRemoveTrackDto
+                .builder()
+                .trackId(trackId)
+                .build()
+        );
         final ResponseEntity<PlaylistDetailsDto> response = restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks/" + trackId,
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks",
                 HttpMethod.DELETE,
-                null,
+                requestBody,
                 PlaylistDetailsDto.class
         );
 
@@ -82,7 +89,7 @@ public class RemoveTrackFromPlaylistTest {
     public void removeTrackFromPlaylistWhenTrackDoesNotExist() {
         final long playlistId = 1L, trackId = 498L;
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks/" + trackId,
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks/" + trackId,
                 HttpMethod.DELETE,
                 null,
                 Object.class
@@ -93,7 +100,7 @@ public class RemoveTrackFromPlaylistTest {
     public void removeTrackFromPlaylistWhenTrackIsNotIncludedInPlaylist() {
         final long playlistId = 1L, trackId = 1L; // track with id 1 does exist
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks/" + trackId,
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks/" + trackId,
                 HttpMethod.DELETE,
                 null,
                 Object.class
@@ -104,7 +111,7 @@ public class RemoveTrackFromPlaylistTest {
     public void removeTrackFromPlaylistWhenPlaylistDoesNotExist() {
         final long playlistId = 498L, trackId = 4L;
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/users/me/playlists/" + playlistId + "/tracks/" + trackId,
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks/" + trackId,
                 HttpMethod.DELETE,
                 null,
                 Object.class

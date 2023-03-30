@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
 import java.util.Objects;
 
 @Tag(name = "tracks")
@@ -25,11 +24,11 @@ import java.util.Objects;
 public class TrackController {
 
     private final TrackService trackService;
-    private final TrackMapper trackMapper;
     private final RestTemplate restTemplate;
 
     @Operation(summary = "Play a track by its id")
     @GetMapping("/users/me/tracks/{track_id}")
+    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<Resource> playTrack(HttpServletRequest request,
                                    @PathVariable("track_id") Long trackId) {
         final String url = request.getRequestURL().toString().replace(request.getRequestURI(), "");
@@ -41,19 +40,5 @@ public class TrackController {
                 .contentType(MediaType.parseMediaType("audio/mpeg3"))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + track.getTitle() + ".mp3\"")
                 .body(new ByteArrayResource(Objects.requireNonNull(array)));
-    }
-
-    @Operation(summary = "Get all tracks in an album by its id")
-    @GetMapping("/albums/{album_id}/tracks")
-    @ResponseStatus(HttpStatus.OK)
-    public List<TrackDto> findAllByAlbumId(@PathVariable("album_id") Long albumId) {
-        return trackMapper.toListOfTrackDetailsDto(trackService.findAllByAlbumId(albumId));
-    }
-
-    @Operation(summary = "Get the top five most played tracks by an artist by their id")
-    @GetMapping("/artists/{artist_id}/most_played_tracks")
-    @ResponseStatus(HttpStatus.OK)
-    public List<TrackDto> findMostPlayedTracksByArtistId(@PathVariable("artist_id") Long artistId) {
-        return trackMapper.toListOfTrackDetailsDto(trackService.findMostPlayedTracksByArtistId(artistId));
     }
 }

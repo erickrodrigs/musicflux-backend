@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AddTrackToPlaylistDto {
+public class AddOrRemoveTrackDto {
 
     @NotNull(message = "Track ID is mandatory")
     @Positive(message = "Track ID must be greater than zero")
