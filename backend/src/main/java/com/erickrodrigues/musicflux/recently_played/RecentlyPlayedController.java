@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "recently played")
 @RestController
-@RequestMapping("/users/me/recently_played")
+@RequestMapping("/me/recently-played")
 @RequiredArgsConstructor
 public class RecentlyPlayedController {
 

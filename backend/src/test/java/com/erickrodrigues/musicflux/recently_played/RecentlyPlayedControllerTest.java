@@ -73,7 +73,7 @@ public class RecentlyPlayedControllerTest {
         final JSONArray listJson = (JSONArray) jsonParser.parse(objectMapper.writeValueAsString(recentlyPlayedDetailsDtos));
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(recentlyPlayedController).build();
-        mockMvc.perform(get("/users/me/recently_played")
+        mockMvc.perform(get("/me/recently-played")
                         .requestAttr("userId", userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

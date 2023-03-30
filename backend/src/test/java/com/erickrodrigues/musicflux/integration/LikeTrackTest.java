@@ -63,7 +63,7 @@ public class LikeTrackTest {
                 .trackId(trackId)
                 .build();
         final ResponseEntity<FavoriteDetailsDto> response = restTemplate.postForEntity(
-                getBaseUrl() + "/users/me/favorites",
+                getBaseUrl() + "/me/favorites",
                 createFavoriteDto,
                 FavoriteDetailsDto.class
         );
@@ -82,7 +82,7 @@ public class LikeTrackTest {
                 .build();
 
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.postForEntity(
-                getBaseUrl() + "/users/me/favorites",
+                getBaseUrl() + "/me/favorites",
                 createFavoriteDto,
                 FavoriteDetailsDto.class
         ));
@@ -97,7 +97,7 @@ public class LikeTrackTest {
                 .build();
 
         assertThrows(HttpClientErrorException.BadRequest.class, () -> restTemplate.postForEntity(
-                getBaseUrl() + "/users/me/favorites",
+                getBaseUrl() + "/me/favorites",
                 createFavoriteDto,
                 FavoriteDetailsDto.class
         ));
