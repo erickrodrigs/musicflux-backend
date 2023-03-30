@@ -6,14 +6,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AddOrRemoveTrackDto {
+public class AddOrRemoveTracksDto {
 
-    @NotNull(message = "Track ID is mandatory")
-    @Positive(message = "Track ID must be greater than zero")
-    private Long trackId;
+    @NotNull(message = "Tracks IDs is mandatory")
+    private List<Long> tracksIds;
 }
