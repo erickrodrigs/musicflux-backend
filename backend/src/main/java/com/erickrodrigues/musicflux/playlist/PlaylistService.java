@@ -1,7 +1,5 @@
 package com.erickrodrigues.musicflux.playlist;
 
-import com.erickrodrigues.musicflux.playlist.Playlist;
-
 import java.util.List;
 
 public interface PlaylistService {
@@ -14,9 +12,9 @@ public interface PlaylistService {
 
     List<Playlist> findAllByUserId(Long userId);
 
-    Playlist addTrack(Long userId, Long playlistId, Long trackId);
+    Playlist addTracks(Long userId, Long playlistId, List<Long> tracksIds);
 
-    Playlist removeTrack(Long userId, Long playlistId, Long trackId);
+    Playlist removeTracks(Long userId, Long playlistId, List<Long> tracksIds);
 
     void deleteById(Long userId, Long playlistId);
 }

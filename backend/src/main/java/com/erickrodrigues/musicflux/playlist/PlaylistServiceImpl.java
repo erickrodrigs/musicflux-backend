@@ -50,31 +50,38 @@ public class PlaylistServiceImpl extends BaseService implements PlaylistService 
 
     @Transactional
     @Override
-    public Playlist addTrack(Long userId, Long playlistId, Long trackId) {
-        final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
-        final Track track = trackService.findById(trackId);
+    public Playlist addTracks(Long userId, Long playlistId, List<Long> tracksIds) {
         final User user = userService.findById(userId);
+        final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
 
         if (!Objects.equals(user.getId(), playlist.getUser().getId())) {
             throw new InvalidActionException("Cannot add tracks to another user's playlist");
         }
 
-        playlist.addTrack(track);
+        tracksIds.forEach((trackId) -> {
+            final Track track = trackService.findById(trackId);
+
+            playlist.addTrack(track);
+        });
+
         return playlistRepository.save(playlist);
     }
 
     @Transactional
     @Override
-    public Playlist removeTrack(Long userId, Long playlistId, Long trackId) {
-        final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
-        final Track track = trackService.findById(trackId);
+    public Playlist removeTracks(Long userId, Long playlistId, List<Long> tracksIds) {
         final User user = userService.findById(userId);
+        final Playlist playlist = super.getEntityOrThrowException(playlistId, playlistRepository, Playlist.class);
 
         if (!Objects.equals(user.getId(), playlist.getUser().getId())) {
             throw new InvalidActionException("Cannot remove tracks from another user's playlist");
         }
 
-        playlist.removeTrack(track);
+        tracksIds.forEach((trackId) -> {
+            final Track track = trackService.findById(trackId);
+            playlist.removeTrack(track);
+        });
+
         return playlistRepository.save(playlist);
     }
 
