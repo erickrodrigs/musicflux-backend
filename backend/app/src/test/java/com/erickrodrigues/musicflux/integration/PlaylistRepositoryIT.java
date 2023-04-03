@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class PlaylistRepositoryTest {
+public class PlaylistRepositoryIT {
 
     private static final String WRONG_NUMBER_OF_PLAYLISTS = "Wrong number of playlists";
     private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_PLAYLISTS = "Actual list does not contain specified playlists";

@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class RecentlyPlayedRepositoryTest {
+public class RecentlyPlayedRepositoryIT {
 
     private static final String PAGE_IS_NOT_EMPTY = "Page is not empty";
     private static final String WRONG_PAGE_SIZE = "Wrong page size";

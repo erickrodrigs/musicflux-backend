@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class PlayTrackTest {
+public class PlayTrackIT {
 
     private static final String INVALID_STATUS_CODE = "Invalid status code";
     private static final String CONTENT_TYPE_IS_NULL = "Content type is null";

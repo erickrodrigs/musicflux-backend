@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class FavoriteRepositoryTest {
+public class FavoriteRepositoryIT {
 
     private static final String WRONG_NUMBER_OF_FAVORITES = "Wrong number of favorites";
     private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_FAVORITES = "Actual list does not contain specified favorites";

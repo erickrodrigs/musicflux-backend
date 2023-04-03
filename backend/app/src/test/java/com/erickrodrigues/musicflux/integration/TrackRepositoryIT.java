@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class TrackRepositoryTest {
+public class TrackRepositoryIT {
 
     private static final String DIFFERENT_NUMBER_OF_TRACKS = "Different number of tracks found";
     private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_TRACKS = "Actual list does not contain specified tracks";
