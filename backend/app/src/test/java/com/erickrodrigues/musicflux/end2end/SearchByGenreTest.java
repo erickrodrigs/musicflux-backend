@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.end2end;
 
-import com.erickrodrigues.musicflux.catalogue.CatalogueResultDto;
+import com.erickrodrigues.musicflux.search.SearchResultDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class CatalogueByGenreTest {
+public class SearchByGenreTest {
 
     @LocalServerPort
     private int port;
@@ -26,9 +26,9 @@ public class CatalogueByGenreTest {
 
     @Test
     public void findArtistsAlbumsAndTracksByGenre() {
-        final ResponseEntity<CatalogueResultDto> response = restTemplate.getForEntity(
+        final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
                 getUrl("Synth-pop"),
-                CatalogueResultDto.class
+                SearchResultDto.class
         );
 
         assertEquals(200, response.getStatusCode().value());
@@ -40,9 +40,9 @@ public class CatalogueByGenreTest {
 
     @Test
     public void findArtistsAlbumsAndTracksByGenreWhenItDoesNotExist() {
-        final ResponseEntity<CatalogueResultDto> response = restTemplate.getForEntity(
+        final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
                 getUrl("something unknown that only cult people know and like"),
-                CatalogueResultDto.class
+                SearchResultDto.class
         );
 
         assertEquals(200, response.getStatusCode().value());

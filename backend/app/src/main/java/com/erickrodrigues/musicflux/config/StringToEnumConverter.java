@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.config;
 
-import com.erickrodrigues.musicflux.catalogue.SearchableType;
+import com.erickrodrigues.musicflux.search.SearchableType;
 import org.springframework.core.convert.converter.Converter;
 
 public class StringToEnumConverter implements Converter<String, SearchableType> {

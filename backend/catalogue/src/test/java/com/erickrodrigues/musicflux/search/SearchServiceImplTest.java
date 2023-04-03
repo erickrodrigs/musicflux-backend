@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.catalogue;
+package com.erickrodrigues.musicflux.search;
 
 import com.erickrodrigues.musicflux.album.Album;
 import com.erickrodrigues.musicflux.album.AlbumService;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class CatalogueServiceImplTest {
+public class SearchServiceImplTest {
 
     @Mock
     private ArtistService artistService;
@@ -30,7 +30,7 @@ public class CatalogueServiceImplTest {
     private TrackService trackService;
 
     @InjectMocks
-    private CatalogueServiceImpl catalogueService;
+    private SearchServiceImpl searchService;
 
     @Test
     public void shouldSearchForArtists() {
@@ -44,10 +44,10 @@ public class CatalogueServiceImplTest {
         when(artistService.findAllByNameContainingIgnoreCase(text)).thenReturn(artists);
 
         // when
-        final CatalogueResult catalogueResult = catalogueService.findAllByTypeAndText(type, text);
+        final SearchResult searchResult = searchService.findAllByTypeAndText(type, text);
 
         // then
-        assertEquals(artists.size(), catalogueResult.getArtists().size());
+        assertEquals(artists.size(), searchResult.getArtists().size());
         verify(artistService, times(1)).findAllByNameContainingIgnoreCase(text);
     }
 
@@ -63,10 +63,10 @@ public class CatalogueServiceImplTest {
         when(albumService.findAllByTitleContainingIgnoreCase(text)).thenReturn(albums);
 
         // when
-        final CatalogueResult catalogueResult = catalogueService.findAllByTypeAndText(type, text);
+        final SearchResult searchResult = searchService.findAllByTypeAndText(type, text);
 
         // then
-        assertEquals(albums.size(), catalogueResult.getAlbums().size());
+        assertEquals(albums.size(), searchResult.getAlbums().size());
         verify(albumService, times(1)).findAllByTitleContainingIgnoreCase(text);
     }
 
@@ -82,10 +82,10 @@ public class CatalogueServiceImplTest {
         when(trackService.findAllByTitleContainingIgnoreCase(text)).thenReturn(tracks);
 
         // when
-        final CatalogueResult catalogueResult = catalogueService.findAllByTypeAndText(type, text);
+        final SearchResult searchResult = searchService.findAllByTypeAndText(type, text);
 
         // then
-        assertEquals(tracks.size(), catalogueResult.getTracks().size());
+        assertEquals(tracks.size(), searchResult.getTracks().size());
         verify(trackService, times(1)).findAllByTitleContainingIgnoreCase(text);
     }
 
@@ -103,11 +103,11 @@ public class CatalogueServiceImplTest {
         when(trackService.findAllByGenreName(text)).thenReturn(tracks);
 
         // when
-        final CatalogueResult catalogueResult = catalogueService.findAllByTypeAndText(type, text);
+        final SearchResult searchResult = searchService.findAllByTypeAndText(type, text);
 
-        assertEquals(1, catalogueResult.getArtists().size());
-        assertEquals(1, catalogueResult.getAlbums().size());
-        assertEquals(2, catalogueResult.getTracks().size());
+        assertEquals(1, searchResult.getArtists().size());
+        assertEquals(1, searchResult.getAlbums().size());
+        assertEquals(2, searchResult.getTracks().size());
         verify(trackService, times(1)).findAllByGenreName(text);
     }
 }

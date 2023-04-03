@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.catalogue;
+package com.erickrodrigues.musicflux.search;
 
 import com.erickrodrigues.musicflux.album.AlbumMapper;
 import com.erickrodrigues.musicflux.artist.ArtistMapper;
@@ -10,7 +10,7 @@ import org.mapstruct.Mapper;
         AlbumMapper.class,
         TrackMapper.class,
 })
-public interface CatalogueMapper {
+public interface SearchMapper {
 
-    CatalogueResultDto toCatalogueResultDto(CatalogueResult catalogueResult);
+    SearchResultDto toSearchResultDto(SearchResult searchResult);
 }

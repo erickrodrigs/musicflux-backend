@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.catalogue;
+package com.erickrodrigues.musicflux.search;
 
 import com.erickrodrigues.musicflux.artist.Artist;
 import com.erickrodrigues.musicflux.artist.ArtistDetailsDto;
@@ -24,49 +24,49 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
-public class CatalogueControllerTest {
+public class SearchControllerTest {
 
     @Mock
-    private CatalogueService catalogueService;
+    private SearchService searchService;
 
     @Mock
-    private CatalogueMapper catalogueMapper;
+    private SearchMapper searchMapper;
 
     @InjectMocks
-    private CatalogueController catalogueController;
+    private SearchController searchController;
 
     @Test
     public void shouldSearchAndReturnProperResult() throws Exception {
         // given
         final SearchableType type = SearchableType.ARTIST;
         final String text = "dark";
-        final CatalogueResult catalogueResult = CatalogueResult
+        final SearchResult searchResult = SearchResult
                 .builder()
                 .artists(List.of(
                         Artist.builder().id(1L).name("Dark Angel").build()
                 ))
                 .build();
-        final CatalogueResultDto catalogueResultDto = CatalogueResultDto
+        final SearchResultDto searchResultDto = SearchResultDto
                 .builder()
                 .artists(List.of(
                         ArtistDetailsDto.builder().id(1L).name("Dark Angel").build()
                 ))
                 .build();
-        when(catalogueService.findAllByTypeAndText(type, text)).thenReturn(catalogueResult);
-        when(catalogueMapper.toCatalogueResultDto(catalogueResult)).thenReturn(catalogueResultDto);
+        when(searchService.findAllByTypeAndText(type, text)).thenReturn(searchResult);
+        when(searchMapper.toSearchResultDto(searchResult)).thenReturn(searchResultDto);
 
         // when
         final MultiValueMap<String, String> params;
         final MockMvc mockMvc;
         final MvcResult mvcResult;
         final ObjectMapper objectMapper;
-        final CatalogueResultDto actualResponse;
+        final SearchResultDto actualResponse;
         params = new LinkedMultiValueMap<>();
         params.add("type", type.name());
         params.add("q", text);
 
         System.out.println(type.getType());
-        mockMvc = MockMvcBuilders.standaloneSetup(catalogueController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(searchController).build();
         mvcResult = mockMvc.perform(get("/search")
                         .params(params))
                 .andExpect(status().isOk())
@@ -75,13 +75,13 @@ public class CatalogueControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
         actualResponse = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(),
-                CatalogueResultDto.class
+                SearchResultDto.class
         );
 
         // then
-        assertEquals(catalogueResultDto.getArtists().size(), actualResponse.getArtists().size());
-        assertTrue(actualResponse.getArtists().containsAll(catalogueResultDto.getArtists()));
-        verify(catalogueService, times(1)).findAllByTypeAndText(type, text);
-        verify(catalogueMapper, times(1)).toCatalogueResultDto(catalogueResult);
+        assertEquals(searchResultDto.getArtists().size(), actualResponse.getArtists().size());
+        assertTrue(actualResponse.getArtists().containsAll(searchResultDto.getArtists()));
+        verify(searchService, times(1)).findAllByTypeAndText(type, text);
+        verify(searchMapper, times(1)).toSearchResultDto(searchResult);
     }
 }

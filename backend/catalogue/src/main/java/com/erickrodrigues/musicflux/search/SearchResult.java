@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.catalogue;
+package com.erickrodrigues.musicflux.search;
 
 import com.erickrodrigues.musicflux.album.Album;
 import com.erickrodrigues.musicflux.artist.Artist;
@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CatalogueResult {
+public class SearchResult {
 
     @Builder.Default
     private List<Artist> artists = new ArrayList<>();
