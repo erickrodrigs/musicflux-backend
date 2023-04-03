@@ -75,8 +75,7 @@ INSERT INTO tracks (album_id, id, title, length, number_of_plays)
            (12, 32, 'Life', 353, 6975821),
            (12, 33, 'Death & Redemption', 290, 6975821),
            (13, 34, 'Antares', 216, 6975821),
-           (14, 35, 'Escape', 322, 6975821),
-           (14, 36, 'Ivy', 316, 6975821);
+           (14, 35, 'Escape', 322, 6975821);
 
 INSERT INTO genres (id, name)
     VALUES (1, 'Rock'),
@@ -119,5 +118,4 @@ INSERT INTO tracks_genres (track_id, genre_id)
            (32, 4),
            (33, 4),
            (34, 4),
-           (35, 4),
-           (36, 4);
+           (35, 4);
