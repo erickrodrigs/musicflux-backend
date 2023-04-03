@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.catalogue;
+package com.erickrodrigues.musicflux.search;
 
 public enum SearchableType {
     ARTIST("artist"), ALBUM("album"), TRACK("track"), GENRE("genre");

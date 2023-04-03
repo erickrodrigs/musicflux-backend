@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.end2end;
 
-import com.erickrodrigues.musicflux.catalogue.CatalogueResultDto;
+import com.erickrodrigues.musicflux.search.SearchResultDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class CatalogueSearchTest {
+public class SearchTest {
 
     @LocalServerPort
     private int port;
@@ -26,9 +26,9 @@ public class CatalogueSearchTest {
 
     @Test
     public void searchForTracks() {
-        final ResponseEntity<CatalogueResultDto> response = restTemplate.getForEntity(
+        final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
                 getUrl() + "?type=track&q=" + "of",
-                CatalogueResultDto.class
+                SearchResultDto.class
         );
 
         assertEquals(200, response.getStatusCode().value());

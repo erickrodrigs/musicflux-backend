@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.catalogue;
+package com.erickrodrigues.musicflux.search;
 
 import com.erickrodrigues.musicflux.album.Album;
 import com.erickrodrigues.musicflux.album.AlbumService;
@@ -17,20 +17,20 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class CatalogueServiceImpl implements CatalogueService {
+public class SearchServiceImpl implements SearchService {
 
     private final ArtistService artistService;
     private final AlbumService albumService;
     private final TrackService trackService;
 
     @Override
-    public CatalogueResult findAllByTypeAndText(SearchableType type, String text) {
-        final CatalogueResult catalogueResult = new CatalogueResult();
+    public SearchResult findAllByTypeAndText(SearchableType type, String text) {
+        final SearchResult searchResult = new SearchResult();
 
         switch (type) {
-            case ARTIST -> catalogueResult.setArtists(artistService.findAllByNameContainingIgnoreCase(text));
-            case ALBUM -> catalogueResult.setAlbums(albumService.findAllByTitleContainingIgnoreCase(text));
-            case TRACK -> catalogueResult.setTracks(trackService.findAllByTitleContainingIgnoreCase(text));
+            case ARTIST -> searchResult.setArtists(artistService.findAllByNameContainingIgnoreCase(text));
+            case ALBUM -> searchResult.setAlbums(albumService.findAllByTitleContainingIgnoreCase(text));
+            case TRACK -> searchResult.setTracks(trackService.findAllByTitleContainingIgnoreCase(text));
             case GENRE -> {
                 final List<Track> tracks = trackService.findAllByGenreName(text);
                 final List<Album> albums = tracks
@@ -49,12 +49,12 @@ public class CatalogueServiceImpl implements CatalogueService {
                         .stream()
                         .toList();
 
-                catalogueResult.setArtists(artists);
-                catalogueResult.setAlbums(albums);
-                catalogueResult.setTracks(tracks);
+                searchResult.setArtists(artists);
+                searchResult.setAlbums(albums);
+                searchResult.setTracks(tracks);
             }
         }
 
-        return catalogueResult;
+        return searchResult;
     }
 }

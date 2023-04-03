@@ -1,4 +1,4 @@
-package com.erickrodrigues.musicflux.catalogue;
+package com.erickrodrigues.musicflux.search;
 
 import com.erickrodrigues.musicflux.album.AlbumDetailsDto;
 import com.erickrodrigues.musicflux.artist.ArtistDetailsDto;
@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CatalogueResultDto {
+public class SearchResultDto {
 
     private List<ArtistDetailsDto> artists;
 
