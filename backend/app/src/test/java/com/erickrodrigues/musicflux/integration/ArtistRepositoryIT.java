@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ArtistRepositoryTest {
+public class ArtistRepositoryIT {
 
     private static final String WRONG_NUMBER_OF_ARTISTS = "Wrong number of artists";
     private static final String LIST_DOES_NOT_CONTAIN_SPECIFIED_ARTISTS = "Actual list does not contain specified artists";

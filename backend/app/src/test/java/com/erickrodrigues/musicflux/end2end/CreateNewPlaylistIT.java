@@ -2,8 +2,8 @@ package com.erickrodrigues.musicflux.end2end;
 
 import com.erickrodrigues.musicflux.auth.AuthCredentialsDto;
 import com.erickrodrigues.musicflux.auth.AuthTokenDto;
-import com.erickrodrigues.musicflux.favorite.CreateFavoriteDto;
-import com.erickrodrigues.musicflux.favorite.FavoriteDetailsDto;
+import com.erickrodrigues.musicflux.playlist.CreatePlaylistDto;
+import com.erickrodrigues.musicflux.playlist.PlaylistDetailsDto;
 import org.apache.hc.core5.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class LikeTrackTest {
+public class CreateNewPlaylistIT {
 
     @LocalServerPort
     private int port;
@@ -43,8 +43,7 @@ public class LikeTrackTest {
                 authCredentialsDto,
                 AuthTokenDto.class
         );
-
-        String token = Objects.requireNonNull(response.getBody()).getToken();
+        final String token = Objects.requireNonNull(response.getBody()).getToken();
 
         restTemplate.getInterceptors().add((outReq, bytes, clientHttpReqExec) -> {
             outReq.getHeaders().set(
@@ -56,50 +55,38 @@ public class LikeTrackTest {
     }
 
     @Test
-    public void likeTrack() {
-        final long trackId = 20L;
-        final CreateFavoriteDto createFavoriteDto = CreateFavoriteDto
+    public void createNewPlaylist() {
+        final String playlistName = "my favorite tracks of all time";
+        final CreatePlaylistDto createPlaylistDto = CreatePlaylistDto
                 .builder()
-                .trackId(trackId)
+                .name(playlistName)
                 .build();
-        final ResponseEntity<FavoriteDetailsDto> response = restTemplate.postForEntity(
-                getBaseUrl() + "/me/favorites",
-                createFavoriteDto,
-                FavoriteDetailsDto.class
+
+        final ResponseEntity<PlaylistDetailsDto> response = restTemplate.postForEntity(
+                getBaseUrl() + "/playlists",
+                createPlaylistDto,
+                PlaylistDetailsDto.class
         );
 
         assertEquals(201, response.getStatusCode().value());
         assertNotNull(response.getBody());
-        assertEquals(trackId, response.getBody().getTrack().getId());
+        assertEquals(2L, response.getBody().getId());
+        assertEquals(1L, response.getBody().getUserId());
+        assertEquals(playlistName, response.getBody().getName());
+        assertEquals(0, response.getBody().getTracks().size());
     }
 
     @Test
-    public void likeTrackWhenItDoesNotExist() {
-        final long trackId = 498L;
-        final CreateFavoriteDto createFavoriteDto = CreateFavoriteDto
+    public void createNewPlaylistWhenInfoAreInvalid() {
+        final CreatePlaylistDto createPlaylistDto = CreatePlaylistDto
                 .builder()
-                .trackId(trackId)
-                .build();
-
-        assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.postForEntity(
-                getBaseUrl() + "/me/favorites",
-                createFavoriteDto,
-                FavoriteDetailsDto.class
-        ));
-    }
-
-    @Test
-    public void likeTrackWhenItWasAlreadyLiked() {
-        final long trackId = 2L;
-        final CreateFavoriteDto createFavoriteDto = CreateFavoriteDto
-                .builder()
-                .trackId(trackId)
+                .name("")
                 .build();
 
         assertThrows(HttpClientErrorException.BadRequest.class, () -> restTemplate.postForEntity(
-                getBaseUrl() + "/me/favorites",
-                createFavoriteDto,
-                FavoriteDetailsDto.class
+                getBaseUrl() + "/playlists",
+                createPlaylistDto,
+                PlaylistDetailsDto.class
         ));
     }
 

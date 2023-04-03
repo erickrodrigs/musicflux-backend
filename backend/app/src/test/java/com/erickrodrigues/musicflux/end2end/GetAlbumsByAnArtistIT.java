@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.end2end;
 
-import com.erickrodrigues.musicflux.track.TrackDto;
+import com.erickrodrigues.musicflux.album.AlbumDetailsDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -8,6 +8,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class GetTopTracksByArtistTest {
+public class GetAlbumsByAnArtistIT {
 
     @LocalServerPort
     private int port;
@@ -24,18 +25,26 @@ public class GetTopTracksByArtistTest {
     private RestTemplate restTemplate;
 
     @Test
-    public void getMostPlayedTracksByAnArtistByTheirId() {
-        final ResponseEntity<TrackDto[]> response = restTemplate.getForEntity(
-                getUrl(),
-                TrackDto[].class
+    public void getAlbumsByAnArtist() {
+        final ResponseEntity<AlbumDetailsDto[]> response = restTemplate.getForEntity(
+                getUrl(1L),
+                AlbumDetailsDto[].class
         );
 
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
-        assertEquals(5, response.getBody().length);
+        assertEquals(2, response.getBody().length);
     }
 
-    private String getUrl() {
-        return "http://localhost:" + port + "/artists/1/top-tracks";
+    @Test
+    public void getAlbumsByAnArtistThatDoesNotExist() {
+        assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.getForEntity(
+                getUrl(2L),
+                AlbumDetailsDto[].class
+        ));
+    }
+
+    private String getUrl(Long artistId) {
+        return "http://localhost:" + port + "/artists/" + artistId + "/albums";
     }
 }

@@ -4,13 +4,13 @@ import com.erickrodrigues.musicflux.auth.AuthCredentialsDto;
 import com.erickrodrigues.musicflux.auth.AuthTokenDto;
 import com.erickrodrigues.musicflux.playlist.AddOrRemoveTracksDto;
 import com.erickrodrigues.musicflux.playlist.PlaylistDetailsDto;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
@@ -26,15 +26,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql({"/data-test.sql"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class AddNewTrackToPlaylistTest {
+public class RemoveTrackFromPlaylistIT {
 
     @LocalServerPort
     private int port;
 
     @Autowired
     private RestTemplate restTemplate;
-
-    private String token;
 
     @BeforeEach
     public void setUp() {
@@ -49,94 +47,86 @@ public class AddNewTrackToPlaylistTest {
                 AuthTokenDto.class
         );
 
-        token = Objects.requireNonNull(response.getBody()).getToken();
+        String token = Objects.requireNonNull(response.getBody()).getToken();
+
+        restTemplate.getInterceptors().add((outReq, bytes, clientHttpReqExec) -> {
+            outReq.getHeaders().set(
+                    HttpHeaders.AUTHORIZATION, "Bearer " + token
+            );
+
+            return clientHttpReqExec.execute(outReq, bytes);
+        });
     }
 
     @Test
-    public void addNewTrackToPlaylist() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-
-        final Long playlistId = 1L;
-        final List<Long> tracksIds = List.of(18L, 19L);
-        final AddOrRemoveTracksDto addOrRemoveTracksDto = AddOrRemoveTracksDto
+    public void removeTrackFromPlaylist() {
+        final long playlistId = 1L;
+        final List<Long> tracksIds = List.of(4L);
+        final HttpEntity<AddOrRemoveTracksDto> requestBody = new HttpEntity<>(AddOrRemoveTracksDto
                 .builder()
                 .tracksIds(tracksIds)
-                .build();
-        final HttpEntity<AddOrRemoveTracksDto> requestEntity = new HttpEntity<>(addOrRemoveTracksDto, headers);
+                .build()
+        );
         final ResponseEntity<PlaylistDetailsDto> response = restTemplate.exchange(
                 getBaseUrl() + "/playlists/" + playlistId + "/tracks",
-                HttpMethod.POST,
-                requestEntity,
+                HttpMethod.DELETE,
+                requestBody,
                 PlaylistDetailsDto.class
         );
 
-        assertEquals(201, response.getStatusCode().value());
+        assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(playlistId, response.getBody().getId());
     }
 
     @Test
-    public void addTrackToPlaylistWhenPlaylistIdIsInvalid() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-
-        final long playlistId = 498L;
-        final List<Long> tracksIds = List.of(18L, 19L);
-        final AddOrRemoveTracksDto addOrRemoveTracksDto = AddOrRemoveTracksDto
-                .builder()
-                .tracksIds(tracksIds)
-                .build();
-        final HttpEntity<AddOrRemoveTracksDto> requestEntity = new HttpEntity<>(addOrRemoveTracksDto, headers);
-
-        assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
-                getBaseUrl() + "/playlists/" + playlistId + "/tracks",
-                HttpMethod.POST,
-                requestEntity,
-                PlaylistDetailsDto.class
-        ));
-    }
-
-    @Test
-    public void addTrackToPlaylistWhenTrackIdIsInvalid() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-
+    public void removeTrackFromPlaylistWhenTrackDoesNotExist() {
         final long playlistId = 1L;
         final List<Long> tracksIds = List.of(498L);
-        final AddOrRemoveTracksDto addOrRemoveTracksDto = AddOrRemoveTracksDto
+        final HttpEntity<AddOrRemoveTracksDto> requestBody = new HttpEntity<>(AddOrRemoveTracksDto
                 .builder()
                 .tracksIds(tracksIds)
-                .build();
-        final HttpEntity<AddOrRemoveTracksDto> requestEntity = new HttpEntity<>(addOrRemoveTracksDto, headers);
-
+                .build()
+        );
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
                 getBaseUrl() + "/playlists/" + playlistId + "/tracks",
-                HttpMethod.POST,
-                requestEntity,
-                PlaylistDetailsDto.class
+                HttpMethod.DELETE,
+                requestBody,
+                Object.class
         ));
     }
 
     @Test
-    public void addTrackToPlaylistWhenTrackIsAlreadyIncluded() {
-        final HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + token);
-
+    public void removeTrackFromPlaylistWhenTrackIsNotIncludedInPlaylist() {
         final long playlistId = 1L;
-        final List<Long> tracksIds = List.of(3L);
-        final AddOrRemoveTracksDto addOrRemoveTracksDto = AddOrRemoveTracksDto
+        final List<Long> tracksIds = List.of(1L);
+        final HttpEntity<AddOrRemoveTracksDto> requestBody = new HttpEntity<>(AddOrRemoveTracksDto
                 .builder()
                 .tracksIds(tracksIds)
-                .build();
-        final HttpEntity<AddOrRemoveTracksDto> requestEntity = new HttpEntity<>(addOrRemoveTracksDto, headers);
+                .build()
+        );
+        assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks",
+                HttpMethod.DELETE,
+                requestBody,
+                Object.class
+        ));
+    }
 
-        assertThrows(HttpClientErrorException.BadRequest.class, () -> restTemplate.exchange(
-                getBaseUrl() + "" +
-                        "/playlists/" + playlistId + "/tracks",
-                HttpMethod.POST,
-                requestEntity,
-                PlaylistDetailsDto.class
+    @Test
+    public void removeTrackFromPlaylistWhenPlaylistDoesNotExist() {
+        final long playlistId = 498L;
+        final List<Long> tracksIds = List.of(4L);
+        final HttpEntity<AddOrRemoveTracksDto> requestBody = new HttpEntity<>(AddOrRemoveTracksDto
+                .builder()
+                .tracksIds(tracksIds)
+                .build()
+        );
+        assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.exchange(
+                getBaseUrl() + "/playlists/" + playlistId + "/tracks",
+                HttpMethod.DELETE,
+                requestBody,
+                Object.class
         ));
     }
 
