@@ -1,12 +1,12 @@
-INSERT INTO artists (id, name, biography)
-    VALUES (1, 'Andrew Howes', ''),
-           (2, 'Yellow Chair', ''),
-           (3, 'Waylon Thornton', ''),
-           (4, 'Break The Bans', ''),
-           (5, 'Cullah', ''),
-           (6, 'Handmade Moments', ''),
-           (7, 'Dee Yan-Key', ''),
-           (8, 'King Imagine', '');
+INSERT INTO artists (id, name, biography, photo_url)
+    VALUES (1, 'Andrew Howes', '', 'https://freemusicarchive.org/img/default/artist.jpg'),
+           (2, 'Yellow Chair', '', 'https://freemusicarchive.org/image/?file=images%2Fartists%2FYELLOW_CHAIR_-_20130303205333740.jpg&width=290&height=290&type=artist'),
+           (3, 'Waylon Thornton', '', 'https://freemusicarchive.org/image/?file=images%2Fartists%2FWaylon_Thornton_-_2012061793125465.jpg&width=290&height=290&type=artist'),
+           (4, 'Break The Bans', 'The garage rock band from Russia.', 'https://freemusicarchive.org/image/?file=images%2Fartists%2FBreak_The_Bans_-_20170413161421713.jpg&width=290&height=290&type=artist'),
+           (5, 'Cullah', '', 'https://freemusicarchive.org/image/?file=images%2Fartists%2FCullah_-_20180503171218146.jpg&width=290&height=290&type=artist'),
+           (6, 'Handmade Moments', '', 'https://freemusicarchive.org/img/default/artist.jpg'),
+           (7, 'Dee Yan-Key', 'Dee Yan-Key is a German composer of Neoclassical, Electro swing and Ambient music.', 'https://freemusicarchive.org/image/?file=image%2FngVfwb9gXHJXranSkdvL6H8Tnyf87fQl2tQqgOE6.jpeg&width=290&height=290&type=artist'),
+           (8, 'King Imagine', 'Alexei Mikryukov aka King Imagine was born in 1972. His first song was sung and recorded at the age of 4. He began his career in music as a gutarist in the punk collective Zooy E Orchestar in 1989. In the same period some of the first bootleg recordings were made, all of them now lost. In the summer of 1993 he meets Eugene Alexandrov, with whom organizes The Schizotronics..and records solo. In 1996 together with the Kiev poet Danylo Kubai,he founds the noise industrial group Ilam, Inc. (or, rather a noise orchestra with 13 musicians, which gave an incredibly insane concert in the Kiev Actors House of Culture) and also the project Rooteniya Pe Since 1998 cooperates as sound engineer with the first Ukrainian reggae/dub group Rootmans Band, Karina Kuznetsova (with whom he works to this day) and the bass guitarist Kirill Machinski aka Roots Controlla, with whom he founds the digital roots dub project Dub Compressors. In 1999 together with the composer Alexander Kohanovski aka Pankifared he starts the studio project Superapes, recording 2 albums, making experiments with electronic and ambient music, as well as composing music for escalators, elevators and corridors. Since 2004 actively cooperates with Foa Hoka as sound producer, remixer and contributor of music. Since 2005 releases his output on the d.i.y. CD-R label SKP Records (Kiev). Since 2006 actively cooperates w/International movement Ukr.tele.kom - as remixer, co-author and remastering engineer.', 'https://freemusicarchive.org/image/?file=images%2Fartists%2FKing_Imagine_-_2014091585028122.jpg&width=290&height=290&type=artist');
 
 INSERT INTO albums (id, title, cover_url, release_date)
     VALUES (1, 'Gubernator', 'https://freemusicarchive.org/image/?file=images%2Falbums%2FAndrew_Howes_-_Gubernator_-_2015031293329764.jpg&width=290&height=290&type=album', '2015-03-18'),

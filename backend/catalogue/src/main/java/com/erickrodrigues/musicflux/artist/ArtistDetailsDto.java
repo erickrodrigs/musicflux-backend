@@ -16,4 +16,6 @@ public class ArtistDetailsDto {
     private String name;
 
     private String biography;
+
+    private String photoUrl;
 }

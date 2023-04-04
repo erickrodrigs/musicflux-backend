@@ -1,4 +1,5 @@
-INSERT INTO artists (id, name, biography) VALUES (1, 'Depeche Mode', 'The best band in the world');
+INSERT INTO artists (id, name, biography, photo_url)
+VALUES (1, 'Depeche Mode', 'The best band in the world', 'https://freemusicarchive.org/img/default/artist.jpg');
 
 INSERT INTO albums (id, title, cover_url, release_date)
 VALUES (1, 'Black Celebration', 'https://i.scdn.co/image/ab67616d0000b273878ae6fc96ee5954168838fc', '1986-03-17'),
