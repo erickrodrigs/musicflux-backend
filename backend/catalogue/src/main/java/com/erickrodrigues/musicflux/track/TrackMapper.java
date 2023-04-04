@@ -11,6 +11,7 @@ import java.util.List;
 public interface TrackMapper {
 
     @Mapping(target = "albumId", source = "track.album.id")
+    @Mapping(target = "albumCoverUrl", source = "track.album.coverUrl")
     TrackDto toTrackDetailsDto(Track track);
 
     List<TrackDto> toListOfTrackDetailsDto(List<Track> tracks);
