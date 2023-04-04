@@ -24,4 +24,6 @@ public class TrackDto {
     private List<String> genres;
 
     private Long albumId;
+
+    private String albumCoverUrl;
 }
