@@ -24,6 +24,9 @@ public class Artist extends BaseEntity {
     @Column(name = "biography")
     private String biography;
 
+    @Column(name = "photo_url")
+    private String photoUrl;
+
     @ManyToMany
     @JoinTable(name = "artists_albums",
             joinColumns = @JoinColumn(name = "artist_id"),
