@@ -1,5 +1,6 @@
 package com.erickrodrigues.musicflux.track;
 
+import com.erickrodrigues.musicflux.album.AlbumDetailsDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,5 @@ public class TrackDto {
 
     private List<String> genres;
 
-    private Long albumId;
-
-    private String albumCoverUrl;
+    private AlbumDetailsDto album;
 }

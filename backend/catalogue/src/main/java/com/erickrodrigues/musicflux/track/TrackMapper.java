@@ -1,17 +1,15 @@
 package com.erickrodrigues.musicflux.track;
 
+import com.erickrodrigues.musicflux.album.AlbumMapper;
 import com.erickrodrigues.musicflux.genre.Genre;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.time.Duration;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {AlbumMapper.class})
 public interface TrackMapper {
 
-    @Mapping(target = "albumId", source = "track.album.id")
-    @Mapping(target = "albumCoverUrl", source = "track.album.coverUrl")
     TrackDto toTrackDetailsDto(Track track);
 
     List<TrackDto> toListOfTrackDetailsDto(List<Track> tracks);

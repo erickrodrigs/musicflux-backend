@@ -49,14 +49,14 @@ class AlbumControllerTest {
                         .title("Sing This Track")
                         .length(60L)
                         .genres(List.of("Synth Pop"))
-                        .albumId(albumId)
+                        .album(AlbumDetailsDto.builder().id(albumId).build())
                         .build(),
                 TrackDto.builder()
                         .id(2L)
                         .title("Love")
                         .length(60L)
                         .genres(List.of("Synth Pop"))
-                        .albumId(albumId)
+                        .album(AlbumDetailsDto.builder().id(albumId).build())
                         .build()
         );
         when(albumService.getAlbumTracks(albumId)).thenReturn(tracks);
