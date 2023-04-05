@@ -1,5 +1,6 @@
 package com.erickrodrigues.musicflux.album;
 
+import com.erickrodrigues.musicflux.artist.ArtistDetailsDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,5 +23,5 @@ public class AlbumDetailsDto {
 
     private LocalDate releaseDate;
 
-    private List<Long> artistsIds;
+    private List<ArtistDetailsDto> artists;
 }

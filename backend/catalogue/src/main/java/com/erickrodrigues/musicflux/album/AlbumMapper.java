@@ -1,20 +1,14 @@
 package com.erickrodrigues.musicflux.album;
 
-import com.erickrodrigues.musicflux.artist.Artist;
+import com.erickrodrigues.musicflux.artist.ArtistMapper;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ArtistMapper.class})
 public interface AlbumMapper {
 
-    @Mapping(target = "artistsIds", source = "album.artists")
     AlbumDetailsDto toAlbumDetailsDto(Album album);
 
     List<AlbumDetailsDto> toListOfAlbumDetailsDto(List<Album> albums);
-
-    default Long artistToId(Artist artist) {
-        return artist.getId();
-    }
 }
