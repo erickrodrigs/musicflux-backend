@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Tag(name = "users")
 @RestController
 @RequestMapping("/me")
@@ -22,5 +24,14 @@ public class UserController {
     public UserDetailsDto getCurrentUserProfile(HttpServletRequest request) {
         final Long userId = (Long) request.getAttribute("userId");
         return userMapper.toUserDetailsDto(userService.findById(userId));
+    }
+
+    @Operation(summary = "Update current user's profile info")
+    @PatchMapping
+    @ResponseStatus(HttpStatus.OK)
+    public UserDetailsDto updateCurrentUserProfileInfo(HttpServletRequest request,
+                                                       @RequestBody Map<String, Object> updates) {
+        final Long userId = (Long) request.getAttribute("userId");
+        return userMapper.toUserDetailsDto(userService.update(userId, updates));
     }
 }
