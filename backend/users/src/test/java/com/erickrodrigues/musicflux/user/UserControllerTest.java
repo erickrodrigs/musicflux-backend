@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -92,10 +93,10 @@ public class UserControllerTest {
     public void shouldUpdateCurrentUserInfo() throws Exception {
         // given
         final Long userId = 1L;
-        final Map<String, Object> updates = Map.of(
-                "name", "Carlos",
-                "password", "carlos123"
-        );
+        final UpdateUserDto updateUserDto = UpdateUserDto.builder()
+                .name("Carlos")
+                .password("carlos123")
+                .build();
         final User user = User.builder()
                 .id(userId)
                 .name("Carlos")
@@ -109,6 +110,11 @@ public class UserControllerTest {
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .build();
+        final Map<String, Object> updates = new HashMap<>();
+        updates.put("name", updateUserDto.getName());
+        updates.put("username", updateUserDto.getUsername());
+        updates.put("email", updateUserDto.getEmail());
+        updates.put("password", updateUserDto.getPassword());
         when(userService.update(user.getId(), updates)).thenReturn(user);
         when(userMapper.toUserDetailsDto(user)).thenReturn(userDetailsDto);
 
@@ -118,7 +124,7 @@ public class UserControllerTest {
         final MvcResult mvcResult = mockMvc.perform(patch("/me")
                 .requestAttr("userId", userId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updates)))
+                .content(objectMapper.writeValueAsString(updateUserDto)))
                 .andExpect(status().isOk())
                 .andReturn();
         final UserDetailsDto actualResponse = objectMapper.readValue(
@@ -140,15 +146,20 @@ public class UserControllerTest {
     public void shouldThrowAnExceptionWhenUpdatingUserInfoToInvalidInfo() {
         // given
         final Long userId = 1L;
-        final Map<String, Object> updates = Map.of();
+        final UpdateUserDto updateUserDto = UpdateUserDto.builder().build();
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
+        final Map<String, Object> updates = new HashMap<>();
+        updates.put("name", updateUserDto.getName());
+        updates.put("username", updateUserDto.getUsername());
+        updates.put("email", updateUserDto.getEmail());
+        updates.put("password", updateUserDto.getPassword());
         when(userService.update(userId, updates)).thenThrow(ResourceAlreadyExistsException.class);
 
         // then
         assertThrows(ServletException.class, () -> mockMvc.perform(patch("/me")
                 .requestAttr("userId", userId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(updates)))
+                .content(new ObjectMapper().writeValueAsString(updateUserDto)))
         );
         verify(userService, times(1)).update(userId, updates);
     }
