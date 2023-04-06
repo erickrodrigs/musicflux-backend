@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -56,32 +58,30 @@ public class UserServiceImpl extends BaseService implements UserService, UserDet
     @Override
     public User update(Long id, Map<String, Object> updates) {
         final User user = findById(id);
+        final Map<String, Consumer<String>> updatesConsumerMap = Map.of(
+                "name", user::setName,
+                "username", (username) -> {
+                    userRepository.findByUsernameOrEmail(username, "")
+                            .ifPresent((s) -> {
+                                throw new ResourceAlreadyExistsException("User with that email already exists");
+                            });
+                    user.setUsername(username);
+                },
+                "email", (email) -> {
+                    userRepository.findByUsernameOrEmail("", email)
+                            .ifPresent((s) -> {
+                                throw new ResourceAlreadyExistsException("User with that email already exists");
+                            });
+                    user.setEmail(email);
+                },
+                "password", (password) -> user.setPassword(passwordEncoder.encode(password))
+        );
 
-        if (updates.containsKey("name")) {
-            user.setName((String) updates.get("name"));
-        }
+        updatesConsumerMap.forEach((key, consumer) -> {
+            if (!updates.containsKey(key) || Objects.isNull(updates.get(key))) return;
 
-        if (updates.containsKey("username")) {
-            final String username = (String) updates.get("username");
-            userRepository.findByUsernameOrEmail(username, "")
-                    .ifPresent((s) -> {
-                        throw new ResourceAlreadyExistsException("User with that email already exists");
-                    });
-            user.setUsername(username);
-        }
-
-        if (updates.containsKey("email")) {
-            final String email = (String) updates.get("email");
-            userRepository.findByUsernameOrEmail("", email)
-                    .ifPresent((s) -> {
-                        throw new ResourceAlreadyExistsException("User with that email already exists");
-                    });
-            user.setEmail(email);
-        }
-
-        if (updates.containsKey("password")) {
-            user.setPassword(passwordEncoder.encode((String) updates.get("password")));
-        }
+            consumer.accept((String) updates.get(key));
+        });
 
         return userRepository.save(user);
     }
