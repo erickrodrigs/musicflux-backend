@@ -3,10 +3,12 @@ package com.erickrodrigues.musicflux.user;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Tag(name = "users")
@@ -30,8 +32,14 @@ public class UserController {
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     public UserDetailsDto updateCurrentUserProfileInfo(HttpServletRequest request,
-                                                       @RequestBody Map<String, Object> updates) {
+                                                       @Valid @RequestBody UpdateUserDto updateUserDto) {
         final Long userId = (Long) request.getAttribute("userId");
+        final Map<String, Object> updates = new HashMap<>();
+        updates.put("name", updateUserDto.getName());
+        updates.put("username", updateUserDto.getUsername());
+        updates.put("email", updateUserDto.getEmail());
+        updates.put("password", updateUserDto.getPassword());
+
         return userMapper.toUserDetailsDto(userService.update(userId, updates));
     }
 }
