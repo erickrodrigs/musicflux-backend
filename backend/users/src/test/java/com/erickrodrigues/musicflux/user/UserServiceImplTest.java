@@ -125,13 +125,14 @@ public class UserServiceImplTest {
                 .build();
         final Map<String, Object> updates = Map.of(
                 "name", "Carlos",
+                "username", "carlos123",
                 "email", "carlos@carlos.com",
                 "password", "carlos123"
         );
         final User userWithUpdatedInfo = User.builder()
                 .id(user.getId())
                 .name((String) updates.get("name"))
-                .username(user.getUsername())
+                .username((String) updates.get("username"))
                 .email((String) updates.get("email"))
                 .password((String) updates.get("password"))
                 .build();
