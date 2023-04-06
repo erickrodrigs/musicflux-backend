@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -110,5 +111,108 @@ public class UserServiceImplTest {
         assertThrows(ResourceAlreadyExistsException.class, () -> userService.register(name, username, email, password));
         verify(userRepository, times(1)).findByUsernameOrEmail(username, email);
         verify(userRepository, times(0)).save(user);
+    }
+
+    @Test
+    public void shouldUpdateSpecifiedUserInfo() {
+        final Long userId = 1L;
+        final User user = User.builder()
+                .id(userId)
+                .name("Erick")
+                .username("erick123")
+                .email("erick@erick.com")
+                .password("erick123")
+                .build();
+        final Map<String, Object> updates = Map.of(
+                "name", "Carlos",
+                "email", "carlos@carlos.com",
+                "password", "carlos123"
+        );
+        final User userWithUpdatedInfo = User.builder()
+                .id(user.getId())
+                .name((String) updates.get("name"))
+                .username(user.getUsername())
+                .email((String) updates.get("email"))
+                .password((String) updates.get("password"))
+                .build();
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.save(eq(userWithUpdatedInfo))).thenReturn(userWithUpdatedInfo);
+        when(passwordEncoder.encode((String) updates.get("password"))).thenReturn((String) updates.get("password"));
+
+        final User actualUser = userService.update(userId, updates);
+
+        assertNotNull(actualUser);
+        assertEquals(userWithUpdatedInfo.getId(), actualUser.getId());
+        assertEquals(userWithUpdatedInfo.getName(), actualUser.getName());
+        assertEquals(userWithUpdatedInfo.getUsername(), actualUser.getUsername());
+        assertEquals(userWithUpdatedInfo.getEmail(), actualUser.getEmail());
+        assertEquals(userWithUpdatedInfo.getPassword(), actualUser.getPassword());
+        verify(userRepository, times(1)).findById(user.getId());
+        verify(userRepository, times(1)).save(eq(userWithUpdatedInfo));
+        verify(passwordEncoder, times(1)).encode(userWithUpdatedInfo.getPassword());
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenUpdatingEmailToOneThatAlreadyExists() {
+        final Long userId = 1L;
+        final User user = User.builder()
+                .id(userId)
+                .name("Erick")
+                .username("erick123")
+                .email("erick@erick.com")
+                .password("erick123")
+                .build();
+        final Map<String, Object> updates = Map.of(
+                "name", "Carlos",
+                "email", "carlos@carlos.com",
+                "password", "carlos123"
+        );
+        final User userWithSameEmail = User.builder()
+                .id(user.getId())
+                .name((String) updates.get("name"))
+                .username(user.getUsername())
+                .email((String) updates.get("email"))
+                .password((String) updates.get("password"))
+                .build();
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findByUsernameOrEmail("", userWithSameEmail.getEmail()))
+                .thenReturn(Optional.of(userWithSameEmail));
+
+        assertThrows(ResourceAlreadyExistsException.class, () -> userService.update(userId, updates));
+        verify(userRepository, never()).save(any());
+        verify(userRepository, times(1)).findById(user.getId());
+        verify(userRepository, times(1)).findByUsernameOrEmail(eq(""), eq(userWithSameEmail.getEmail()));
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenUpdatingUsernameToOneThatAlreadyExists() {
+        final Long userId = 1L;
+        final User user = User.builder()
+                .id(userId)
+                .name("Erick")
+                .username("erick123")
+                .email("erick@erick.com")
+                .password("erick123")
+                .build();
+        final Map<String, Object> updates = Map.of(
+                "name", "Carlos",
+                "username", "carlos123",
+                "password", "carlos123"
+        );
+        final User userWithSameEmail = User.builder()
+                .id(user.getId())
+                .name((String) updates.get("name"))
+                .username((String) updates.get("username"))
+                .email(user.getEmail())
+                .password((String) updates.get("password"))
+                .build();
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findByUsernameOrEmail(userWithSameEmail.getUsername(), ""))
+                .thenReturn(Optional.of(userWithSameEmail));
+
+        assertThrows(ResourceAlreadyExistsException.class, () -> userService.update(userId, updates));
+        verify(userRepository, never()).save(any());
+        verify(userRepository, times(1)).findById(user.getId());
+        verify(userRepository, times(1)).findByUsernameOrEmail(eq(userWithSameEmail.getUsername()), eq(""));
     }
 }
