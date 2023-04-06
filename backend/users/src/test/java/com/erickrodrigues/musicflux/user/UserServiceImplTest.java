@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -22,6 +23,9 @@ public class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -81,6 +85,7 @@ public class UserServiceImplTest {
                 .build();
         when(userRepository.findByUsernameOrEmail(username, email)).thenReturn(Optional.empty());
         when(userRepository.save(user)).thenReturn(user);
+        when(passwordEncoder.encode(password)).thenReturn(password);
 
         final User actualUser = userService.register(name, username, email, password);
 

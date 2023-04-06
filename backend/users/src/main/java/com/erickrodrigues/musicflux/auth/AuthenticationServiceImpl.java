@@ -8,7 +8,6 @@ import com.erickrodrigues.musicflux.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,13 +19,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final UserService userService;
     private final TokenRepository tokenRepository;
-    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     @Override
     public String register(String name, String username, String email, String password) {
-        final User savedUser = userService.register(name, username, email, passwordEncoder.encode(password));
+        final User savedUser = userService.register(name, username, email, password);
         final String jwtToken = jwtService.generateToken(Map.of("userId", savedUser.getId()), savedUser);
 
         saveUserToken(savedUser, jwtToken);
