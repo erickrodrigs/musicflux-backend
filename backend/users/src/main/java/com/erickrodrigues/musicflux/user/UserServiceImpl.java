@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl extends BaseService implements UserService, UserDetailsService {
@@ -49,6 +51,39 @@ public class UserServiceImpl extends BaseService implements UserService, UserDet
                         .password(passwordEncoder.encode(password))
                         .build()
         );
+    }
+
+    @Override
+    public User update(Long id, Map<String, Object> updates) {
+        final User user = findById(id);
+
+        if (updates.containsKey("name")) {
+            user.setName((String) updates.get("name"));
+        }
+
+        if (updates.containsKey("username")) {
+            final String username = (String) updates.get("username");
+            userRepository.findByUsernameOrEmail(username, "")
+                    .ifPresent((s) -> {
+                        throw new ResourceAlreadyExistsException("User with that email already exists");
+                    });
+            user.setUsername(username);
+        }
+
+        if (updates.containsKey("email")) {
+            final String email = (String) updates.get("email");
+            userRepository.findByUsernameOrEmail("", email)
+                    .ifPresent((s) -> {
+                        throw new ResourceAlreadyExistsException("User with that email already exists");
+                    });
+            user.setEmail(email);
+        }
+
+        if (updates.containsKey("password")) {
+            user.setPassword(passwordEncoder.encode((String) updates.get("password")));
+        }
+
+        return userRepository.save(user);
     }
 
     @Override
