@@ -27,7 +27,7 @@ public class SearchIT {
     @Test
     public void searchForArtists() {
         final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
-                getUrl() + "?type=artist&q=" + "dep",
+                getUrl() + "?type=artist&q=dep",
                 SearchResultDto.class
         );
 
@@ -39,7 +39,7 @@ public class SearchIT {
     @Test
     public void searchForAlbums() {
         final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
-                getUrl() + "?type=album&q=" + "e",
+                getUrl() + "?type=album&q=e",
                 SearchResultDto.class
         );
 
@@ -51,7 +51,7 @@ public class SearchIT {
     @Test
     public void searchForTracks() {
         final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
-                getUrl() + "?type=track&q=" + "of",
+                getUrl() + "?type=track&q=of",
                 SearchResultDto.class
         );
 
@@ -63,13 +63,41 @@ public class SearchIT {
     @Test
     public void searchForPlaylists() {
         final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
-                getUrl() + "?type=playlist&q=" + "of",
+                getUrl() + "?type=playlist&q=of",
                 SearchResultDto.class
         );
 
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(1, response.getBody().getPlaylists().size());
+    }
+
+    @Test
+    public void findArtistsAlbumsAndTracksByGenre() {
+        final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
+                getUrl() + "?type=genre&q=Synth-pop",
+                SearchResultDto.class
+        );
+
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().getArtists().size());
+        assertEquals(2, response.getBody().getAlbums().size());
+        assertEquals(21, response.getBody().getTracks().size());
+    }
+
+    @Test
+    public void findArtistsAlbumsAndTracksByGenreWhenItDoesNotExist() {
+        final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
+                getUrl() + "?type=genre&q=unknown",
+                SearchResultDto.class
+        );
+
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(0, response.getBody().getArtists().size());
+        assertEquals(0, response.getBody().getAlbums().size());
+        assertEquals(0, response.getBody().getTracks().size());
     }
 
     private String getUrl() {
