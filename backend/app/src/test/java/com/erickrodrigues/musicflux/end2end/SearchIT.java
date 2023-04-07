@@ -25,6 +25,30 @@ public class SearchIT {
     private RestTemplate restTemplate;
 
     @Test
+    public void searchForArtists() {
+        final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
+                getUrl() + "?type=artist&q=" + "dep",
+                SearchResultDto.class
+        );
+
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().getArtists().size());
+    }
+
+    @Test
+    public void searchForAlbums() {
+        final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
+                getUrl() + "?type=album&q=" + "e",
+                SearchResultDto.class
+        );
+
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(2, response.getBody().getAlbums().size());
+    }
+
+    @Test
     public void searchForTracks() {
         final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
                 getUrl() + "?type=track&q=" + "of",
@@ -34,6 +58,18 @@ public class SearchIT {
         assertEquals(200, response.getStatusCode().value());
         assertNotNull(response.getBody());
         assertEquals(3, response.getBody().getTracks().size());
+    }
+
+    @Test
+    public void searchForPlaylists() {
+        final ResponseEntity<SearchResultDto> response = restTemplate.getForEntity(
+                getUrl() + "?type=playlist&q=" + "of",
+                SearchResultDto.class
+        );
+
+        assertEquals(200, response.getStatusCode().value());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().getPlaylists().size());
     }
 
     private String getUrl() {

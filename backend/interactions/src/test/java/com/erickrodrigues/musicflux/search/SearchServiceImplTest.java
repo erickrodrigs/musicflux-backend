@@ -4,6 +4,8 @@ import com.erickrodrigues.musicflux.album.Album;
 import com.erickrodrigues.musicflux.album.AlbumService;
 import com.erickrodrigues.musicflux.artist.Artist;
 import com.erickrodrigues.musicflux.artist.ArtistService;
+import com.erickrodrigues.musicflux.playlist.Playlist;
+import com.erickrodrigues.musicflux.playlist.PlaylistService;
 import com.erickrodrigues.musicflux.track.Track;
 import com.erickrodrigues.musicflux.track.TrackService;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,9 @@ public class SearchServiceImplTest {
 
     @Mock
     private TrackService trackService;
+
+    @Mock
+    private PlaylistService playlistService;
 
     @InjectMocks
     private SearchServiceImpl searchService;
@@ -87,6 +92,25 @@ public class SearchServiceImplTest {
         // then
         assertEquals(tracks.size(), searchResult.getTracks().size());
         verify(trackService, times(1)).findAllByTitleContainingIgnoreCase(text);
+    }
+
+    @Test
+    public void shouldSearchForPlaylists() {
+        // given
+        final String text = "something not important";
+        final SearchableType type = SearchableType.PLAYLIST;
+        final List<Playlist> playlists = List.of(
+                Playlist.builder().id(1L).build(),
+                Playlist.builder().id(2L).build()
+        );
+        when(playlistService.findAllByNameContainingIgnoreCase(text)).thenReturn(playlists);
+
+        // when
+        final SearchResult searchResult = searchService.findAllByTypeAndText(type, text);
+
+        // then
+        assertEquals(playlists.size(), searchResult.getPlaylists().size());
+        verify(playlistService, times(1)).findAllByNameContainingIgnoreCase(text);
     }
 
     @Test

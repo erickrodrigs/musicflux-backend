@@ -1,7 +1,7 @@
 package com.erickrodrigues.musicflux.search;
 
 public enum SearchableType {
-    ARTIST("artist"), ALBUM("album"), TRACK("track"), GENRE("genre");
+    ARTIST("artist"), ALBUM("album"), TRACK("track"), PLAYLIST("playlist"), GENRE("genre");
 
     private final String type;
 
