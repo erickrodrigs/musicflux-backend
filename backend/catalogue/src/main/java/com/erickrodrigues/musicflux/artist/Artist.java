@@ -21,7 +21,7 @@ public class Artist extends BaseEntity {
     private String name;
 
     @Lob
-    @Column(name = "biography")
+    @Column(name = "biography", columnDefinition = "text")
     private String biography;
 
     @Column(name = "photo_url")
