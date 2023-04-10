@@ -85,6 +85,58 @@ public class AuthenticationServiceImplTest {
         verify(tokenRepository, never()).save(any());
     }
 
+    @Test
+    public void shouldAuthenticateAnExistingUserByGeneratingANewTokenAndRevokingThePreviousOnes() {
+        // given
+        final Long userId = 1L;
+        final String username = "erick123", password = "erick123";
+        final String jwtToken = "my-token";
+        final User user = User
+                .builder()
+                .id(userId)
+                .username(username)
+                .password(password)
+                .build();
+        final List<Token> tokens = List.of(
+                createToken("token1", user),
+                createToken("token2", user)
+        );
+        final Map<String, Object> extraClaims = Map.of("userId", user.getId());
+        final Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
+        when(authenticationManager.authenticate(authentication)).thenReturn(authentication);
+        when(userService.findByUsername(user.getUsername())).thenReturn(user);
+        when(jwtService.generateToken(extraClaims, user)).thenReturn(jwtToken);
+        when(tokenRepository.findAllValidTokensByUser(user.getId())).thenReturn(tokens);
+
+        // when
+        final String actualAccessToken = authenticationService.authenticate(username, password);
+
+        // then
+        assertEquals(jwtToken, actualAccessToken, WRONG_JWT_TOKEN);
+        assertTrue(tokens.stream().allMatch(token -> token.isRevoked() && token.isExpired()), TOKENS_NOT_REVOKED_NOR_EXPIRED);
+        verify(authenticationManager, times(1)).authenticate(authentication);
+        verify(userService, times(1)).findByUsername(user.getUsername());
+        verify(jwtService, times(1)).generateToken(extraClaims, user);
+        verify(tokenRepository, times(1)).findAllValidTokensByUser(user.getId());
+        verify(tokenRepository, times(1)).saveAll(tokens);
+        verify(tokenRepository, times(1)).save(createToken(jwtToken, user));
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenAuthenticationFails() {
+        // given
+        final String username = "erick123", password = "erick123";
+        final Authentication authentication = new UsernamePasswordAuthenticationToken(username, password);
+        when(authenticationManager.authenticate(authentication)).thenThrow(RuntimeException.class);
+
+        // then
+        assertThrows(RuntimeException.class, () -> authenticationService.authenticate(username, password));
+        verify(authenticationManager, times(1)).authenticate(authentication);
+        verify(jwtService, never()).generateToken(anyMap(), any());
+        verify(tokenRepository, never()).saveAll(anyList());
+        verify(tokenRepository, never()).save(any());
+    }
+
     private Token createToken(final String token, final User user) {
         return Token
                 .builder()
