@@ -35,7 +35,7 @@ public class PlayerController {
         final String url = request.getRequestURL().toString().replace(request.getRequestURI(), "");
         final Long userId = (Long) request.getAttribute("userId");
         final Track track = trackService.play(userId, trackId);
-        final byte[] array = restTemplate.getForObject(url + "/files/" + track.getId() + ".mp3", byte[].class);
+        final byte[] array = restTemplate.getForObject(url + "/api/v1/files/" + track.getId() + ".mp3", byte[].class);
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.parseMediaType("audio/mpeg3"))
