@@ -82,6 +82,6 @@ public class RegisterNewUserIT {
     }
 
     private String getUrl() {
-        return "http://localhost:" + port + "/auth/register";
+        return "http://localhost:" + port + "/api/v1" + "/auth/register";
     }
 }

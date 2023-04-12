@@ -101,6 +101,6 @@ public class SearchIT {
     }
 
     private String getUrl() {
-        return "http://localhost:" + port + "/search";
+        return "http://localhost:" + port + "/api/v1" + "/search";
     }
 }

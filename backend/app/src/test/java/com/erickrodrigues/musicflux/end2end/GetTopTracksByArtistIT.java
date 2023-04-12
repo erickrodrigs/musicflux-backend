@@ -36,6 +36,6 @@ public class GetTopTracksByArtistIT {
     }
 
     private String getUrl() {
-        return "http://localhost:" + port + "/artists/1/top-tracks";
+        return "http://localhost:" + port + "/api/v1" + "/artists/1/top-tracks";
     }
 }

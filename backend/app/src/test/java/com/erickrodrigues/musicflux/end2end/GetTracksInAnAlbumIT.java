@@ -45,6 +45,6 @@ public class GetTracksInAnAlbumIT {
     }
 
     private String getUrl(Long albumId) {
-        return "http://localhost:" + port + "/albums/" + albumId + "/tracks";
+        return "http://localhost:" + port + "/api/v1" + "/albums/" + albumId + "/tracks";
     }
 }

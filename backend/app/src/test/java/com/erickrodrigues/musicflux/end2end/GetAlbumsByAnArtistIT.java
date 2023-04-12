@@ -45,6 +45,6 @@ public class GetAlbumsByAnArtistIT {
     }
 
     private String getUrl(Long artistId) {
-        return "http://localhost:" + port + "/artists/" + artistId + "/albums";
+        return "http://localhost:" + port + "/api/v1" + "/artists/" + artistId + "/albums";
     }
 }
