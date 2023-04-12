@@ -28,7 +28,7 @@ public class GetAllGenresIT {
     @Test
     public void shouldGetAllGenres() {
         // given
-        final String url = "http://localhost:" + port + "/genres";
+        final String url = "http://localhost:" + port + "/api/v1" + "/genres";
 
         // when
         final ResponseEntity<GenreDto[]> response = restTemplate.getForEntity(url, GenreDto[].class);

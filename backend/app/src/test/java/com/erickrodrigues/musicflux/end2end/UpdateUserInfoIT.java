@@ -143,6 +143,6 @@ public class UpdateUserInfoIT {
     }
 
     private String getBaseUrl() {
-        return "http://localhost:" + port;
+        return "http://localhost:" + port + "/api/v1";
     }
 }

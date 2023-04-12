@@ -45,6 +45,6 @@ public class GetPlaylistByIdIT {
     }
 
     private String getUrl(Long playlistId) {
-        return "http://localhost:" + port + "/playlists/" + playlistId;
+        return "http://localhost:" + port + "/api/v1" + "/playlists/" + playlistId;
     }
 }

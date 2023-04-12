@@ -37,6 +37,6 @@ public class GetPlaylistsCreatedByUserIT {
     }
 
     private String getUrl() {
-        return "http://localhost:" + port + "/users/1/playlists";
+        return "http://localhost:" + port + "/api/v1/users/1/playlists";
     }
 }

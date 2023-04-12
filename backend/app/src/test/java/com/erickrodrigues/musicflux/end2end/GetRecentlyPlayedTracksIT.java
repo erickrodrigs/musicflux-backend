@@ -78,7 +78,7 @@ public class GetRecentlyPlayedTracksIT {
     }
 
     private String getBaseUrl() {
-        return "http://localhost:" + port;
+        return "http://localhost:" + port + "/api/v1";
     }
 
     @SuppressWarnings("unused")
