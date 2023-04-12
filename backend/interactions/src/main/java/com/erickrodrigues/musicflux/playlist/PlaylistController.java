@@ -27,10 +27,11 @@ public class PlaylistController {
         return playlistMapper.toPlaylistDetailsDto(playlistService.create(userId, createPlaylistDto.getName()));
     }
 
-    @Operation(summary = "Get all playlists by a user by their id")
-    @GetMapping("/users/{user_id}/playlists")
+    @Operation(summary = "Get current user's playlists")
+    @GetMapping("/me/playlists")
     @ResponseStatus(HttpStatus.OK)
-    public List<PlaylistDto> findAllByUserId(@PathVariable("user_id") Long userId) {
+    public List<PlaylistDto> getCurrentUsersPlaylists(HttpServletRequest request) {
+        final Long userId = (Long) request.getAttribute("userId");
         return playlistMapper.toListOfPlaylistDto(playlistService.findAllByUserId(userId));
     }
 

@@ -82,7 +82,8 @@ public class PlaylistControllerTest {
         when(playlistMapper.toListOfPlaylistDto(playlists)).thenReturn(playlistsDto);
 
         final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(playlistController).build();
-        final MvcResult mvcResult = mockMvc.perform(get("/users/" + userId + "/playlists"))
+        final MvcResult mvcResult = mockMvc.perform(get("/me/playlists")
+                        .requestAttr("userId", userId))
                 .andExpect(status().isOk())
                 .andReturn();
         final ObjectMapper objectMapper = new ObjectMapper();
