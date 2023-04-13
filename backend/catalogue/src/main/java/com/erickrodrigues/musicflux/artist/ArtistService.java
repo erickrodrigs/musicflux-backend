@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface ArtistService {
 
+    Artist findById(Long artistId);
+
     List<Artist> findAllByNameContainingIgnoreCase(String text);
 
     List<Album> getArtistAlbums(Long artistId);

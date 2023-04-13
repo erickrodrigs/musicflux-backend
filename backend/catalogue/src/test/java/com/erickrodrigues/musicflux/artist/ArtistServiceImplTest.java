@@ -1,6 +1,7 @@
 package com.erickrodrigues.musicflux.artist;
 
 import com.erickrodrigues.musicflux.album.Album;
+import com.erickrodrigues.musicflux.shared.ResourceNotFoundException;
 import com.erickrodrigues.musicflux.track.Track;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,36 @@ public class ArtistServiceImplTest {
 
     @InjectMocks
     private ArtistServiceImpl artistService;
+
+    @Test
+    public void shouldFindAnArtistByTheirId() {
+        // given
+        final Long artistId = 1L;
+        final Artist artist = Artist.builder()
+                .id(artistId)
+                .name("Depeche Mode")
+                .build();
+        when(artistRepository.findById(artistId)).thenReturn(Optional.of(artist));
+
+        // when
+        final Artist actualArtist = artistService.findById(artistId);
+
+        // then
+        assertEquals(artist.getId(), actualArtist.getId());
+        assertEquals(artist.getName(), actualArtist.getName());
+        verify(artistRepository, times(1)).findById(artistId);
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenArtistWithGivenIdDoesNotExist() {
+        // given
+        final Long artistId = 1L;
+        when(artistRepository.findById(artistId)).thenReturn(Optional.empty());
+
+        // then
+        assertThrows(ResourceNotFoundException.class, () -> artistService.findById(artistId));
+        verify(artistRepository, times(1)).findById(artistId);
+    }
 
     @Test
     public void shouldFindAllArtistByTheirNameContainingTextAndIgnoringCase() {
