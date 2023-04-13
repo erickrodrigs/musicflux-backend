@@ -37,6 +37,9 @@ public class ArtistControllerTest {
     private ArtistService artistService;
 
     @Mock
+    private ArtistMapper artistMapper;
+
+    @Mock
     private AlbumMapper albumMapper;
 
     @Mock
@@ -44,6 +47,38 @@ public class ArtistControllerTest {
 
     @InjectMocks
     private ArtistController artistController;
+
+    @Test
+    public void shouldReturnAnArtistByTheirId() throws Exception {
+        // given
+        final Long artistId = 1L;
+        final Artist artist = Artist.builder()
+                .id(artistId)
+                .name("Depeche Mode")
+                .build();
+        final ArtistDetailsDto artistDetailsDto = ArtistDetailsDto.builder()
+                .id(artist.getId())
+                .name(artist.getName())
+                .build();
+        when(artistService.findById(artistId)).thenReturn(artist);
+        when(artistMapper.toArtistDetailsDto(artist)).thenReturn(artistDetailsDto);
+
+        // when
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(artistController).build();
+        final MvcResult mvcResult = mockMvc.perform(get("/artists/" + artistId))
+                .andExpect(status().isOk())
+                .andReturn();
+        final ArtistDetailsDto actualResponse = new ObjectMapper().readValue(
+                mvcResult.getResponse().getContentAsString(),
+                ArtistDetailsDto.class
+        );
+
+        // then
+        assertEquals(artistDetailsDto.getId(), artistDetailsDto.getId());
+        assertEquals(artistDetailsDto.getName(), artistDetailsDto.getName());
+        verify(artistService, times(1)).findById(artistId);
+        verify(artistMapper, times(1)).toArtistDetailsDto(artist);
+    }
 
     @Test
     public void shouldReturnAllAlbumsFromAnArtist() throws Exception {

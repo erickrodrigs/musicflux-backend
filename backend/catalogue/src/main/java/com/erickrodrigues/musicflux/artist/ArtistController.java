@@ -21,8 +21,15 @@ import java.util.List;
 public class ArtistController {
 
     private final ArtistService artistService;
+    private final ArtistMapper artistMapper;
     private final AlbumMapper albumMapper;
     private final TrackMapper trackMapper;
+
+    @GetMapping("/artists/{artist_id}")
+    @ResponseStatus(HttpStatus.OK)
+    public ArtistDetailsDto getArtist(@PathVariable("artist_id") Long artistId) {
+        return artistMapper.toArtistDetailsDto(artistService.findById(artistId));
+    }
 
     @Operation(summary = "Get artist's albums by their id")
     @GetMapping("/artists/{artist_id}/albums")
