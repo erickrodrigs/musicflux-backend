@@ -4,7 +4,7 @@ import com.erickrodrigues.musicflux.album.Album;
 import com.erickrodrigues.musicflux.album.AlbumDetailsDto;
 import com.erickrodrigues.musicflux.album.AlbumMapper;
 import com.erickrodrigues.musicflux.track.Track;
-import com.erickrodrigues.musicflux.track.TrackDto;
+import com.erickrodrigues.musicflux.track.TrackDetailsDto;
 import com.erickrodrigues.musicflux.track.TrackMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -140,14 +140,14 @@ public class ArtistControllerTest {
                 Track.builder().id(1L).title("Sing This Track").build(),
                 Track.builder().id(2L).title("Love").build()
         );
-        final List<TrackDto> tracksDetailsDto = List.of(
-                TrackDto.builder()
+        final List<TrackDetailsDto> tracksDetailsDto = List.of(
+                TrackDetailsDto.builder()
                         .id(1L)
                         .title("Sing This Track")
                         .length(60L)
                         .genres(List.of("Synth Pop"))
                         .build(),
-                TrackDto.builder()
+                TrackDetailsDto.builder()
                         .id(2L)
                         .title("Love")
                         .length(60L)
@@ -163,9 +163,9 @@ public class ArtistControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
         final ObjectMapper objectMapper = new ObjectMapper();
-        final List<TrackDto> actualResult = objectMapper.readValue(
+        final List<TrackDetailsDto> actualResult = objectMapper.readValue(
                 mvcResult.getResponse().getContentAsString(),
-                objectMapper.getTypeFactory().constructCollectionType(List.class, TrackDto.class)
+                objectMapper.getTypeFactory().constructCollectionType(List.class, TrackDetailsDto.class)
         );
 
         // then

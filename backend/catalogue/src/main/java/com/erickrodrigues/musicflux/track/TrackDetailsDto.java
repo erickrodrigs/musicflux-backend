@@ -13,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TrackDto {
+public class TrackDetailsDto {
 
     private Long id;
 

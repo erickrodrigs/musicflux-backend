@@ -3,7 +3,7 @@ package com.erickrodrigues.musicflux.search;
 import com.erickrodrigues.musicflux.album.AlbumDetailsDto;
 import com.erickrodrigues.musicflux.artist.ArtistDetailsDto;
 import com.erickrodrigues.musicflux.playlist.PlaylistDto;
-import com.erickrodrigues.musicflux.track.TrackDto;
+import com.erickrodrigues.musicflux.track.TrackDetailsDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,7 +25,7 @@ public class SearchResultDto {
     private List<AlbumDetailsDto> albums = new ArrayList<>();
 
     @Builder.Default
-    private List<TrackDto> tracks = new ArrayList<>();
+    private List<TrackDetailsDto> tracks = new ArrayList<>();
 
     @Builder.Default
     private List<PlaylistDto> playlists = new ArrayList<>();

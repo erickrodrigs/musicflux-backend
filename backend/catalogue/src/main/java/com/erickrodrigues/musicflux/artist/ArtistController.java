@@ -2,7 +2,7 @@ package com.erickrodrigues.musicflux.artist;
 
 import com.erickrodrigues.musicflux.album.AlbumDetailsDto;
 import com.erickrodrigues.musicflux.album.AlbumMapper;
-import com.erickrodrigues.musicflux.track.TrackDto;
+import com.erickrodrigues.musicflux.track.TrackDetailsDto;
 import com.erickrodrigues.musicflux.track.TrackMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,7 +40,7 @@ public class ArtistController {
     @Operation(summary = "Get artist's top tracks by their id")
     @GetMapping("/top-tracks")
     @ResponseStatus(HttpStatus.OK)
-    public List<TrackDto> getArtistTopTracks(@PathVariable("artist_id") Long artistId) {
+    public List<TrackDetailsDto> getArtistTopTracks(@PathVariable("artist_id") Long artistId) {
         return trackMapper.toListOfTrackDetailsDto(artistService.getTopTracks(artistId));
     }
 }
