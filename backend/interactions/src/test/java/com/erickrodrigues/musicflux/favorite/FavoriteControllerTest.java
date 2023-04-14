@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.favorite;
 
-import com.erickrodrigues.musicflux.track.TrackDto;
+import com.erickrodrigues.musicflux.track.TrackDetailsDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +37,7 @@ public class FavoriteControllerTest {
         final Favorite favorite = Favorite.builder().id(1L).build();
         final FavoriteDetailsDto favoriteDetailsDto = FavoriteDetailsDto.builder()
                 .id(1L)
-                .track(TrackDto.builder().id(1L).build())
+                .track(TrackDetailsDto.builder().id(1L).build())
                 .userId(userId)
                 .build();
         final CreateFavoriteDto createFavoriteDto = CreateFavoriteDto.builder().trackId(trackId).build();
@@ -90,12 +90,12 @@ public class FavoriteControllerTest {
         final List<FavoriteDetailsDto> favoritesDetailsDto = List.of(
                 FavoriteDetailsDto.builder()
                         .id(1L)
-                        .track(TrackDto.builder().id(1L).build())
+                        .track(TrackDetailsDto.builder().id(1L).build())
                         .userId(userId)
                         .build(),
                 FavoriteDetailsDto.builder()
                         .id(2L)
-                        .track(TrackDto.builder().id(2L).build())
+                        .track(TrackDetailsDto.builder().id(2L).build())
                         .userId(userId)
                         .build()
         );

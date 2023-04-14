@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.end2end;
 
-import com.erickrodrigues.musicflux.track.TrackDto;
+import com.erickrodrigues.musicflux.track.TrackDetailsDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,9 +26,9 @@ public class GetTracksInAnAlbumIT {
 
     @Test
     public void getAlbumById() {
-        final ResponseEntity<TrackDto[]> response = restTemplate.getForEntity(
+        final ResponseEntity<TrackDetailsDto[]> response = restTemplate.getForEntity(
                 getUrl(1L),
-                TrackDto[].class
+                TrackDetailsDto[].class
         );
 
         assertEquals(200, response.getStatusCode().value());
@@ -40,7 +40,7 @@ public class GetTracksInAnAlbumIT {
     public void getAlbumByIdWhenItDoesNotExist() {
         assertThrows(HttpClientErrorException.NotFound.class, () -> restTemplate.getForEntity(
                 getUrl(3L),
-                TrackDto[].class
+                TrackDetailsDto[].class
         ));
     }
 

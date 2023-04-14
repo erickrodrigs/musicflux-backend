@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.end2end;
 
-import com.erickrodrigues.musicflux.track.TrackDto;
+import com.erickrodrigues.musicflux.track.TrackDetailsDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,9 +25,9 @@ public class GetTopTracksByArtistIT {
 
     @Test
     public void getMostPlayedTracksByAnArtistByTheirId() {
-        final ResponseEntity<TrackDto[]> response = restTemplate.getForEntity(
+        final ResponseEntity<TrackDetailsDto[]> response = restTemplate.getForEntity(
                 getUrl(),
-                TrackDto[].class
+                TrackDetailsDto[].class
         );
 
         assertEquals(200, response.getStatusCode().value());

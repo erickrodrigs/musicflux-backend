@@ -12,9 +12,9 @@ import java.util.List;
 public interface TrackMapper {
 
     @Mapping(target = "artists", source = "track.album.artists")
-    TrackDto toTrackDetailsDto(Track track);
+    TrackDetailsDto toTrackDetailsDto(Track track);
 
-    List<TrackDto> toListOfTrackDetailsDto(List<Track> tracks);
+    List<TrackDetailsDto> toListOfTrackDetailsDto(List<Track> tracks);
 
     default String genreToName(Genre genre) {
         return genre.getName();

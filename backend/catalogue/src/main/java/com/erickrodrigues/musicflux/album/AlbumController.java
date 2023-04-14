@@ -1,6 +1,6 @@
 package com.erickrodrigues.musicflux.album;
 
-import com.erickrodrigues.musicflux.track.TrackDto;
+import com.erickrodrigues.musicflux.track.TrackDetailsDto;
 import com.erickrodrigues.musicflux.track.TrackMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,7 +24,7 @@ public class AlbumController {
     @Operation(summary = "Get all tracks in an album by its id")
     @GetMapping("/albums/{album_id}/tracks")
     @ResponseStatus(HttpStatus.OK)
-    public List<TrackDto> findAllByAlbumId(@PathVariable("album_id") Long albumId) {
+    public List<TrackDetailsDto> findAllByAlbumId(@PathVariable("album_id") Long albumId) {
         return trackMapper.toListOfTrackDetailsDto(albumService.getAlbumTracks(albumId));
     }
 }
