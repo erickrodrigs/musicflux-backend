@@ -8,6 +8,8 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {ArtistMapper.class})
 public interface AlbumMapper {
 
+    AlbumDto toAlbumDto(Album album);
+
     AlbumDetailsDto toAlbumDetailsDto(Album album);
 
     List<AlbumDetailsDto> toListOfAlbumDetailsDto(List<Album> albums);
