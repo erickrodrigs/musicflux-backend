@@ -1,6 +1,10 @@
 package com.erickrodrigues.musicflux.end2end;
 
+import com.erickrodrigues.musicflux.auth.AuthCredentialsDto;
+import com.erickrodrigues.musicflux.auth.AuthTokenDto;
 import com.erickrodrigues.musicflux.playlist.PlaylistDto;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,10 +30,34 @@ public class GetPlaylistsCreatedByUserIT {
     @Autowired
     private RestTemplate restTemplate;
 
+    @BeforeEach
+    public void setUp() {
+        final AuthCredentialsDto authCredentialsDto = AuthCredentialsDto
+                .builder()
+                .username("erickrodrigs")
+                .password("carlos123")
+                .build();
+        final ResponseEntity<AuthTokenDto> response = restTemplate.postForEntity(
+                getBaseUrl() + "/auth",
+                authCredentialsDto,
+                AuthTokenDto.class
+        );
+
+        String token = Objects.requireNonNull(response.getBody()).getToken();
+
+        restTemplate.getInterceptors().add((outReq, bytes, clientHttpReqExec) -> {
+            outReq.getHeaders().set(
+                    HttpHeaders.AUTHORIZATION, "Bearer " + token
+            );
+
+            return clientHttpReqExec.execute(outReq, bytes);
+        });
+    }
+
     @Test
     public void getAllPlaylistsCreatedByUser() {
         final ResponseEntity<PlaylistDto[]> response = restTemplate.getForEntity(
-                getUrl(),
+                getBaseUrl() + "/me/playlists",
                 PlaylistDto[].class
         );
 
@@ -36,7 +66,7 @@ public class GetPlaylistsCreatedByUserIT {
         assertEquals(1, response.getBody().length);
     }
 
-    private String getUrl() {
-        return "http://localhost:" + port + "/api/v1/users/1/playlists";
+    private String getBaseUrl() {
+        return "http://localhost:" + port + "/api/v1";
     }
 }
