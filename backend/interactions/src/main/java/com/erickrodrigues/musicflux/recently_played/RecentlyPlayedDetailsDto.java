@@ -1,12 +1,12 @@
 package com.erickrodrigues.musicflux.recently_played;
 
-import com.erickrodrigues.musicflux.track.TrackDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -16,9 +16,11 @@ public class RecentlyPlayedDetailsDto {
 
     private Long id;
 
-    private TrackDto track;
+    private String trackTitle;
 
-    private Long userId;
+    private String albumTitle;
+
+    private List<String> artistsNames;
 
     private LocalDateTime createdAt;
 }
