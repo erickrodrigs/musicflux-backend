@@ -1,7 +1,8 @@
 package com.erickrodrigues.musicflux.recently_played;
 
+import com.erickrodrigues.musicflux.album.Album;
+import com.erickrodrigues.musicflux.artist.Artist;
 import com.erickrodrigues.musicflux.track.Track;
-import com.erickrodrigues.musicflux.track.TrackDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.minidev.json.JSONArray;
@@ -43,20 +44,32 @@ public class RecentlyPlayedControllerTest {
     public void findAllByUserId() throws Exception {
         final Long userId = 1L;
         final List<RecentlyPlayed> recentlyPlayedTracks = List.of(
-                RecentlyPlayed.builder().id(1L).track(Track.builder().id(1L).build()).build(),
-                RecentlyPlayed.builder().id(2L).track(Track.builder().id(2L).build()).build()
+                RecentlyPlayed.builder().id(1L).track(
+                        Track.builder()
+                                .id(1L)
+                                .title("")
+                                .album(Album.builder().title("").artists(List.of(Artist.builder().name("").build())).build())
+                                .build()).build(),
+                RecentlyPlayed.builder().id(2L).track(
+                        Track.builder()
+                                .id(2L)
+                                .title("")
+                                .album(Album.builder().title("").artists(List.of(Artist.builder().name("").build())).build())
+                                .build()).build()
         );
         final List<RecentlyPlayedDetailsDto> recentlyPlayedDetailsDtos = List.of(
                 RecentlyPlayedDetailsDto.builder()
                         .id(1L)
-                        .track(TrackDto.builder().id(1L).build())
-                        .userId(userId)
+                        .trackTitle("")
+                        .albumTitle("")
+                        .artistsNames(List.of(""))
                         .createdAt(LocalDateTime.now())
                         .build(),
                 RecentlyPlayedDetailsDto.builder()
                         .id(2L)
-                        .track(TrackDto.builder().id(2L).build())
-                        .userId(userId)
+                        .trackTitle("")
+                        .albumTitle("")
+                        .artistsNames(List.of(""))
                         .createdAt(LocalDateTime.now().plusDays(1L))
                         .build()
         );
