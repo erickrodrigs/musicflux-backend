@@ -101,13 +101,13 @@ public class ArtistControllerTest {
                         .id(1L)
                         .title("Black Celebration")
                         .releaseDate(LocalDate.parse("1986-03-17"))
-                        .artists(List.of(ArtistDetailsDto.builder().id(artistId).build()))
+                        .artists(List.of(ArtistDto.builder().id(artistId).build()))
                         .build(),
                 AlbumDetailsDto.builder()
                         .id(2L)
                         .title("Music For The Masses")
                         .releaseDate(LocalDate.parse("1987-09-28"))
-                        .artists(List.of(ArtistDetailsDto.builder().id(artistId).build()))
+                        .artists(List.of(ArtistDto.builder().id(artistId).build()))
                         .build()
         );
         when(artistService.getArtistAlbums(artistId)).thenReturn(albums);
