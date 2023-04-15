@@ -192,15 +192,15 @@ public class FavoriteServiceImplTest {
         when(favoriteRepository.findByTrackId(track2.getId())).thenReturn(Optional.empty());
 
         // when
-        final Map<Track, Boolean> tracksToLiked = favoriteService.checkWhetherTracksAreLiked(
+        final Map<Long, Boolean> tracksToLiked = favoriteService.checkWhetherTracksAreLiked(
                 user.getId(), List.of(track1.getId(), track2.getId())
         );
 
         // then
-        assertTrue(tracksToLiked.containsKey(track1));
-        assertTrue(tracksToLiked.containsKey(track2));
-        assertTrue(tracksToLiked.get(track1));
-        assertFalse(tracksToLiked.get(track2));
+        assertTrue(tracksToLiked.containsKey(track1.getId()));
+        assertTrue(tracksToLiked.containsKey(track2.getId()));
+        assertTrue(tracksToLiked.get(track1.getId()));
+        assertFalse(tracksToLiked.get(track2.getId()));
         verify(userService, times(1)).findById(user.getId());
         verify(trackService, times(1)).findById(track1.getId());
         verify(trackService, times(1)).findById(track2.getId());

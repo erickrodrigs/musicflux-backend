@@ -13,5 +13,5 @@ public interface FavoriteService {
 
     List<Favorite> findAllByUserId(Long userId);
 
-    Map<Track, Boolean> checkWhetherTracksAreLiked(Long userId, List<Long> tracksIds);
+    Map<Long, Boolean> checkWhetherTracksAreLiked(Long userId, List<Long> tracksIds);
 }
