@@ -1,8 +1,11 @@
 package com.erickrodrigues.musicflux.recently_played;
 
 import com.erickrodrigues.musicflux.album.Album;
+import com.erickrodrigues.musicflux.album.AlbumDto;
 import com.erickrodrigues.musicflux.artist.Artist;
+import com.erickrodrigues.musicflux.artist.ArtistDto;
 import com.erickrodrigues.musicflux.track.Track;
+import com.erickrodrigues.musicflux.track.TrackDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import net.minidev.json.JSONArray;
@@ -60,16 +63,16 @@ public class RecentlyPlayedControllerTest {
         final List<RecentlyPlayedDetailsDto> recentlyPlayedDetailsDtos = List.of(
                 RecentlyPlayedDetailsDto.builder()
                         .id(1L)
-                        .trackTitle("")
-                        .albumTitle("")
-                        .artistsNames(List.of(""))
+                        .track(TrackDto.builder().build())
+                        .album(AlbumDto.builder().build())
+                        .artists(List.of(ArtistDto.builder().build()))
                         .createdAt(LocalDateTime.now())
                         .build(),
                 RecentlyPlayedDetailsDto.builder()
                         .id(2L)
-                        .trackTitle("")
-                        .albumTitle("")
-                        .artistsNames(List.of(""))
+                        .track(TrackDto.builder().build())
+                        .album(AlbumDto.builder().build())
+                        .artists(List.of(ArtistDto.builder().build()))
                         .createdAt(LocalDateTime.now().plusDays(1L))
                         .build()
         );
