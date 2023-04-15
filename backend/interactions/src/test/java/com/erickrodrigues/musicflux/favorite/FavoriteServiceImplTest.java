@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -164,5 +165,46 @@ public class FavoriteServiceImplTest {
         assertEquals(favorites.size(), actualFavorites.size(), WRONG_NUMBER_OF_FAVORITES);
         assertTrue(actualFavorites.containsAll(favorites), LIST_DOES_NOT_CONTAIN_SPECIFIED_FAVORITES);
         verify(favoriteRepository, times(1)).findAllByUserId(userId);
+    }
+
+    @Test
+    public void shouldReturnIfTracksSpecifiedAreLikedOrNot() {
+        // given
+        final Long userId = 1L;
+        final User user = User.builder()
+                .id(userId)
+                .build();
+        final Track track1 = Track.builder()
+                .id(1L)
+                .build();
+        final Track track2 = Track.builder()
+                .id(2L)
+                .build();
+        final Favorite favorite = Favorite.builder()
+                .id(1L)
+                .track(track1)
+                .user(user)
+                .build();
+        when(userService.findById(user.getId())).thenReturn(user);
+        when(trackService.findById(track1.getId())).thenReturn(track1);
+        when(trackService.findById(track2.getId())).thenReturn(track2);
+        when(favoriteRepository.findByTrackId(track1.getId())).thenReturn(Optional.of(favorite));
+        when(favoriteRepository.findByTrackId(track2.getId())).thenReturn(Optional.empty());
+
+        // when
+        final Map<Track, Boolean> tracksToLiked = favoriteService.checkWhetherTracksAreLiked(
+                user.getId(), List.of(track1.getId(), track2.getId())
+        );
+
+        // then
+        assertTrue(tracksToLiked.containsKey(track1));
+        assertTrue(tracksToLiked.containsKey(track2));
+        assertTrue(tracksToLiked.get(track1));
+        assertFalse(tracksToLiked.get(track2));
+        verify(userService, times(1)).findById(user.getId());
+        verify(trackService, times(1)).findById(track1.getId());
+        verify(trackService, times(1)).findById(track2.getId());
+        verify(favoriteRepository, times(1)).findByTrackId(track1.getId());
+        verify(favoriteRepository, times(1)).findByTrackId(track2.getId());
     }
 }

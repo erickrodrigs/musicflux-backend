@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +55,18 @@ public class FavoriteServiceImpl extends BaseService implements FavoriteService 
     @Override
     public List<Favorite> findAllByUserId(Long userId) {
         return favoriteRepository.findAllByUserId(userId);
+    }
+
+    @Override
+    public Map<Track, Boolean> checkWhetherTracksAreLiked(Long userId, List<Long> tracksIds) {
+        userService.findById(userId);
+        return tracksIds
+                .stream()
+                .map(trackService::findById)
+                .collect(Collectors.toMap(Function.identity(), (track) ->
+                        favoriteRepository
+                                .findByTrackId(track.getId())
+                                .isPresent()
+                ));
     }
 }
