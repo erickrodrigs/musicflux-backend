@@ -11,8 +11,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -119,5 +122,37 @@ public class FavoriteControllerTest {
         assertTrue(actualResult.containsAll(favoritesDetailsDto));
         verify(favoriteService, times(1)).findAllByUserId(anyLong());
         verify(favoriteMapper, times(1)).toListOfFavoriteDetailsDto(anyList());
+    }
+
+    @Test
+    public void shouldReturnIfTracksAreLikedOrNot() throws Exception {
+        // given
+        final Long userId = 1L;
+        final List<Long> tracksIds = List.of(1L, 2L);
+        final Map<Long, Boolean> tracksToLiked = Map.of(
+                tracksIds.get(0), true,
+                tracksIds.get(1), false
+        );
+        when(favoriteService.checkWhetherTracksAreLiked(userId, tracksIds)).thenReturn(tracksToLiked);
+
+        // when
+        final MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.addAll("tracksIds", tracksIds.stream().map(Object::toString).toList());
+        final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(favoriteController).build();
+        final MvcResult mvcResult = mockMvc.perform(get("/me/favorites/check-liked")
+                .requestAttr("userId", userId)
+                .params(params))
+                .andExpect(status().isOk())
+                .andReturn();
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final Map<Long, Boolean> actualResponse = objectMapper.readValue(
+                mvcResult.getResponse().getContentAsString(),
+                objectMapper.getTypeFactory().constructMapType(Map.class, Long.class, Boolean.class)
+        );
+
+        // then
+        assertEquals(tracksToLiked.get(tracksIds.get(0)), actualResponse.get(tracksIds.get(0)));
+        assertEquals(tracksToLiked.get(tracksIds.get(1)), actualResponse.get(tracksIds.get(1)));
+        verify(favoriteService, times(1)).checkWhetherTracksAreLiked(userId, tracksIds);
     }
 }

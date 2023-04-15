@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "favorites")
 @RestController
@@ -45,5 +46,14 @@ public class FavoriteController {
     public List<FavoriteDetailsDto> findAllByUserId(HttpServletRequest request) {
         final Long userId = (Long) request.getAttribute("userId");
         return favoriteMapper.toListOfFavoriteDetailsDto(favoriteService.findAllByUserId(userId));
+    }
+
+    @Operation(summary = "Check if tracks are liked or not")
+    @GetMapping("/check-liked")
+    @ResponseStatus(HttpStatus.OK)
+    public Map<Long, Boolean> checkIfTracksAreLiked(HttpServletRequest request,
+                                                    @RequestParam("tracksIds") List<Long> tracksIds) {
+        final Long userId = (Long) request.getAttribute("userId");
+        return favoriteService.checkWhetherTracksAreLiked(userId, tracksIds);
     }
 }
