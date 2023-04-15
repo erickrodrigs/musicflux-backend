@@ -1,5 +1,8 @@
 package com.erickrodrigues.musicflux.recently_played;
 
+import com.erickrodrigues.musicflux.album.AlbumDto;
+import com.erickrodrigues.musicflux.artist.ArtistDto;
+import com.erickrodrigues.musicflux.track.TrackDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,11 +19,11 @@ public class RecentlyPlayedDetailsDto {
 
     private Long id;
 
-    private String trackTitle;
+    private TrackDto track;
 
-    private String albumTitle;
+    private AlbumDto album;
 
-    private List<String> artistsNames;
+    private List<ArtistDto> artists;
 
     private LocalDateTime createdAt;
 }
