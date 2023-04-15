@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,12 +57,12 @@ public class FavoriteServiceImpl extends BaseService implements FavoriteService 
     }
 
     @Override
-    public Map<Track, Boolean> checkWhetherTracksAreLiked(Long userId, List<Long> tracksIds) {
+    public Map<Long, Boolean> checkWhetherTracksAreLiked(Long userId, List<Long> tracksIds) {
         userService.findById(userId);
         return tracksIds
                 .stream()
                 .map(trackService::findById)
-                .collect(Collectors.toMap(Function.identity(), (track) ->
+                .collect(Collectors.toMap(Track::getId, (track) ->
                         favoriteRepository
                                 .findByTrackId(track.getId())
                                 .isPresent()
