@@ -21,6 +21,8 @@ public class TrackDetailsDto {
 
     private Long length;
 
+    private Long numberOfPlays;
+
     private AlbumDto album;
 
     private List<ArtistDto> artists;

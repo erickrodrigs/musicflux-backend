@@ -23,7 +23,7 @@ public class Track extends BaseEntity implements Comparable<Track> {
     private String title;
 
     @Column(name = "length")
-    private Duration length;
+    private Long length;
 
     @Column(name = "number_of_plays")
     @Builder.Default

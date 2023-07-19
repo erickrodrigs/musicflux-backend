@@ -19,8 +19,4 @@ public interface TrackMapper {
     default String genreToName(Genre genre) {
         return genre.getName();
     }
-
-    default Long lengthToLong(Duration length) {
-        return length.toSeconds();
-    }
 }
