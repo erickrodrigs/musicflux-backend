@@ -14,6 +14,11 @@ public class AlbumServiceImpl extends BaseService implements AlbumService {
     private final AlbumRepository albumRepository;
 
     @Override
+    public Album findById(Long albumId) {
+        return super.getEntityOrThrowException(albumId, albumRepository, Album.class);
+    }
+
+    @Override
     public List<Album> findAllByTitleContainingIgnoreCase(String text) {
         return albumRepository.findAllByTitleContainingIgnoreCase(text);
     }
